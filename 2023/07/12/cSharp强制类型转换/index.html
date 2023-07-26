@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>Archive</title>
+  <title>cSharp强制类型转换</title>
   
     
       <meta 
         property="og:title" 
-        content="Archive">
+        content="cSharp强制类型转换">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/archives/2023/index.html">
+        content="https://sabakiro.github.io/2023/07/12/cSharp%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/index.html">
     
     
       <meta 
@@ -36,6 +36,26 @@
         content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
     
     
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-07-12">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-07-26">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="c#">
+        
+      
     
   
   
@@ -52,6 +72,8 @@
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
   
   
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
   
   <script>
     function loadScript(url, cb) {
@@ -285,6 +307,18 @@
                <div class="sticky-tablet">
   
   
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Convert%E7%B1%BB"><span class="toc-text">Convert类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Parse"><span class="toc-text">Parse</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Convert%E5%92%8CParse%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">Convert和Parse的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TryParse"><span class="toc-text">TryParse</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TryParse-%E5%92%8C-Parse%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">TryParse 和 Parse的区别</span></a></li></ol>
+      </div>
+    </article>
+  
   
   <article class="card card-content categories-widget">
     <div class="categories-card">
@@ -321,111 +355,158 @@
   </article>
   
   
-    <article class="card card-content widescreen-archive archive-widget">
-      <div class="archive-card">
-  <div class="archive-card-header">
-    <i 
-      class="iconfont icon-wodebaobiao" 
-      style="padding-right: 2px;">
-    </i>Archive
-  </div>
-  <div class="archive-card-list">
-    
-    
-    
-      
-        
-        
-        
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
-    
-      <a 
-        href="/archives/2023" 
-        class="archive-card-list-item">
-        2023
-        <span class="archive-card-list-item-badge">3</span>
-      </a>
-    
-  </div>
-</div>
-    </article>
-  
 </div>
             </aside>
             <main class="main-column">
               
-<div class="card card-content">
-  <h1 class="widget-title">Archive</h1>
-</div>
-<div class="archive-timeline">
-  
-  
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      cSharp强制类型转换
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-07-12T08:51:46.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-07-12</span>
+    </time>
     
-      <div class="archive-timeline-tag"><span>2023</span></div>
-      
     
-    <div class="archive-timeline-item">
-      <div class="archive-timeline-post">
-        <div class="card card-content">
-          <div class="archive-timeline-post-date">2023-07-12</div>
-          <div class="archive-timeline-post-content">
-            <a 
-              href="/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/"
-              class="archive-timeline-post-item">
-              cSharp的ref和out和params关键字
-            </a>
-          </div>
-        </div>
+      <span class="dot"></span>
+      <span>173 words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/c/" 
+            class="post-meta-link">
+            c#
+          </a>
+        
       </div>
     </div>
   
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h1 id="Convert类"><a href="#Convert类" class="headerlink" title="Convert类"></a>Convert类</h1><p>Convert.to…..()</p>
+<pre class="highlight"><span class="line"><span class="built_in">string</span> str = <span class="string">&quot;100&quot;</span>;</span><br><span class="line"><span class="keyword">var</span> i = Convert.ToInt32(str);</span><br></pre>
+
+<h1 id="Parse"><a href="#Parse" class="headerlink" title="Parse"></a>Parse</h1><p>….Parse()</p>
+<pre class="highlight"><span class="line"><span class="keyword">var</span> i2 = Int32.Parse(str);</span><br></pre>
+
+<h1 id="Convert和Parse的区别"><a href="#Convert和Parse的区别" class="headerlink" title="Convert和Parse的区别"></a>Convert和Parse的区别</h1><p>实际上Convert.ToDouble与 Double.Parse 较为类似,</p>
+<p>Convert.ToDouble内部调用了 Double.Parse,</p>
+<p>Convert.ToDouble与Double.Parse的区别和相同:</p>
+<ol>
+<li><p>对于参数为null的时候：</p>
+<p>Convert.ToDouble→返回 0.0；</p>
+<p>Double.Parse →抛出异常。</p>
+</li>
+<li><p>对于参数为””的时候：</p>
+<p>Convert.ToDouble→抛出异常；</p>
+<p>Double.Parse→抛出异常。</p>
+</li>
+</ol>
+<h1 id="TryParse"><a href="#TryParse" class="headerlink" title="TryParse"></a>TryParse</h1><pre class="highlight"><span class="line">Double.TryParse(变量<span class="number">1</span>,<span class="keyword">out</span> 变量<span class="number">2</span>);</span><br></pre>
+
+<h1 id="TryParse-和-Parse的区别"><a href="#TryParse-和-Parse的区别" class="headerlink" title="TryParse 和 Parse的区别"></a>TryParse 和 Parse的区别</h1><p>Double.TryParse与Double.Parse的区别:</p>
+<ol>
+<li><p>返回值不同 (tryParse为bool ,Parse为double):</p>
+<p>TryParse不会产生异常，</p>
+<p>转换成功返回 true，</p>
+<p>转换失败返回 false。</p>
+</li>
+<li><p>参数不同(最后一个参数为输出值)</p>
+<p>如果转换失败，输出值为 0.0。</p>
+</li>
+</ol>
+
+  </div>
+  <div>
     
-    <div class="archive-timeline-item">
-      <div class="archive-timeline-post">
-        <div class="card card-content">
-          <div class="archive-timeline-post-date">2023-07-12</div>
-          <div class="archive-timeline-post-content">
-            <a 
-              href="/2023/07/12/cSharp%E6%9E%9A%E4%B8%BE%E5%92%8C%E6%95%B0%E7%BB%84/"
-              class="archive-timeline-post-item">
-              cSharp枚举和数组
-            </a>
-          </div>
-        </div>
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/07/12/cSharp%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">
+            https://sabakiro.github.io/2023/07/12/cSharp%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
       </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/07/12/cSharp%E6%9E%9A%E4%B8%BE%E5%92%8C%E6%95%B0%E7%BB%84/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">Prev</div>
+          
+            <div class="nav-title">cSharp枚举和数组 </div>
+          
+        </div>
+      </a>
     </div>
   
-    
-    <div class="archive-timeline-item">
-      <div class="archive-timeline-post">
-        <div class="card card-content">
-          <div class="archive-timeline-post-date">2023-07-12</div>
-          <div class="archive-timeline-post-content">
-            <a 
-              href="/2023/07/12/cSharp%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"
-              class="archive-timeline-post-item">
-              cSharp强制类型转换
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
   
 </div>
 
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Convert%E7%B1%BB"><span class="toc-text">Convert类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Parse"><span class="toc-text">Parse</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Convert%E5%92%8CParse%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">Convert和Parse的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TryParse"><span class="toc-text">TryParse</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TryParse-%E5%92%8C-Parse%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">TryParse 和 Parse的区别</span></a></li></ol>
+</div>
             </main>
             <aside class="right-column">
               <div class="sticky-widescreen">
   
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Convert%E7%B1%BB"><span class="toc-text">Convert类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Parse"><span class="toc-text">Parse</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Convert%E5%92%8CParse%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">Convert和Parse的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TryParse"><span class="toc-text">TryParse</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TryParse-%E5%92%8C-Parse%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">TryParse 和 Parse的区别</span></a></li></ol>
+    </article>
   
   
   <article class="card card-content">
@@ -457,44 +538,6 @@
 </div>
   </article>
   
-  
-    <article class="card card-content">
-      <div class="archive-card">
-  <div class="archive-card-header">
-    <i 
-      class="iconfont icon-wodebaobiao" 
-      style="padding-right: 2px;">
-    </i>Archive
-  </div>
-  <div class="archive-card-list">
-    
-    
-    
-      
-        
-        
-        
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
-    
-      <a 
-        href="/archives/2023" 
-        class="archive-card-list-item">
-        2023
-        <span class="archive-card-list-item-badge">3</span>
-      </a>
-    
-  </div>
-</div>
-    </article>
   
 </div>
             </aside>
@@ -597,6 +640,36 @@
 </a> 
      
      
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
      
      
     <script src="/js/main.js"></script> 

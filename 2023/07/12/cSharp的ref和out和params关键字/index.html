@@ -18,22 +18,22 @@
   <link 
     rel="icon" 
     href="/">
-  <title>Hello World</title>
+  <title>cSharp的ref和out和params关键字</title>
   
     
       <meta 
         property="og:title" 
-        content="Hello World">
+        content="cSharp的ref和out和params关键字">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/07/23/hello-world/index.html">
+        content="https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/index.html">
     
     
       <meta 
         property="og:img" 
-        content="https://img.songhn.com/img/Y67gdd.png">
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
     
     
     
@@ -42,14 +42,18 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-07-23">
+        content="2023-07-12">
       <meta 
         property="og:article:modified_time" 
-        content="2023-07-23">
+        content="2023-07-26">
       <meta 
         property="og:article:author" 
-        content="theme-kaze">
+        content="sabakiro">
       
+        
+          <meta 
+            property="og:article:tag" 
+            content="c#">
         
       
     
@@ -172,7 +176,7 @@
   <div class="navbar-logo">
     <a class="navbar-logo-main" href="/">
       
-      <span class="navbar-logo-dsc">Theme Kaze</span>
+      <span class="navbar-logo-dsc">kaze</span>
       </a>
   </div>
   <div class="navbar-menu">
@@ -270,19 +274,19 @@
               <div class="card card-author">
                 
   <img 
-    src="https://img.songhn.com/img/Y67gdd.png" 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
     class="author-img"
     width="88"
     height="88"
     alt="author avatar">
 
-<p class="author-name">theme-kaze</p>
-<p class="author-description">designed by theme-kaze</p>
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
 <div class="author-message">
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>1</span>
+    <span>3</span>
     <span>Posts</span>
   </a>
   <a 
@@ -294,7 +298,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>0</span>
+    <span>1</span>
     <span>Tags</span>
   </a>
 </div>
@@ -311,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
       </div>
     </article>
   
@@ -340,6 +344,12 @@
   </div>
   <div class="tags-list">
     
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
   </div>
 </div>
   </article>
@@ -352,41 +362,62 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Hello World
+      cSharp的ref和out和params关键字
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-07-23T13:49:37.732Z">
+    <time datetime="2023-07-12T10:05:32.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-07-23</span>
+      <span>2023-07-12</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>75 words</span>
+      <span>258 words</span>
     
   </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/c/" 
+            class="post-meta-link">
+            c#
+          </a>
+        
+      </div>
+    </div>
   
   </header>
   <div 
     id="section" 
     class="post-content">
-    <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+    <h1 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h1><pre class="highlight"><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRef</span>(<span class="params"><span class="keyword">ref</span> <span class="built_in">int</span> a</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            a = <span class="number">3</span> + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">int</span> a = <span class="number">10</span>;<span class="comment">//必须初始化</span></span><br><span class="line">                testRef(<span class="keyword">ref</span> a);</span><br><span class="line">                Console.WriteLine(a);<span class="comment">//4</span></span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<h1 id="out"><a href="#out" class="headerlink" title="out"></a>out</h1><pre class="highlight"><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRef</span>(<span class="params"><span class="keyword">out</span> <span class="built_in">int</span> a</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            a = <span class="number">3</span> + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">int</span> a;<span class="comment">//不需要初始化</span></span><br><span class="line">                testRef(<span class="keyword">out</span> a);</span><br><span class="line">                Console.WriteLine(a);<span class="comment">//4</span></span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<h1 id="out和ref的区别"><a href="#out和ref的区别" class="headerlink" title="out和ref的区别"></a>out和ref的区别</h1><ol>
+<li><p>ref将参数的参数值和引用都传入方法中,</p>
+<p>所以ref的参数的初始化必须在方法外部进行,</p>
+<p>也就是ref的参数必须有初始化值,否则程序会报错</p>
+</li>
+<li><p>out不会将参数的参数值传入方法中,只会将参数的引用传入方法中,</p>
+<p>所以参数的初始化工作必须在其对用方法中进行,</p>
+<p>否则程序会报错</p>
+</li>
+</ol>
+<h1 id="params"><a href="#params" class="headerlink" title="params"></a>params</h1><pre class="highlight"><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">UseParams2</span>(<span class="params"><span class="keyword">params</span> <span class="built_in">object</span>[] list</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; list.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.Write(list[i] + <span class="string">&quot; &quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Console.WriteLine();</span><br><span class="line">    &#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        UseParams2(<span class="number">1</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;test&quot;</span>);</span><br><span class="line">		<span class="built_in">int</span>[] myIntArray = &#123; <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span> &#125;;</span><br><span class="line">		UseParams2(myIntArray);</span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">                1 a test</span></span><br><span class="line"><span class="comment">                System.Int32[]</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
 
   </div>
   <div>
@@ -399,15 +430,15 @@
             target="_blank" 
             rel="nofollow noopener noreferrer" 
             href="/about">
-            theme-kaze
+            sabakiro
           </a>
         </p>
         <p>
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/07/23/hello-world/">
-            https://sabakiro.github.io/2023/07/23/hello-world/
+            href="https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/">
+            https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -417,6 +448,20 @@
 </article>
 <div class="nav">
   
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/07/12/cSharp%E6%9E%9A%E4%B8%BE%E5%92%8C%E6%95%B0%E7%BB%84/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">cSharp枚举和数组 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
   
 </div>
 
@@ -429,7 +474,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -443,7 +488,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
     </article>
   
   
@@ -458,8 +503,18 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-07-23</div>
-        <a href="/2023/07/23/hello-world/"><div class="recent-posts-item-content">Hello World</div></a>
+        <div class="recent-posts-item-title">2023-07-12</div>
+        <a href="/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/"><div class="recent-posts-item-content">cSharp的ref和out和params关键字</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-07-12</div>
+        <a href="/2023/07/12/cSharp%E6%9E%9A%E4%B8%BE%E5%92%8C%E6%95%B0%E7%BB%84/"><div class="recent-posts-item-content">cSharp枚举和数组</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-07-12</div>
+        <a href="/2023/07/12/cSharp%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"><div class="recent-posts-item-content">cSharp强制类型转换</div></a>
       </div>
     
   </div>
@@ -492,7 +547,7 @@
         <a 
           href="/" 
           class="footer-link">
-          Theme Kaze
+          kaze
         </a>
       </div>
     </div>
