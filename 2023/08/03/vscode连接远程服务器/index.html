@@ -18,12 +18,12 @@
   <link 
     rel="icon" 
     href="/">
-  <title>kaze</title>
+  <title>vscode连接远程服务器</title>
   
     
       <meta 
         property="og:title" 
-        content="kaze">
+        content="vscode连接远程服务器">
     
     
       <meta 
@@ -50,6 +50,10 @@
         property="og:article:author" 
         content="sabakiro">
       
+        
+          <meta 
+            property="og:article:tag" 
+            content="linux">
         
       
     
@@ -294,7 +298,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>1</span>
+    <span>2</span>
     <span>Tags</span>
   </a>
 </div>
@@ -311,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">vscode连接远程服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
       </div>
     </article>
   
@@ -346,6 +350,12 @@
         <div class="tags-list-item">c#</div>
       </a>
     
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
   </div>
 </div>
   </article>
@@ -358,11 +368,11 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      
+      vscode连接远程服务器
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-08-03T08:24:35.483Z">
+    <time datetime="2023-08-03T08:28:41.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
@@ -372,28 +382,48 @@
     
     
       <span class="dot"></span>
-      <span>173 words</span>
+      <span>167 words</span>
     
   </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/linux/" 
+            class="post-meta-link">
+            linux
+          </a>
+        
+      </div>
+    </div>
   
   </header>
   <div 
     id="section" 
     class="post-content">
-    <h1 id="vscode连接远程服务器"><a href="#vscode连接远程服务器" class="headerlink" title="vscode连接远程服务器"></a>vscode连接远程服务器</h1><h1 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h1><p>在本地输入</p>
-<pre class="highlight"><span class="line">ssh<span class="literal">-keygen</span> <span class="literal">-t</span> rsa <span class="literal">-b</span> <span class="number">4096</span> <span class="operator">-f</span> 路径/文件名</span><br></pre>
+    <h1 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h1><p>在本地输入</p>
+<pre class="highlight"><span class="line">ssh<span class="literal">-keygen</span> <span class="literal">-t</span> rsa <span class="literal">-b</span> <span class="number">4096</span> <span class="operator">-f</span> 路径/文件名</span><br><span class="line"><span class="comment"># -t 指定创建的类型</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -b 表示密钥的长度</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -f 指定用来保存密钥的文件名</span></span><br></pre>
 
-<p>-t 指定创建的类型</p>
-<p>-b 表示密钥的长度</p>
-<p>-f 指定用来保存密钥的文件名</p>
+
+
 <h1 id="上传公钥到服务器"><a href="#上传公钥到服务器" class="headerlink" title="上传公钥到服务器"></a>上传公钥到服务器</h1><pre class="highlight"><span class="line"><span class="built_in">cd</span> ~/.ssh &amp;&amp; touch authorized_keys</span><br><span class="line">sudo vi ~/.ssh/authorized_keys</span><br><span class="line">之后将生成的后缀名为.pub的密钥文件追加到authorized_keys中</span><br></pre>
 
 <h1 id="创建vscode的连接配置"><a href="#创建vscode的连接配置" class="headerlink" title="创建vscode的连接配置"></a>创建vscode的连接配置</h1><p>1.点击远程资源管理器</p>
 <p>2.点击齿轮（配置）</p>
 <p>3.在框中输入密钥文件的路径</p>
 <p>4.完成后配置路径文件</p>
-<p>格式：</p>
+<p>​		文件格式：</p>
 <pre class="highlight"><span class="line">Host 自定义名称</span><br><span class="line">	User 远程服务器账户</span><br><span class="line">	Host Ipv4地址</span><br><span class="line">	Port <span class="number">22</span></span><br><span class="line">	IdentityFile 本地密钥所在位置</span><br></pre>
+
+
   </div>
   <div>
     
@@ -449,7 +479,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">vscode连接远程服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -463,7 +493,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">vscode连接远程服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
     </article>
   
   
@@ -479,7 +509,7 @@
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-03</div>
-        <a href="/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/"><div class="recent-posts-item-content"></div></a>
+        <a href="/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/"><div class="recent-posts-item-content">vscode连接远程服务器</div></a>
       </div>
     
       <div class="recent-posts-item">
