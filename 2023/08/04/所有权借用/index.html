@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>cSharp的ref和out和params关键字</title>
+  <title>所有权借用</title>
   
     
       <meta 
         property="og:title" 
-        content="cSharp的ref和out和params关键字">
+        content="所有权借用">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/index.html">
+        content="https://sabakiro.github.io/2023/08/04/%E6%89%80%E6%9C%89%E6%9D%83%E5%80%9F%E7%94%A8/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-07-12">
+        content="2023-08-04">
       <meta 
         property="og:article:modified_time" 
-        content="2023-07-26">
+        content="2023-08-04">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -53,7 +53,7 @@
         
           <meta 
             property="og:article:tag" 
-            content="c#">
+            content="rust">
         
       
     
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%E5%8E%9F%E5%88%99"><span class="toc-text">所有权原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%80%9F%E7%94%A8"><span class="toc-text">借用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">不可变引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">可变引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NLL"><span class="toc-text">NLL</span></a></li></ol>
       </div>
     </article>
   
@@ -374,21 +374,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      cSharp的ref和out和params关键字
+      所有权借用
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-07-12T10:05:32.000Z">
+    <time datetime="2023-08-04T13:31:14.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-07-12</span>
+      <span>2023-08-04</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>258 words</span>
+      <span>472 words</span>
     
   </div>
   
@@ -403,9 +403,9 @@
         
           
           <a 
-            href="/tags/c/" 
+            href="/tags/rust/" 
             class="post-meta-link">
-            c#
+            rust
           </a>
         
       </div>
@@ -415,21 +415,32 @@
   <div 
     id="section" 
     class="post-content">
-    <h1 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h1><pre class="highlight"><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRef</span>(<span class="params"><span class="keyword">ref</span> <span class="built_in">int</span> a</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            a = <span class="number">3</span> + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">int</span> a = <span class="number">10</span>;<span class="comment">//必须初始化</span></span><br><span class="line">                testRef(<span class="keyword">ref</span> a);</span><br><span class="line">                Console.WriteLine(a);<span class="comment">//4</span></span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre>
+    <h1 id="所有权"><a href="#所有权" class="headerlink" title="所有权"></a>所有权</h1><p>栈上的非自定义类型基本都实现了copy这个trait，所以它们当发生所有权转移时只会复制一份数据</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">num</span>=<span class="number">10</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">x</span>=num;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,num);</span><br></pre>
 
-<h1 id="out"><a href="#out" class="headerlink" title="out"></a>out</h1><pre class="highlight"><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRef</span>(<span class="params"><span class="keyword">out</span> <span class="built_in">int</span> a</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            a = <span class="number">3</span> + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">int</span> a;<span class="comment">//不需要初始化</span></span><br><span class="line">                testRef(<span class="keyword">out</span> a);</span><br><span class="line">                Console.WriteLine(a);<span class="comment">//4</span></span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre>
+<p>堆上的数据才讲究所有权的概念</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">num</span>=<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">x</span>=num;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,num);<span class="comment">//error 值已经被借走</span></span><br></pre>
 
-<h1 id="out和ref的区别"><a href="#out和ref的区别" class="headerlink" title="out和ref的区别"></a>out和ref的区别</h1><ol>
-<li><p>ref将参数的参数值和引用都传入方法中,</p>
-<p>所以ref的参数的初始化必须在方法外部进行,</p>
-<p>也就是ref的参数必须有初始化值,否则程序会报错</p>
-</li>
-<li><p>out不会将参数的参数值传入方法中,只会将参数的引用传入方法中,</p>
-<p>所以参数的初始化工作必须在其对用方法中进行,</p>
-<p>否则程序会报错</p>
-</li>
+<h2 id="所有权原则"><a href="#所有权原则" class="headerlink" title="所有权原则"></a>所有权原则</h2><ol>
+<li>Rust 中每一个值都被一个变量所拥有，该变量被称为值的所有者</li>
+<li>一个值同时只能被一个变量所拥有，或者说一个值只能拥有一个所有者</li>
+<li>当所有者(变量)离开作用域范围时，这个值将被丢弃(drop)【rust实现无gc，无手动释放堆上数据的核心机制】</li>
 </ol>
-<h1 id="params"><a href="#params" class="headerlink" title="params"></a>params</h1><pre class="highlight"><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">UseParams2</span>(<span class="params"><span class="keyword">params</span> <span class="built_in">object</span>[] list</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; list.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.Write(list[i] + <span class="string">&quot; &quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Console.WriteLine();</span><br><span class="line">    &#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        UseParams2(<span class="number">1</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;test&quot;</span>);</span><br><span class="line">		<span class="built_in">int</span>[] myIntArray = &#123; <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span> &#125;;</span><br><span class="line">		UseParams2(myIntArray);</span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">                1 a test</span></span><br><span class="line"><span class="comment">                System.Int32[]</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h1 id="借用"><a href="#借用" class="headerlink" title="借用"></a>借用</h1><p>获取变量的引用，称之为借用(borrowing)</p>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><h3 id="不可变引用"><a href="#不可变引用" class="headerlink" title="不可变引用"></a>不可变引用</h3><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">x</span> = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">y</span> = &amp;x;<span class="comment">//发生借用</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;x&#125;&quot;</span>);</span><br><span class="line"><span class="comment">//这里发生了表达式自动解引用的机制，否则应该手动解引用 *y</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;y&#125;&quot;</span>);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, *y);</span><br><span class="line"><span class="built_in">assert_eq!</span>(<span class="number">5</span>,*y);<span class="comment">//这里不能使用y，只能使用*y进行比较</span></span><br></pre>
+
+<h3 id="可变引用"><a href="#可变引用" class="headerlink" title="可变引用"></a>可变引用</h3><pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">change</span>(&amp;<span class="keyword">mut</span> x);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, x);<span class="comment">//ciallo world</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">change</span>(<span class="type">str</span>: &amp;<span class="keyword">mut</span> <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="type">str</span>.<span class="title function_ invoke__">push_str</span>(<span class="string">&quot; world&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>注意：</p>
+<ol>
+<li>可变引用只能同时存在一个</li>
+<li>不可变引用可以同时存在多个</li>
+<li>可变引用和不可变引用不能同时存在</li>
+</ol>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">y</span> = &amp;<span class="keyword">mut</span> x;<span class="comment">//发生可变引用</span></span><br><span class="line"><span class="comment">//不能同时发生可变和不可变引用</span></span><br><span class="line"><span class="built_in">print!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,x);<span class="comment">//error，这里发生不可变引用</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,y);</span><br></pre>
+
+<h1 id="NLL"><a href="#NLL" class="headerlink" title="NLL"></a>NLL</h1><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">y</span> = &amp;<span class="keyword">mut</span> x;<span class="comment">//发生可变引用</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,y); <span class="comment">//这里发生NLL，y在这一行后就被释放掉</span></span><br><span class="line"><span class="built_in">print!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,x);</span><br></pre>
+
 
   </div>
   <div>
@@ -449,8 +460,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/">
-            https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/
+            href="https://sabakiro.github.io/2023/08/04/%E6%89%80%E6%9C%89%E6%9D%83%E5%80%9F%E7%94%A8/">
+            https://sabakiro.github.io/2023/08/04/%E6%89%80%E6%9C%89%E6%9D%83%E5%80%9F%E7%94%A8/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -460,29 +471,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">vscode连接远程服务器 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/07/12/cSharp%E6%9E%9A%E4%B8%BE%E5%92%8C%E6%95%B0%E7%BB%84/" 
+        href="/2023/08/04/rust%E5%8F%98%E9%87%8F%E4%B8%8E%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E7%AC%94%E8%AE%B0/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">cSharp枚举和数组 </div>
+            <div class="nav-title">rust变量与基本类型笔记 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -500,7 +497,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%E5%8E%9F%E5%88%99"><span class="toc-text">所有权原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%80%9F%E7%94%A8"><span class="toc-text">借用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">不可变引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">可变引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NLL"><span class="toc-text">NLL</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -514,7 +511,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%E5%8E%9F%E5%88%99"><span class="toc-text">所有权原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%80%9F%E7%94%A8"><span class="toc-text">借用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">不可变引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">可变引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NLL"><span class="toc-text">NLL</span></a></li></ol>
     </article>
   
   
