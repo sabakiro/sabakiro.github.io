@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>所有权借用</title>
+  <title>流程控制</title>
   
     
       <meta 
         property="og:title" 
-        content="所有权借用">
+        content="流程控制">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/08/04/%E6%89%80%E6%9C%89%E6%9D%83%E5%80%9F%E7%94%A8/index.html">
+        content="https://sabakiro.github.io/2023/08/05/%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-08-04">
+        content="2023-08-05">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-04">
+        content="2023-08-05">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%E5%8E%9F%E5%88%99"><span class="toc-text">所有权原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%80%9F%E7%94%A8"><span class="toc-text">借用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">不可变引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">可变引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NLL"><span class="toc-text">NLL</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">条件判断</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else"><span class="toc-text">if-else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else-1"><span class="toc-text">if-else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else-if-else"><span class="toc-text">if-else if-else</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF"><span class="toc-text">循环</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#for%E5%BE%AA%E7%8E%AF"><span class="toc-text">for循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#while%E5%BE%AA%E7%8E%AF"><span class="toc-text">while循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#loop%E5%BE%AA%E7%8E%AF"><span class="toc-text">loop循环</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -374,21 +374,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      所有权借用
+      流程控制
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-08-04T13:31:14.000Z">
+    <time datetime="2023-08-05T03:36:14.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-08-04</span>
+      <span>2023-08-05</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>472 words</span>
+      <span>228 words</span>
     
   </div>
   
@@ -415,31 +415,17 @@
   <div 
     id="section" 
     class="post-content">
-    <h1 id="所有权"><a href="#所有权" class="headerlink" title="所有权"></a>所有权</h1><p>栈上的非自定义类型基本都实现了copy这个trait，所以它们当发生所有权转移时只会复制一份数据</p>
-<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">num</span>=<span class="number">10</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">x</span>=num;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,num);</span><br></pre>
+    <h1 id="条件判断"><a href="#条件判断" class="headerlink" title="条件判断"></a>条件判断</h1><h2 id="if-else"><a href="#if-else" class="headerlink" title="if-else"></a>if-else</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">flag</span>=<span class="literal">true</span>;</span><br><span class="line"><span class="keyword">if</span> flag&#123;</span><br><span class="line">    <span class="built_in">assert!</span>(flag)</span><br><span class="line">&#125;</span><br></pre>
 
-<p>堆上的数据才讲究所有权的概念</p>
-<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">num</span>=<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">x</span>=num;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,num);<span class="comment">//error 值已经被借走</span></span><br></pre>
+<h2 id="if-else-1"><a href="#if-else-1" class="headerlink" title="if-else"></a>if-else</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">flag</span>=<span class="literal">true</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">number</span>=<span class="keyword">if</span> flag&#123;</span><br><span class="line">    <span class="number">5</span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="number">6</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">assert_eq!</span>(<span class="number">5</span>,number);</span><br></pre>
 
-<h2 id="所有权原则"><a href="#所有权原则" class="headerlink" title="所有权原则"></a>所有权原则</h2><ol>
-<li>Rust 中每一个值都被一个变量所拥有，该变量被称为值的所有者</li>
-<li>一个值同时只能被一个变量所拥有，或者说一个值只能拥有一个所有者</li>
-<li>当所有者(变量)离开作用域范围时，这个值将被丢弃(drop)【rust实现无gc，无手动释放堆上数据的核心机制】</li>
-</ol>
-<h1 id="借用"><a href="#借用" class="headerlink" title="借用"></a>借用</h1><p>获取变量的引用，称之为借用(borrowing)</p>
-<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><h3 id="不可变引用"><a href="#不可变引用" class="headerlink" title="不可变引用"></a>不可变引用</h3><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">x</span> = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">y</span> = &amp;x;<span class="comment">//发生借用</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;x&#125;&quot;</span>);</span><br><span class="line"><span class="comment">//这里发生了表达式自动解引用的机制，否则应该手动解引用 *y</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;y&#125;&quot;</span>);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, *y);</span><br><span class="line"><span class="built_in">assert_eq!</span>(<span class="number">5</span>,*y);<span class="comment">//这里不能使用y，只能使用*y进行比较</span></span><br></pre>
+<h2 id="if-else-if-else"><a href="#if-else-if-else" class="headerlink" title="if-else if-else"></a>if-else if-else</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">number</span>=<span class="number">10</span>;</span><br><span class="line"><span class="keyword">if</span> number&lt;<span class="number">10</span> &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;less&quot;</span>)</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span> number==<span class="number">10</span> &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;eq&quot;</span>)</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;better&quot;</span>)</span><br><span class="line">&#125;</span><br></pre>
 
-<h3 id="可变引用"><a href="#可变引用" class="headerlink" title="可变引用"></a>可变引用</h3><pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">change</span>(&amp;<span class="keyword">mut</span> x);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, x);<span class="comment">//ciallo world</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">change</span>(<span class="type">str</span>: &amp;<span class="keyword">mut</span> <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="type">str</span>.<span class="title function_ invoke__">push_str</span>(<span class="string">&quot; world&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+<h1 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h1><h2 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h2><pre class="highlight"><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">1</span>..=<span class="number">5</span>&#123;</span><br><span class="line">        <span class="built_in">print!</span>(<span class="string">&quot;&#123;i&#125; &quot;</span>);</span><br><span class="line">    &#125;<span class="comment">//1 2 3 4 5</span></span><br><span class="line"><span class="comment">//---------------------------</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arr</span>=<span class="built_in">vec!</span>[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>];</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> arr&#123;</span><br><span class="line">        <span class="built_in">print!</span>(<span class="string">&quot;&#123;i&#125; &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,arr[<span class="number">0</span>]);<span class="comment">//error 值被借用了</span></span><br><span class="line"><span class="comment">//------------------------------</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arr</span>=<span class="built_in">vec!</span>[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>];</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> &amp;arr&#123;</span><br><span class="line">        <span class="built_in">print!</span>(<span class="string">&quot;&#123;i&#125; &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,arr[<span class="number">0</span>]);</span><br></pre>
 
-<p>注意：</p>
-<ol>
-<li>可变引用只能同时存在一个</li>
-<li>不可变引用可以同时存在多个</li>
-<li>可变引用和不可变引用不能同时存在</li>
-</ol>
-<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">y</span> = &amp;<span class="keyword">mut</span> x;<span class="comment">//发生可变引用</span></span><br><span class="line"><span class="comment">//不能同时发生可变和不可变引用</span></span><br><span class="line"><span class="built_in">print!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,x);<span class="comment">//error，这里发生不可变引用</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,y);</span><br></pre>
+<h2 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">n</span> = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> n &lt;= <span class="number">5</span>  &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;!&quot;</span>, n);</span><br><span class="line">    n = n + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre>
 
-<h1 id="NLL"><a href="#NLL" class="headerlink" title="NLL"></a>NLL</h1><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">y</span> = &amp;<span class="keyword">mut</span> x;<span class="comment">//发生可变引用</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,y); <span class="comment">//这里发生NLL，y在这一行后就被释放掉</span></span><br><span class="line"><span class="built_in">print!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,x);</span><br></pre>
+<h2 id="loop循环"><a href="#loop循环" class="headerlink" title="loop循环"></a>loop循环</h2><pre class="highlight"><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;again!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//break 可以单独使用，也可以带一个返回值，有些类似 return</span></span><br><span class="line"><span class="comment">//loop 是一个表达式，因此可以返回一个值</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span> = <span class="keyword">loop</span> &#123;</span><br><span class="line">        counter += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> counter == <span class="number">10</span> &#123;</span><br><span class="line">            <span class="keyword">break</span> counter * <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br></pre>
 
 
   </div>
@@ -460,8 +446,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/08/04/%E6%89%80%E6%9C%89%E6%9D%83%E5%80%9F%E7%94%A8/">
-            https://sabakiro.github.io/2023/08/04/%E6%89%80%E6%9C%89%E6%9D%83%E5%80%9F%E7%94%A8/
+            href="https://sabakiro.github.io/2023/08/05/%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/">
+            https://sabakiro.github.io/2023/08/05/%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -471,29 +457,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/04/%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E%E5%88%87%E7%89%87/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">字符串与切片 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/08/04/rust%E5%8F%98%E9%87%8F%E4%B8%8E%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E7%AC%94%E8%AE%B0/" 
+        href="/2023/08/05/%E7%BB%93%E6%9E%84%E4%BD%93%E5%92%8C%E6%9E%9A%E4%B8%BE/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">rust变量与基本类型笔记 </div>
+            <div class="nav-title">结构体和枚举 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -511,7 +483,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%E5%8E%9F%E5%88%99"><span class="toc-text">所有权原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%80%9F%E7%94%A8"><span class="toc-text">借用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">不可变引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">可变引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NLL"><span class="toc-text">NLL</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">条件判断</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else"><span class="toc-text">if-else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else-1"><span class="toc-text">if-else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else-if-else"><span class="toc-text">if-else if-else</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF"><span class="toc-text">循环</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#for%E5%BE%AA%E7%8E%AF"><span class="toc-text">for循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#while%E5%BE%AA%E7%8E%AF"><span class="toc-text">while循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#loop%E5%BE%AA%E7%8E%AF"><span class="toc-text">loop循环</span></a></li></ol></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -525,7 +497,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%E5%8E%9F%E5%88%99"><span class="toc-text">所有权原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%80%9F%E7%94%A8"><span class="toc-text">借用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">不可变引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="toc-text">可变引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NLL"><span class="toc-text">NLL</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">条件判断</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else"><span class="toc-text">if-else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else-1"><span class="toc-text">if-else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-else-if-else"><span class="toc-text">if-else if-else</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF"><span class="toc-text">循环</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#for%E5%BE%AA%E7%8E%AF"><span class="toc-text">for循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#while%E5%BE%AA%E7%8E%AF"><span class="toc-text">while循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#loop%E5%BE%AA%E7%8E%AF"><span class="toc-text">loop循环</span></a></li></ol></li></ol>
     </article>
   
   
