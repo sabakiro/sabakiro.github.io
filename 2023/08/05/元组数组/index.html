@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>cSharp的ref和out和params关键字</title>
+  <title>元组数组</title>
   
     
       <meta 
         property="og:title" 
-        content="cSharp的ref和out和params关键字">
+        content="元组数组">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/index.html">
+        content="https://sabakiro.github.io/2023/08/05/%E5%85%83%E7%BB%84%E6%95%B0%E7%BB%84/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-07-12">
+        content="2023-08-05">
       <meta 
         property="og:article:modified_time" 
-        content="2023-07-26">
+        content="2023-08-05">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -53,7 +53,7 @@
         
           <meta 
             property="og:article:tag" 
-            content="c#">
+            content="rust">
         
       
     
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%83%E7%BB%84"><span class="toc-text">元组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-text">数组</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%93%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E4%B8%BA%E9%9D%9E%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B"><span class="toc-text">当数组元素为非基础类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%88%87%E7%89%87"><span class="toc-text">数组切片</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -374,21 +374,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      cSharp的ref和out和params关键字
+      元组数组
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-07-12T10:05:32.000Z">
+    <time datetime="2023-08-05T02:14:10.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-07-12</span>
+      <span>2023-08-05</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>258 words</span>
+      <span>278 words</span>
     
   </div>
   
@@ -403,9 +403,9 @@
         
           
           <a 
-            href="/tags/c/" 
+            href="/tags/rust/" 
             class="post-meta-link">
-            c#
+            rust
           </a>
         
       </div>
@@ -415,21 +415,19 @@
   <div 
     id="section" 
     class="post-content">
-    <h1 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h1><pre class="highlight"><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRef</span>(<span class="params"><span class="keyword">ref</span> <span class="built_in">int</span> a</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            a = <span class="number">3</span> + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">int</span> a = <span class="number">10</span>;<span class="comment">//必须初始化</span></span><br><span class="line">                testRef(<span class="keyword">ref</span> a);</span><br><span class="line">                Console.WriteLine(a);<span class="comment">//4</span></span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre>
+    <h1 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h1><pre class="highlight"><span class="line">   <span class="keyword">let</span> <span class="variable">tup</span>: (<span class="type">i32</span>, <span class="type">f64</span>, <span class="type">u8</span>) = (<span class="number">500</span>, <span class="number">6.4</span>, <span class="number">1</span>);</span><br><span class="line"><span class="keyword">let</span> (x,y,z)=tup;</span><br><span class="line">   <span class="built_in">assert_eq!</span>(<span class="number">500</span>,tup.<span class="number">0</span>);</span><br><span class="line"><span class="built_in">assert_eq!</span>(<span class="number">500</span>,x);</span><br></pre>
 
-<h1 id="out"><a href="#out" class="headerlink" title="out"></a>out</h1><pre class="highlight"><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testRef</span>(<span class="params"><span class="keyword">out</span> <span class="built_in">int</span> a</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            a = <span class="number">3</span> + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">int</span> a;<span class="comment">//不需要初始化</span></span><br><span class="line">                testRef(<span class="keyword">out</span> a);</span><br><span class="line">                Console.WriteLine(a);<span class="comment">//4</span></span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre>
+<h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><pre class="highlight"><span class="line"><span class="comment">//定义数组</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">a</span>: [<span class="type">i32</span>; <span class="number">5</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br></pre>
 
-<h1 id="out和ref的区别"><a href="#out和ref的区别" class="headerlink" title="out和ref的区别"></a>out和ref的区别</h1><ol>
-<li><p>ref将参数的参数值和引用都传入方法中,</p>
-<p>所以ref的参数的初始化必须在方法外部进行,</p>
-<p>也就是ref的参数必须有初始化值,否则程序会报错</p>
-</li>
-<li><p>out不会将参数的参数值传入方法中,只会将参数的引用传入方法中,</p>
-<p>所以参数的初始化工作必须在其对用方法中进行,</p>
-<p>否则程序会报错</p>
-</li>
-</ol>
-<h1 id="params"><a href="#params" class="headerlink" title="params"></a>params</h1><pre class="highlight"><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">UseParams2</span>(<span class="params"><span class="keyword">params</span> <span class="built_in">object</span>[] list</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; list.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.Write(list[i] + <span class="string">&quot; &quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Console.WriteLine();</span><br><span class="line">    &#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        UseParams2(<span class="number">1</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;test&quot;</span>);</span><br><span class="line">		<span class="built_in">int</span>[] myIntArray = &#123; <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span> &#125;;</span><br><span class="line">		UseParams2(myIntArray);</span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">                1 a test</span></span><br><span class="line"><span class="comment">                System.Int32[]</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h2 id="当数组元素为非基础类型"><a href="#当数组元素为非基础类型" class="headerlink" title="当数组元素为非基础类型"></a>当数组元素为非基础类型</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">array</span> = [<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;rust is good!&quot;</span>); <span class="number">8</span>];<span class="comment">//error 因为string类型没有实现copy trait</span></span><br><span class="line"><span class="comment">//正确写法</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">array</span> = [<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;rust is good!&quot;</span>),<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;rust is good!&quot;</span>))];</span><br><span class="line"><span class="comment">//调用std::array::from_fn</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">array</span>: [<span class="type">String</span>; <span class="number">2</span>] = std::array::<span class="title function_ invoke__">from_fn</span>(|i| <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;rust is good!&quot;</span>));</span><br><span class="line"></span><br></pre>
+
+<h2 id="数组切片"><a href="#数组切片" class="headerlink" title="数组切片"></a>数组切片</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">a</span>: [<span class="type">i32</span>; <span class="number">5</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">slice</span>: &amp;[<span class="type">i32</span>] = &amp;a[<span class="number">1</span>..<span class="number">3</span>];<span class="comment">//索取索引1~2的引用</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">a2</span>:&amp;[<span class="type">i32</span>;<span class="number">2</span>]=&amp;[<span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="built_in">assert_eq!</span>(slice, a2);</span><br></pre>
+
+<ul>
+<li>切片的长度可以与数组不同，并不是固定的，而是取决于你使用时指定的起始和结束位置</li>
+<li>创建切片的代价非常小，因为切片只是针对底层数组的一个引用</li>
+<li>切片类型[T]拥有不固定的大小，而切片引用类型&amp;[T]则具有固定的大小，因为 Rust 很多时候都需要固定大小数据类型，因此&amp;[T]更有用,<code>&amp;str</code>字符串切片也同理</li>
+</ul>
 
   </div>
   <div>
@@ -449,8 +447,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/">
-            https://sabakiro.github.io/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/
+            href="https://sabakiro.github.io/2023/08/05/%E5%85%83%E7%BB%84%E6%95%B0%E7%BB%84/">
+            https://sabakiro.github.io/2023/08/05/%E5%85%83%E7%BB%84%E6%95%B0%E7%BB%84/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -460,29 +458,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">vscode连接远程服务器 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/07/12/cSharp%E6%9E%9A%E4%B8%BE%E5%92%8C%E6%95%B0%E7%BB%84/" 
+        href="/2023/08/04/%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E%E5%88%87%E7%89%87/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">cSharp枚举和数组 </div>
+            <div class="nav-title">字符串与切片 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -500,7 +484,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%83%E7%BB%84"><span class="toc-text">元组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-text">数组</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%93%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E4%B8%BA%E9%9D%9E%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B"><span class="toc-text">当数组元素为非基础类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%88%87%E7%89%87"><span class="toc-text">数组切片</span></a></li></ol></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -514,7 +498,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out"><span class="toc-text">out</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#out%E5%92%8Cref%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">out和ref的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#params"><span class="toc-text">params</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%83%E7%BB%84"><span class="toc-text">元组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-text">数组</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%93%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E4%B8%BA%E9%9D%9E%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B"><span class="toc-text">当数组元素为非基础类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%88%87%E7%89%87"><span class="toc-text">数组切片</span></a></li></ol></li></ol>
     </article>
   
   
