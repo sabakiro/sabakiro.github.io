@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>模式匹配</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="模式匹配">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/05/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-05">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-05">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>11</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>3</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#match%E5%92%8Cif-let"><span class="toc-text">match和if let</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#match"><span class="toc-text">match</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-text">语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-let%E5%8C%B9%E9%85%8D%E7%AE%80%E5%8C%96match"><span class="toc-text">if let匹配简化match</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#matches-%E5%AE%8F"><span class="toc-text">matches!宏</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F"><span class="toc-text">模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#while-let"><span class="toc-text">while let</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#for"><span class="toc-text">for</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E9%A9%B3%E6%A8%A1%E5%BC%8F"><span class="toc-text">不可驳模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E9%A9%B3%E6%A8%A1%E5%BC%8F"><span class="toc-text">可驳模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%BA%8F%E5%88%97%E5%8C%B9%E9%85%8D"><span class="toc-text">通过序列匹配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%AE%88%E5%8D%AB"><span class="toc-text">匹配守卫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%91%E5%AE%9A"><span class="toc-text">@绑定</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      模式匹配
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-05T05:22:19.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-05</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>843 words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h1 id="match和if-let"><a href="#match和if-let" class="headerlink" title="match和if let"></a>match和if let</h1><h2 id="match"><a href="#match" class="headerlink" title="match"></a>match</h2><h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre class="highlight"><span class="line"><span class="keyword">match</span> target &#123;</span><br><span class="line">    模式<span class="number">1</span> =&gt; 表达式<span class="number">1</span>,</span><br><span class="line">    模式<span class="number">2</span> =&gt; &#123;</span><br><span class="line">        语句<span class="number">1</span>;</span><br><span class="line">        语句<span class="number">2</span>;</span><br><span class="line">        表达式<span class="number">2</span></span><br><span class="line">    &#125;,</span><br><span class="line">    _ =&gt; 表达式<span class="number">3</span></span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><pre class="highlight"><span class="line"></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">    East,</span><br><span class="line">    West,</span><br><span class="line">    North,</span><br><span class="line">    South,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">dire</span> = Direction::South;</span><br><span class="line">    <span class="keyword">match</span> dire &#123;</span><br><span class="line">        Direction::East =&gt; <span class="built_in">println!</span>(<span class="string">&quot;East&quot;</span>),</span><br><span class="line">        <span class="comment">//单分支，多模式</span></span><br><span class="line">        Direction::North | Direction::South =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;South or North&quot;</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">        _ =&gt; <span class="built_in">println!</span>(<span class="string">&quot;West&quot;</span>),</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre>
+
+<ul>
+<li><code>match</code> 的匹配必须要穷举出所有可能，因此这里用 <code>_</code> 来代表未列出的所有可能性，相当于switch中的default</li>
+<li><code>match</code> 的每一个分支都必须是一个表达式，且所有分支的表达式最终返回值的类型必须相同</li>
+<li><strong>X | Y</strong>，类似逻辑运算符 <code>或</code>，代表该分支可以匹配 <code>X</code> 也可以匹配 <code>Y</code>，只要满足一个即可</li>
+</ul>
+<h2 id="if-let匹配简化match"><a href="#if-let匹配简化match" class="headerlink" title="if let匹配简化match"></a>if let匹配简化match</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">v</span>:<span class="type">Option</span>&lt;<span class="type">u8</span>&gt;=<span class="title function_ invoke__">Some</span>(<span class="number">3</span>);</span><br><span class="line"><span class="keyword">match</span> v&#123;</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(<span class="number">3</span>)=&gt;<span class="built_in">println!</span>(<span class="string">&quot;three&quot;</span>),</span><br><span class="line">    _=&gt;(),</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//使用if let简化</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">v</span>:<span class="type">Option</span>&lt;<span class="type">u8</span>&gt;=<span class="title function_ invoke__">Some</span>(<span class="number">3</span>);</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(<span class="number">3</span>)=v&#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;three&quot;</span>);</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="matches-宏"><a href="#matches-宏" class="headerlink" title="matches!宏"></a>matches!宏</h2><p>可以将一个表达式跟模式进行匹配，然后返回匹配的结果 true or false</p>
+<pre class="highlight"><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">MyEnum</span> &#123;</span><br><span class="line">    Foo,</span><br><span class="line">    Bar,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span> = <span class="built_in">vec!</span>[MyEnum::Foo, MyEnum::Bar, MyEnum::Foo];</span><br><span class="line">    <span class="comment">//error,无法将 x 直接跟一个枚举成员进行比较</span></span><br><span class="line">    <span class="comment">// v.iter().filter(|x| x == MyEnum::Foo);</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//使用match匹配</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span>=v.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">filter</span>(|x| <span class="keyword">match</span> x &#123;</span><br><span class="line">        MyEnum::Foo =&gt; <span class="literal">true</span>,</span><br><span class="line">        _ =&gt; <span class="literal">false</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">e</span> <span class="keyword">in</span> v  &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,e);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//使用matches！(变量，模式)</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span>=v.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">filter</span>(|x| matches!(x,MyEnum::Foo));</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">e</span> <span class="keyword">in</span> v  &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<h1 id="模式"><a href="#模式" class="headerlink" title="模式"></a>模式</h1><h2 id="while-let"><a href="#while-let" class="headerlink" title="while let"></a>while let</h2><pre class="highlight"><span class="line"><span class="comment">// Vec是动态数组</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">stack</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 向数组尾部插入元素</span></span><br><span class="line">stack.<span class="title function_ invoke__">push</span>(<span class="number">1</span>);</span><br><span class="line">stack.<span class="title function_ invoke__">push</span>(<span class="number">2</span>);</span><br><span class="line">stack.<span class="title function_ invoke__">push</span>(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// stack.pop从数组尾部弹出元素</span></span><br><span class="line"><span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(top) = stack.<span class="title function_ invoke__">pop</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, top);</span><br><span class="line">&#125;</span><br></pre>
+
+
+
+<h2 id="for"><a href="#for" class="headerlink" title="for"></a>for</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">v</span> = <span class="built_in">vec!</span>[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>];</span><br><span class="line"><span class="comment">//获取下标，元素值</span></span><br><span class="line"><span class="title function_ invoke__">for</span> (index, value) <span class="keyword">in</span> v.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125; is at index &#123;&#125;&quot;</span>, value, index);</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="不可驳模式"><a href="#不可驳模式" class="headerlink" title="不可驳模式"></a>不可驳模式</h2><p>类似 <code>let</code> , <code>for</code>和<code>match</code> 都必须要求完全覆盖匹配</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">Some</span>(x) = some_option_value;</span><br></pre>
+
+<h2 id="可驳模式"><a href="#可驳模式" class="headerlink" title="可驳模式"></a>可驳模式</h2><p>因为 <code>if let</code>和<code>while let</code> 允许匹配一种模式，而忽略其余的模式( 可驳模式匹配 )。</p>
+<pre class="highlight"><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(x) = some_option_value &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, x);</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="通过序列匹配"><a href="#通过序列匹配" class="headerlink" title="通过序列匹配"></a>通过序列匹配</h2><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">x</span> = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">match</span> x &#123;</span><br><span class="line">    <span class="number">1</span>..=<span class="number">5</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;one through five&quot;</span>),</span><br><span class="line">    _ =&gt; <span class="built_in">println!</span>(<span class="string">&quot;something else&quot;</span>),</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="匹配守卫"><a href="#匹配守卫" class="headerlink" title="匹配守卫"></a>匹配守卫</h2><p><strong>匹配守卫</strong>（<em>match guard</em>）是一个位于 <code>match</code> 分支模式之后的额外 <code>if</code> 条件，</p>
+<p>它能为分支模式提供更进一步的匹配条件。</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">num</span> = <span class="title function_ invoke__">Some</span>(<span class="number">4</span>);</span><br><span class="line"><span class="keyword">match</span> num &#123;</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(x) <span class="keyword">if</span> x &lt; <span class="number">5</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;less than five: &#123;&#125;&quot;</span>, x),</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(x) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, x),</span><br><span class="line">    <span class="literal">None</span> =&gt; (),</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="绑定"><a href="#绑定" class="headerlink" title="@绑定"></a>@绑定</h2><pre class="highlight"><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span> &#123;</span><br><span class="line">    x: <span class="type">i32</span>,</span><br><span class="line">    y: <span class="type">i32</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Message</span> &#123;</span><br><span class="line">        Hello &#123; id: <span class="type">i32</span> &#125;,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">msg</span> = Message::Hello &#123; id: <span class="number">5</span> &#125;;</span><br><span class="line">    <span class="keyword">match</span> msg &#123;</span><br><span class="line">        Message::Hello &#123; id: id_variable @ <span class="number">3</span>..=<span class="number">7</span> &#125; =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;Found an id in range: &#123;&#125;&quot;</span>, id_variable)</span><br><span class="line">        &#125;,</span><br><span class="line">        _=&gt;()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 绑定新变量 p，同时对 Point 进行解构</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> @ Point &#123;x: px, y: py &#125; = Point &#123;x: <span class="number">10</span>, y: <span class="number">23</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> <span class="variable">point</span> = Point &#123;x: <span class="number">10</span>, y: <span class="number">5</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">p</span> @ Point &#123;x: <span class="number">10</span>, y&#125; = point &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;x is 10 and y is &#123;&#125; in &#123;:?&#125;&quot;</span>, y, p);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;x was not 10 :(&quot;</span>);</span><br><span class="line">    &#125;<span class="comment">//x is 10 and y is 5 in Point &#123; x: 10, y: 5 &#125;</span></span><br><span class="line">    </span><br><span class="line">   <span class="comment">//1.53后新增</span></span><br><span class="line">	<span class="keyword">match</span> <span class="number">1</span> &#123;</span><br><span class="line">        num @ (<span class="number">1</span> | <span class="number">2</span>) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, num);</span><br><span class="line">        &#125;</span><br><span class="line">        _ =&gt; &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+
+
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/05/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/">
+            https://sabakiro.github.io/2023/08/05/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/05/%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">流程控制 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#match%E5%92%8Cif-let"><span class="toc-text">match和if let</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#match"><span class="toc-text">match</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-text">语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-let%E5%8C%B9%E9%85%8D%E7%AE%80%E5%8C%96match"><span class="toc-text">if let匹配简化match</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#matches-%E5%AE%8F"><span class="toc-text">matches!宏</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F"><span class="toc-text">模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#while-let"><span class="toc-text">while let</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#for"><span class="toc-text">for</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E9%A9%B3%E6%A8%A1%E5%BC%8F"><span class="toc-text">不可驳模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E9%A9%B3%E6%A8%A1%E5%BC%8F"><span class="toc-text">可驳模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%BA%8F%E5%88%97%E5%8C%B9%E9%85%8D"><span class="toc-text">通过序列匹配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%AE%88%E5%8D%AB"><span class="toc-text">匹配守卫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%91%E5%AE%9A"><span class="toc-text">@绑定</span></a></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#match%E5%92%8Cif-let"><span class="toc-text">match和if let</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#match"><span class="toc-text">match</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-text">语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if-let%E5%8C%B9%E9%85%8D%E7%AE%80%E5%8C%96match"><span class="toc-text">if let匹配简化match</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#matches-%E5%AE%8F"><span class="toc-text">matches!宏</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F"><span class="toc-text">模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#while-let"><span class="toc-text">while let</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#for"><span class="toc-text">for</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E9%A9%B3%E6%A8%A1%E5%BC%8F"><span class="toc-text">不可驳模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E9%A9%B3%E6%A8%A1%E5%BC%8F"><span class="toc-text">可驳模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%BA%8F%E5%88%97%E5%8C%B9%E9%85%8D"><span class="toc-text">通过序列匹配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%AE%88%E5%8D%AB"><span class="toc-text">匹配守卫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%91%E5%AE%9A"><span class="toc-text">@绑定</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-05</div>
+        <a href="/2023/08/05/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/"><div class="recent-posts-item-content">模式匹配</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-05</div>
+        <a href="/2023/08/05/%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/"><div class="recent-posts-item-content">流程控制</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-05</div>
+        <a href="/2023/08/05/%E7%BB%93%E6%9E%84%E4%BD%93%E5%92%8C%E6%9E%9A%E4%B8%BE/"><div class="recent-posts-item-content">结构体和枚举</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-05</div>
+        <a href="/2023/08/05/%E5%85%83%E7%BB%84%E6%95%B0%E7%BB%84/"><div class="recent-posts-item-content">元组数组</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
