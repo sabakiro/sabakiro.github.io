@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>trait</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="trait">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/06/trait/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-06">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-06">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>14</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>3</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%9F%BA%E7%A1%80"><span class="toc-text">trait基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E7%BA%A6%E6%9D%9F"><span class="toc-text">trait约束</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%87%8D%E7%BA%A6%E6%9D%9F"><span class="toc-text">多重约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#where%E7%BA%A6%E6%9D%9F"><span class="toc-text">where约束</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">trait对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Box%E5%AE%9E%E7%8E%B0trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">Box实现trait对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">&amp; 实现trait对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E5%8F%91"><span class="toc-text">静态分发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E5%8F%91"><span class="toc-text">动态分发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trait%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-text">trait对象的限制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E7%B1%BB%E5%9E%8B"><span class="toc-text">关联类型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E6%B3%9B%E5%9E%8B%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0"><span class="toc-text">默认泛型类型参数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%90%8C%E5%90%8D%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">调用同名的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89-self%E5%8F%82%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-text">有&amp;self参数的情况下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B2%A1%E6%9C%89-self%E5%8F%82%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-text">没有&amp;self参数的情况下</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%AE%9A%E4%B9%89%E4%B8%AD%E7%9A%84trait%E7%BA%A6%E6%9D%9F"><span class="toc-text">trait定义中的trait约束</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%A8%E5%A4%96%E9%83%A8%E7%B1%BB%E5%9E%8B%E4%B8%8A%E5%AE%9E%E7%8E%B0%E5%A4%96%E9%83%A8trait"><span class="toc-text">在外部类型上实现外部trait</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#trait%E9%99%90%E5%88%B6"><span class="toc-text">trait限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#newtype-%E6%A8%A1%E5%BC%8F"><span class="toc-text">newtype 模式</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      trait
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-06T07:19:35.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-06</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.3k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h1 id="trait基础"><a href="#trait基础" class="headerlink" title="trait基础"></a>trait基础</h1><pre class="highlight"><span class="line"><span class="comment">//定义trait</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Summary</span> &#123;</span><br><span class="line">    <span class="comment">//定义trait方法</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">summarize</span>(&amp;<span class="keyword">self</span>);</span><br><span class="line">    <span class="comment">//默认实现</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">fuction</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;summary function&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">A</span>;</span><br><span class="line"><span class="comment">//实现trait</span></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Summary</span> <span class="keyword">for</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">summarize</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;impl trait Summary for A&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">function</span>(x: &amp;<span class="keyword">impl</span> <span class="title class_">Summary</span>) &#123;</span><br><span class="line">    x.<span class="title function_ invoke__">summarize</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">B</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Summary</span> <span class="keyword">for</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">summarize</span>(&amp;<span class="keyword">self</span>) &#123;&#125;</span><br><span class="line">    <span class="comment">//重写trait的默认实现</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">fuction</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;B fuction&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//返回值是实现trait的对象</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">C</span>(x: <span class="keyword">impl</span> <span class="title class_">Summary</span>) <span class="punctuation">-&gt;</span> <span class="keyword">impl</span> <span class="title class_">Summary</span> &#123;</span><br><span class="line">    x</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = A;</span><br><span class="line">    <span class="title function_ invoke__">function</span>(&amp;a);</span><br><span class="line">    a.<span class="title function_ invoke__">fuction</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = B;</span><br><span class="line">    b.<span class="title function_ invoke__">fuction</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_</span> = <span class="title function_ invoke__">C</span>(b);</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    impl trait Summary for a</span></span><br><span class="line"><span class="comment">    summary function</span></span><br><span class="line"><span class="comment">    B function</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<h1 id="trait约束"><a href="#trait约束" class="headerlink" title="trait约束"></a>trait约束</h1><pre class="highlight"><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Summary</span> &#123;&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">A</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Summary</span> <span class="keyword">for</span> <span class="title class_">A</span> &#123;&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">function</span>&lt;T:Summary&gt;(_:&amp;T)&#123;&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span>=A;</span><br><span class="line">    <span class="title function_ invoke__">function</span>(&amp;a);</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="多重约束"><a href="#多重约束" class="headerlink" title="多重约束"></a>多重约束</h2><pre class="highlight"><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Summary</span> &#123;&#125;</span><br><span class="line"><span class="meta">#[derive(Clone, Copy)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">A</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Summary</span> <span class="keyword">for</span> <span class="title class_">A</span> &#123;&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">function</span>&lt;T:Summary+<span class="built_in">Copy</span>&gt;(_:&amp;T)&#123;&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span>=A;</span><br><span class="line">    <span class="title function_ invoke__">function</span>(&amp;a);</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="where约束"><a href="#where约束" class="headerlink" title="where约束"></a>where约束</h2><pre class="highlight"><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Summary</span> &#123;&#125;</span><br><span class="line"><span class="meta">#[derive(Clone, Copy)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">A</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Summary</span> <span class="keyword">for</span> <span class="title class_">A</span> &#123;&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">function</span>&lt;T&gt;(_: &amp;T)</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    T: Summary + <span class="built_in">Copy</span>,</span><br><span class="line">&#123;&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = A;</span><br><span class="line">    <span class="title function_ invoke__">function</span>(&amp;a);</span><br><span class="line">&#125;</span><br></pre>
+
+
+
+<h1 id="trait对象"><a href="#trait对象" class="headerlink" title="trait对象"></a>trait对象</h1><h2 id="Box实现trait对象"><a href="#Box实现trait对象" class="headerlink" title="Box实现trait对象"></a>Box实现trait对象</h2><pre class="highlight"><span class="line"><span class="keyword">trait</span> <span class="title class_">Draw</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">draw</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Draw</span> <span class="keyword">for</span> <span class="title class_">u8</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">draw</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">        <span class="built_in">format!</span>(<span class="string">&quot;u8: &#123;&#125;&quot;</span>, *<span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Draw</span> <span class="keyword">for</span> <span class="title class_">f64</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">draw</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">        <span class="built_in">format!</span>(<span class="string">&quot;f64: &#123;&#125;&quot;</span>, *<span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 若 T 实现了 Draw 特征， 则调用该函数时传入的 Box&lt;T&gt; 可以被隐式转换成函数参数签名中的 Box&lt;dyn Draw&gt;</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">draw1</span>(x: <span class="type">Box</span>&lt;<span class="keyword">dyn</span> Draw&gt;) &#123;</span><br><span class="line">    <span class="comment">// 由于实现了 Deref 特征，Box 智能指针会自动解引用为它所包裹的值，然后调用该值对应的类型上定义的 `draw` 方法</span></span><br><span class="line">    x.<span class="title function_ invoke__">draw</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">1.1f64</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = <span class="number">8u8</span>;</span><br><span class="line">    <span class="comment">// x 和 y 的类型 T 都实现了 `Draw` 特征，因为 Box&lt;T&gt; 可以在函数调用时隐式地被转换为特征对象 Box&lt;dyn Draw&gt; </span></span><br><span class="line">    <span class="comment">// 基于 x 的值创建一个 Box&lt;f64&gt; 类型的智能指针，指针指向的数据被放置在了堆上</span></span><br><span class="line">    <span class="title function_ invoke__">draw1</span>(<span class="type">Box</span>::<span class="title function_ invoke__">new</span>(x));</span><br><span class="line">    <span class="comment">// 基于 y 的值创建一个 Box&lt;u8&gt; 类型的智能指针</span></span><br><span class="line">    <span class="title function_ invoke__">draw1</span>(<span class="type">Box</span>::<span class="title function_ invoke__">new</span>(y));</span><br><span class="line">&#125;</span><br></pre>
+
+
+
+<h2 id="实现trait对象"><a href="#实现trait对象" class="headerlink" title="&amp; 实现trait对象"></a><code>&amp;</code> 实现trait对象</h2><pre class="highlight"><span class="line"><span class="keyword">trait</span> <span class="title class_">Draw</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">draw</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Draw</span> <span class="keyword">for</span> <span class="title class_">u8</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">draw</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">        <span class="built_in">format!</span>(<span class="string">&quot;u8: &#123;&#125;&quot;</span>, *<span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Draw</span> <span class="keyword">for</span> <span class="title class_">f64</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">draw</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">        <span class="built_in">format!</span>(<span class="string">&quot;f64: &#123;&#125;&quot;</span>, *<span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">draw2</span>(x: &amp;<span class="keyword">dyn</span> Draw) &#123;</span><br><span class="line">    x.<span class="title function_ invoke__">draw</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">1.1f64</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = <span class="number">8u8</span>;</span><br><span class="line">    <span class="title function_ invoke__">draw2</span>(&amp;x);</span><br><span class="line">    <span class="title function_ invoke__">draw2</span>(&amp;y);</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="静态分发"><a href="#静态分发" class="headerlink" title="静态分发"></a>静态分发</h2><p>泛型是在编译期完成处理的：编译器会为每一个泛型参数对应的具体类型生成一份代码，这种方式是**静态分发(static dispatch)**，因为是在编译期完成的，对于运行期性能完全没有任何影响。</p>
+<h2 id="动态分发"><a href="#动态分发" class="headerlink" title="动态分发"></a>动态分发</h2><p>直到运行时，才能确定需要调用什么方法。</p>
+<h2 id="trait对象的限制"><a href="#trait对象的限制" class="headerlink" title="trait对象的限制"></a>trait对象的限制</h2><ul>
+<li>方法的返回类型不能是 <code>Self</code></li>
+<li>方法没有任何泛型参数</li>
+</ul>
+<h1 id="关联类型"><a href="#关联类型" class="headerlink" title="关联类型"></a>关联类型</h1><pre class="highlight"><span class="line"><span class="comment">//定义关联类型</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">my_iterator</span> &#123;</span><br><span class="line">    <span class="comment">//type Item;</span></span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>:<span class="built_in">Copy</span>;<span class="comment">//添加trait约束</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>)<span class="punctuation">-&gt;</span><span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Vector</span>&#123;</span><br><span class="line">  storage:<span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现关联类型</span></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">my_iterator</span> <span class="keyword">for</span> <span class="title class_">Vector</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span> = <span class="type">i32</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>)<span class="punctuation">-&gt;</span><span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt; &#123;</span><br><span class="line">        <span class="keyword">self</span>.storage.<span class="title function_ invoke__">pop</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="默认泛型类型参数"><a href="#默认泛型类型参数" class="headerlink" title="默认泛型类型参数"></a>默认泛型类型参数</h2><pre class="highlight"><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Test</span>&lt;T=<span class="type">i32</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">test</span>(&amp;<span class="keyword">self</span>,other:T)<span class="punctuation">-&gt;</span><span class="keyword">Self</span>::Item ;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">A</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Test</span> <span class="keyword">for</span> <span class="title class_">A</span> &#123;</span><br><span class="line">  <span class="keyword">type</span> <span class="title class_">Item</span> = <span class="type">i32</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">test</span>(&amp;<span class="keyword">self</span>,other:<span class="type">i32</span>)<span class="punctuation">-&gt;</span><span class="keyword">Self</span>::Item &#123;</span><br><span class="line">        <span class="number">10</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">B</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Test</span>&lt;<span class="type">u8</span>&gt; <span class="keyword">for</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span> = <span class="type">i32</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">test</span>(&amp;<span class="keyword">self</span>,other:<span class="type">u8</span>)<span class="punctuation">-&gt;</span><span class="keyword">Self</span>::Item &#123;</span><br><span class="line">        <span class="number">10</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+
+
+<h1 id="调用同名的方法"><a href="#调用同名的方法" class="headerlink" title="调用同名的方法"></a>调用同名的方法</h1><h2 id="有-self参数的情况下"><a href="#有-self参数的情况下" class="headerlink" title="有&amp;self参数的情况下"></a>有&amp;self参数的情况下</h2><pre class="highlight"><span class="line"><span class="keyword">trait</span> <span class="title class_">Pilot</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">fly</span>(&amp;<span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Human</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Pilot</span> <span class="keyword">for</span> <span class="title class_">Human</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">fly</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;This is your captain speaking.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Human</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">fly</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;*waving arms furiously*&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">person</span> = Human;</span><br><span class="line">    Pilot::<span class="title function_ invoke__">fly</span>(&amp;person); <span class="comment">// 调用Pilot特征上的方法</span></span><br><span class="line">    person.<span class="title function_ invoke__">fly</span>(); <span class="comment">// 调用Human类型自身的方法</span></span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="没有-self参数的情况下"><a href="#没有-self参数的情况下" class="headerlink" title="没有&amp;self参数的情况下"></a>没有&amp;self参数的情况下</h2><pre class="highlight"><span class="line"><span class="keyword">trait</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line">  <span class="keyword">fn</span> <span class="title function_">baby_name</span>() <span class="punctuation">-&gt;</span> <span class="type">String</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Dog</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Dog</span> &#123;</span><br><span class="line">  <span class="keyword">fn</span> <span class="title function_">baby_name</span>() <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">      <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Spot&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Animal</span> <span class="keyword">for</span> <span class="title class_">Dog</span> &#123;</span><br><span class="line">  <span class="keyword">fn</span> <span class="title function_">baby_name</span>() <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">      <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;puppy&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">  <span class="comment">//调用自己的</span></span><br><span class="line">  <span class="built_in">println!</span>(<span class="string">&quot;A baby dog is called a &#123;&#125;&quot;</span>, Dog::<span class="title function_ invoke__">baby_name</span>());</span><br><span class="line">  <span class="comment">//完全限定语法</span></span><br><span class="line">  <span class="built_in">println!</span>(<span class="string">&quot;A baby dog is called a &#123;&#125;&quot;</span>, &lt;Dog <span class="keyword">as</span> Animal&gt;::<span class="title function_ invoke__">baby_name</span>());</span><br><span class="line">&#125;</span><br></pre>
+
+<h1 id="trait定义中的trait约束"><a href="#trait定义中的trait约束" class="headerlink" title="trait定义中的trait约束"></a>trait定义中的trait约束</h1><pre class="highlight"><span class="line"><span class="keyword">use</span> std::fmt::Display;</span><br><span class="line"><span class="comment">//实现 OutlinePrint 之前要先实现 Display</span></span><br><span class="line"><span class="keyword">trait</span> <span class="title class_">OutlinePrint</span>: Display &#123;&#125;</span><br></pre>
+
+<h1 id="在外部类型上实现外部trait"><a href="#在外部类型上实现外部trait" class="headerlink" title="在外部类型上实现外部trait"></a>在外部类型上实现外部trait</h1><h2 id="trait限制"><a href="#trait限制" class="headerlink" title="trait限制"></a>trait限制</h2><p>孤儿规则：就是特征或者类型必需至少有一个是本地的，才能在此类型上定义特征。</p>
+<h2 id="newtype-模式"><a href="#newtype-模式" class="headerlink" title="newtype 模式"></a>newtype 模式</h2><p>作用：绕过孤儿规则的方法。</p>
+<p>具体实现：就是为一个<code>元组结构体</code>创建新类型。该元组结构体封装有一个字段，该字段就是希望实现特征的具体类型。</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::fmt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Wrapper</span>(<span class="type">Vec</span>&lt;<span class="type">String</span>&gt;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">fmt</span>::Display <span class="keyword">for</span> <span class="title class_">Wrapper</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">fmt</span>(&amp;<span class="keyword">self</span>, f: &amp;<span class="keyword">mut</span> fmt::Formatter) <span class="punctuation">-&gt;</span> fmt::<span class="type">Result</span> &#123;</span><br><span class="line">        <span class="built_in">write!</span>(f, <span class="string">&quot;[&#123;&#125;]&quot;</span>, <span class="keyword">self</span>.<span class="number">0</span>.<span class="title function_ invoke__">join</span>(<span class="string">&quot;, &quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">w</span> = <span class="title function_ invoke__">Wrapper</span>(<span class="built_in">vec!</span>[<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello&quot;</span>), <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;world&quot;</span>)]);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;w = &#123;&#125;&quot;</span>, w);</span><br><span class="line">&#125;</span><br></pre>
+
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/06/trait/">
+            https://sabakiro.github.io/2023/08/06/trait/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/08/06/trait-1/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">Prev</div>
+          
+            <div class="nav-title">trait </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/06/%E6%96%B9%E6%B3%95%E6%B3%9B%E5%9E%8B/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">方法泛型 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%9F%BA%E7%A1%80"><span class="toc-text">trait基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E7%BA%A6%E6%9D%9F"><span class="toc-text">trait约束</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%87%8D%E7%BA%A6%E6%9D%9F"><span class="toc-text">多重约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#where%E7%BA%A6%E6%9D%9F"><span class="toc-text">where约束</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">trait对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Box%E5%AE%9E%E7%8E%B0trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">Box实现trait对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">&amp; 实现trait对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E5%8F%91"><span class="toc-text">静态分发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E5%8F%91"><span class="toc-text">动态分发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trait%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-text">trait对象的限制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E7%B1%BB%E5%9E%8B"><span class="toc-text">关联类型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E6%B3%9B%E5%9E%8B%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0"><span class="toc-text">默认泛型类型参数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%90%8C%E5%90%8D%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">调用同名的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89-self%E5%8F%82%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-text">有&amp;self参数的情况下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B2%A1%E6%9C%89-self%E5%8F%82%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-text">没有&amp;self参数的情况下</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%AE%9A%E4%B9%89%E4%B8%AD%E7%9A%84trait%E7%BA%A6%E6%9D%9F"><span class="toc-text">trait定义中的trait约束</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%A8%E5%A4%96%E9%83%A8%E7%B1%BB%E5%9E%8B%E4%B8%8A%E5%AE%9E%E7%8E%B0%E5%A4%96%E9%83%A8trait"><span class="toc-text">在外部类型上实现外部trait</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#trait%E9%99%90%E5%88%B6"><span class="toc-text">trait限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#newtype-%E6%A8%A1%E5%BC%8F"><span class="toc-text">newtype 模式</span></a></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%9F%BA%E7%A1%80"><span class="toc-text">trait基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E7%BA%A6%E6%9D%9F"><span class="toc-text">trait约束</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%87%8D%E7%BA%A6%E6%9D%9F"><span class="toc-text">多重约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#where%E7%BA%A6%E6%9D%9F"><span class="toc-text">where约束</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">trait对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Box%E5%AE%9E%E7%8E%B0trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">Box实现trait对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0trait%E5%AF%B9%E8%B1%A1"><span class="toc-text">&amp; 实现trait对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E5%8F%91"><span class="toc-text">静态分发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E5%8F%91"><span class="toc-text">动态分发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trait%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-text">trait对象的限制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E7%B1%BB%E5%9E%8B"><span class="toc-text">关联类型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E6%B3%9B%E5%9E%8B%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0"><span class="toc-text">默认泛型类型参数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%90%8C%E5%90%8D%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">调用同名的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89-self%E5%8F%82%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-text">有&amp;self参数的情况下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B2%A1%E6%9C%89-self%E5%8F%82%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-text">没有&amp;self参数的情况下</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#trait%E5%AE%9A%E4%B9%89%E4%B8%AD%E7%9A%84trait%E7%BA%A6%E6%9D%9F"><span class="toc-text">trait定义中的trait约束</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%A8%E5%A4%96%E9%83%A8%E7%B1%BB%E5%9E%8B%E4%B8%8A%E5%AE%9E%E7%8E%B0%E5%A4%96%E9%83%A8trait"><span class="toc-text">在外部类型上实现外部trait</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#trait%E9%99%90%E5%88%B6"><span class="toc-text">trait限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#newtype-%E6%A8%A1%E5%BC%8F"><span class="toc-text">newtype 模式</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-06</div>
+        <a href="/2023/08/06/trait-1/"><div class="recent-posts-item-content">trait</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-06</div>
+        <a href="/2023/08/06/trait/"><div class="recent-posts-item-content">trait</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-06</div>
+        <a href="/2023/08/06/%E6%96%B9%E6%B3%95%E6%B3%9B%E5%9E%8B/"><div class="recent-posts-item-content">方法泛型</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-05</div>
+        <a href="/2023/08/05/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/"><div class="recent-posts-item-content">模式匹配</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
