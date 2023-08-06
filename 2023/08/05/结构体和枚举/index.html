@@ -45,7 +45,7 @@
         content="2023-08-05">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-05">
+        content="2023-08-06">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -286,7 +286,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>11</span>
+    <span>12</span>
     <span>Posts</span>
   </a>
   <a 
@@ -388,7 +388,7 @@
     
     
       <span class="dot"></span>
-      <span>280 words</span>
+      <span>282 words</span>
     
   </div>
   
@@ -428,7 +428,7 @@
 
 <h2 id="Option枚举"><a href="#Option枚举" class="headerlink" title="Option枚举"></a>Option枚举</h2><pre class="highlight"><span class="line"><span class="keyword">enum</span> <span class="title class_">Option</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(T),</span><br><span class="line">    <span class="literal">None</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
 
-<h2 id="Result枚举"><a href="#Result枚举" class="headerlink" title="Result枚举"></a>Result枚举</h2><pre class="highlight"><span class="line"><span class="keyword">enum</span> <span class="title class_">Result</span>&lt;T&gt;&#123;</span><br><span class="line">    <span class="title function_ invoke__">ok</span>(T),</span><br><span class="line">    Error</span><br><span class="line">&#125;</span><br></pre>
+<h2 id="Result枚举"><a href="#Result枚举" class="headerlink" title="Result枚举"></a>Result枚举</h2><pre class="highlight"><span class="line"><span class="keyword">enum</span> <span class="title class_">Result</span>&lt;T,E&gt;&#123;</span><br><span class="line">    <span class="title function_ invoke__">ok</span>(T),</span><br><span class="line">    <span class="title function_ invoke__">Error</span>(E),</span><br><span class="line">&#125;</span><br></pre>
 
 
   </div>
@@ -529,6 +529,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-06</div>
+        <a href="/2023/08/06/%E6%96%B9%E6%B3%95%E6%B3%9B%E5%9E%8B/"><div class="recent-posts-item-content">方法泛型</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-05</div>
         <a href="/2023/08/05/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/"><div class="recent-posts-item-content">模式匹配</div></a>
       </div>
@@ -541,11 +546,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-05</div>
         <a href="/2023/08/05/%E7%BB%93%E6%9E%84%E4%BD%93%E5%92%8C%E6%9E%9A%E4%B8%BE/"><div class="recent-posts-item-content">结构体和枚举</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-08-05</div>
-        <a href="/2023/08/05/%E5%85%83%E7%BB%84%E6%95%B0%E7%BB%84/"><div class="recent-posts-item-content">元组数组</div></a>
       </div>
     
   </div>
