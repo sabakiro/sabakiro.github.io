@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>rust使用多线程</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="rust使用多线程">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/13/rust%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-13">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-13">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>17</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>3</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="toc-text">使用多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8move%E8%8E%B7%E5%BE%97%E5%8F%98%E9%87%8F%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">用move获得变量所有权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%BB%93%E6%9D%9F"><span class="toc-text">线程结束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%A8%A1%E6%8B%9F%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%83%85%E5%86%B5"><span class="toc-text">代码模拟第二种情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%B1%8F%E9%9A%9C"><span class="toc-text">线程屏障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">线程局部变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E5%BA%93"><span class="toc-text">标准库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%BB%93%E6%9E%84%E4%BD%93%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">在结构体中使用线程局部变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="toc-text">条件变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AA%E8%83%BD%E8%B0%83%E7%94%A8%E4%B8%80%E6%AC%A1%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">只能调用一次的函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      rust使用多线程
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-13T10:19:56.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-13</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>2k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h1 id="使用多线程"><a href="#使用多线程" class="headerlink" title="使用多线程"></a>使用多线程</h1><pre class="highlight"><span class="line"><span class="keyword">use</span> std::&#123;thread, time::Duration&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">线程内部的代码使用闭包来执行</span></span><br><span class="line"><span class="comment">main 线程一旦结束，程序就立刻结束，</span></span><br><span class="line"><span class="comment">因此需要保持它的存活，直到其它子线程完成自己的任务</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">1</span>..<span class="number">10</span> &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;&#123;i&#125;&quot;</span>);</span><br><span class="line">            thread::<span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">//通过调用 handle.join，可以让当前线程阻塞，</span></span><br><span class="line">    <span class="comment">//直到它等待的子线程的结束</span></span><br><span class="line">    handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>()</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="用move获得变量所有权"><a href="#用move获得变量所有权" class="headerlink" title="用move获得变量所有权"></a>用move获得变量所有权</h2><pre class="highlight"><span class="line"><span class="keyword">use</span> std::&#123;thread, time::Duration&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span>=<span class="built_in">vec!</span>[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>];</span><br><span class="line">    <span class="comment">//不使用move的话，Rust 无法确定新的线程会活多久（多个线程的结束顺序并不是固定的），</span></span><br><span class="line">    <span class="comment">//所以也无法确定新线程所引用的 v 是否在使用过程中一直合法：</span></span><br><span class="line">    <span class="comment">//线程的启动时间点和结束时间点是不确定的，因此存在一种可能，</span></span><br><span class="line">    <span class="comment">//当主线程执行完， v 被释放掉时，新的线程很可能还没有结束甚至还没有被创建成功，</span></span><br><span class="line">    <span class="comment">//此时新线程对 v 的引用立刻就不再合法！</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> v.<span class="title function_ invoke__">iter</span>() &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;&#123;i&#125;&quot;</span>);</span><br><span class="line">            thread::<span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>()</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="线程结束"><a href="#线程结束" class="headerlink" title="线程结束"></a>线程结束</h2><ul>
+<li>线程的任务是一个循环 IO 读取，任务流程类似：IO 阻塞，等待读取新的数据 -&gt; 读到数据，处理完成 -&gt; 继续阻塞等待 ··· -&gt; 收到 socket 关闭的信号 -&gt; 结束线程，在此过程中，绝大部分时间线程都处于阻塞的状态，因此虽然看上去是循环，CPU 占用其实很小，也是网络服务中最最常见的模型</li>
+<li>线程的任务是一个循环，里面没有任何阻塞，包括休眠这种操作也没有，此时 CPU 很不幸的会被跑满，而且你如果没有设置终止条件，该线程将持续跑满一个 CPU 核心，并且不会被终止，直到 <code>main</code> 线程的结束</li>
+</ul>
+<h3 id="代码模拟第二种情况"><a href="#代码模拟第二种情况" class="headerlink" title="代码模拟第二种情况"></a>代码模拟第二种情况</h3><pre class="highlight"><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::time::Duration;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    创建了一个新的线程 A，同时该新线程又创建了一个新的线程 B，</span></span><br><span class="line"><span class="comment">    可以看到 A 线程在创建完 B 线程后就立即结束了，</span></span><br><span class="line"><span class="comment">    而 B 线程则在不停地循环输出。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="comment">// 创建一个线程A</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">new_thread</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="comment">// 再创建一个线程B</span></span><br><span class="line">        thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">            <span class="keyword">loop</span> &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot;I am a new thread.&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待新创建的线程执行完成</span></span><br><span class="line">    new_thread.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();<span class="comment">//等待线程A</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Child thread is finish!&quot;</span>);</span><br><span class="line">    <span class="comment">// 睡眠一段时间，看子线程创建的子线程是否还在运行</span></span><br><span class="line">    thread::<span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">100</span>));</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="线程屏障"><a href="#线程屏障" class="headerlink" title="线程屏障"></a>线程屏障</h2><p>使用 <code>Barrier</code> 让多个线程都执行到某个点后，才继续一起往后执行</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Barrier&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">handles</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">with_capacity</span>(<span class="number">6</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">barrier</span> = Arc::<span class="title function_ invoke__">new</span>(Barrier::<span class="title function_ invoke__">new</span>(<span class="number">6</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">6</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">b</span> = barrier.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">        handles.<span class="title function_ invoke__">push</span>(thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span>|| &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;before wait&quot;</span>);</span><br><span class="line">            b.<span class="title function_ invoke__">wait</span>();</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;after wait&quot;</span>);</span><br><span class="line">        &#125;));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">handle</span> <span class="keyword">in</span> handles &#123;</span><br><span class="line">        handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">before wait</span></span><br><span class="line"><span class="comment">before wait</span></span><br><span class="line"><span class="comment">before wait</span></span><br><span class="line"><span class="comment">before wait</span></span><br><span class="line"><span class="comment">before wait</span></span><br><span class="line"><span class="comment">before wait</span></span><br><span class="line"><span class="comment">after wait</span></span><br><span class="line"><span class="comment">after wait</span></span><br><span class="line"><span class="comment">after wait</span></span><br><span class="line"><span class="comment">after wait</span></span><br><span class="line"><span class="comment">after wait</span></span><br><span class="line"><span class="comment">after wait</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre>
+
+<h2 id="线程局部变量"><a href="#线程局部变量" class="headerlink" title="线程局部变量"></a>线程局部变量</h2><p>线程局部变量(Thread Local Variable)是一种特殊类型的变量，每个线程都有其自己独立的副本。</p>
+<p>这意味着每个线程可以在该变量上进行操作，而不会影响其他线程的副本。</p>
+<p>线程局部变量通常用于在多线程环境中存储线程私有的数据，</p>
+<p>以便每个线程都可以独立地访问和修改自己的数据，而不会干扰其他线程的数据。</p>
+<h3 id="标准库"><a href="#标准库" class="headerlink" title="标准库"></a>标准库</h3><pre class="highlight"><span class="line"><span class="keyword">use</span> std::&#123;cell::RefCell, thread&#125;;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    FOO 即是我们创建的线程局部变量，每个新的线程访问它时，都会使用它的初始值作为开始，</span></span><br><span class="line"><span class="comment">    各个线程中的 FOO 值彼此互不干扰。</span></span><br><span class="line"><span class="comment">    注意 FOO 使用 static 声明为生命周期为 &#x27;static 的静态变量。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    thread_local!(<span class="keyword">static</span> FOO: RefCell&lt;<span class="type">u32</span>&gt; = RefCell::<span class="title function_ invoke__">new</span>(<span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">    FOO.<span class="title function_ invoke__">with</span>(|f| &#123;</span><br><span class="line">        <span class="built_in">assert_eq!</span>(*f.<span class="title function_ invoke__">borrow</span>(), <span class="number">1</span>);</span><br><span class="line">        *f.<span class="title function_ invoke__">borrow_mut</span>() = <span class="number">2</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 每个线程开始时都会拿到线程局部变量的FOO的初始值</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        FOO.<span class="title function_ invoke__">with</span>(|f| &#123;</span><br><span class="line">            <span class="built_in">assert_eq!</span>(*f.<span class="title function_ invoke__">borrow</span>(), <span class="number">1</span>);</span><br><span class="line">            *f.<span class="title function_ invoke__">borrow_mut</span>() = <span class="number">3</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待线程完成</span></span><br><span class="line">    t.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 尽管子线程中修改为了3，我们在这里依然拥有main线程中的局部值：2</span></span><br><span class="line">    FOO.<span class="title function_ invoke__">with</span>(|f| &#123;</span><br><span class="line">        <span class="built_in">assert_eq!</span>(*f.<span class="title function_ invoke__">borrow</span>(), <span class="number">2</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<h3 id="在结构体中使用线程局部变量"><a href="#在结构体中使用线程局部变量" class="headerlink" title="在结构体中使用线程局部变量"></a>在结构体中使用线程局部变量</h3><pre class="highlight"><span class="line"><span class="keyword">use</span> std::cell::RefCell;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Foo</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Foo</span> &#123;</span><br><span class="line">    thread_local! &#123;</span><br><span class="line">        <span class="keyword">static</span> FOO: RefCell&lt;<span class="type">usize</span>&gt; = RefCell::<span class="title function_ invoke__">new</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    Foo::FOO.<span class="title function_ invoke__">with</span>(|x| <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, x));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过引用的方式使用</span></span><br><span class="line"><span class="keyword">use</span> std::cell::RefCell;</span><br><span class="line"><span class="keyword">use</span> std::thread::LocalKey;</span><br><span class="line"></span><br><span class="line">thread_local! &#123;</span><br><span class="line">    <span class="keyword">static</span> FOO: RefCell&lt;<span class="type">usize</span>&gt; = RefCell::<span class="title function_ invoke__">new</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Bar</span> &#123;</span><br><span class="line">    foo: &amp;<span class="symbol">&#x27;static</span> LocalKey&lt;RefCell&lt;<span class="type">usize</span>&gt;&gt;,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Bar</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">constructor</span>() <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">Self</span> &#123;</span><br><span class="line">            foo: &amp;FOO,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h2><p>条件变量(Condition Variables)经常和 <code>Mutex</code> 一起使用，</p>
+<p>可以让线程挂起，直到某个条件发生后再继续执行</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Mutex, Condvar&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment"> main 线程首先进入 while 循环，调用 wait 方法挂起等待子线程的通知，并释放了锁 started</span></span><br><span class="line"><span class="comment">子线程获取到锁，并将其修改为 true，然后调用条件变量的 notify_one 方法来通知主线程继续执行</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pair</span> = Arc::<span class="title function_ invoke__">new</span>((Mutex::<span class="title function_ invoke__">new</span>(<span class="literal">false</span>), Condvar::<span class="title function_ invoke__">new</span>()));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pair2</span> = pair.<span class="title function_ invoke__">clone</span>();</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span>|| &#123;</span><br><span class="line">        <span class="keyword">let</span> (lock, cvar) = &amp;*pair2;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">started</span> = lock.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;changing started&quot;</span>);</span><br><span class="line">        *started = <span class="literal">true</span>;</span><br><span class="line">        cvar.<span class="title function_ invoke__">notify_one</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> (lock, cvar) = &amp;*pair;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">started</span> = lock.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">while</span> !*started &#123;</span><br><span class="line">        started = cvar.<span class="title function_ invoke__">wait</span>(started).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;started changed&quot;</span>);</span><br><span class="line">&#125;</span><br></pre>
+
+
+
+<h2 id="只能调用一次的函数"><a href="#只能调用一次的函数" class="headerlink" title="只能调用一次的函数"></a>只能调用一次的函数</h2><p>需要某个函数在多线程环境下只被调用一次，</p>
+<p>例如初始化全局变量，无论是哪个线程先调用函数来初始化，</p>
+<p>都会保证全局变量只会被初始化一次，随后的其它线程调用就会忽略该函数：</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::sync::Once;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">mut</span> VAL: <span class="type">usize</span> = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">static</span> INIT: Once = Once::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">代码运行的结果取决于哪个线程先调用 INIT.call_once （虽然代码具有先后顺序，</span></span><br><span class="line"><span class="comment">但是线程的初始化顺序并无法被保证！因为线程初始化是异步的，且耗时较久），</span></span><br><span class="line"><span class="comment">若 handle1 先，则输出 1，否则输出 2。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">handle1</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        INIT.<span class="title function_ invoke__">call_once</span>(|| &#123;</span><br><span class="line">            <span class="keyword">unsafe</span> &#123;</span><br><span class="line">                VAL = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">call_once 方法</span></span><br><span class="line"><span class="comment">执行初始化过程一次，并且只执行一次。</span></span><br><span class="line"><span class="comment">如果当前有另一个初始化过程正在运行，线程将阻止该方法被调用。</span></span><br><span class="line"><span class="comment">当这个函数返回时，保证一些初始化已经运行并完成，</span></span><br><span class="line"><span class="comment">它还保证由执行的闭包所执行的任何内存写入都能被其他线程在这时可靠地观察到。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">handle2</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        INIT.<span class="title function_ invoke__">call_once</span>(|| &#123;</span><br><span class="line">            <span class="keyword">unsafe</span> &#123;</span><br><span class="line">                VAL = <span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    handle1.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    handle2.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="keyword">unsafe</span> &#123; VAL &#125;);</span><br><span class="line">&#125;</span><br></pre>
+
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><p>Rust 的线程模型是 1:1 模型，因为 Rust 要保持尽量小的运行时。</p>
+</li>
+<li><p>我们可以使用 thread::spawn 来创建线程，创建出的多个线程之间并不存在执行顺序关系，</p>
+<p>因此代码逻辑千万不要依赖于线程间的执行顺序。</p>
+</li>
+<li><p>main 线程若是结束，则所有子线程都将被终止，如果希望等待子线程结束后，</p>
+<p>再结束 main 线程，你需要使用创建线程时返回的句柄的 join 方法。</p>
+</li>
+<li><p>在线程中无法直接借用外部环境中的变量值，因为新线程的启动时间点和结束时间点是不确定的，</p>
+<p>所以 Rust 无法保证该线程中借用的变量在使用过程中依然是合法的。</p>
+<p>你可以使用 move 关键字将变量的所有权转移给新的线程，来解决此问题。</p>
+</li>
+<li><p>父线程结束后，子线程仍在持续运行，直到子线程的代码运行完成或者 <code>main</code> 线程的结束</p>
+</li>
+</ol>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/13/rust%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+            https://sabakiro.github.io/2023/08/13/rust%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/08/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">智能指针 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="toc-text">使用多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8move%E8%8E%B7%E5%BE%97%E5%8F%98%E9%87%8F%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">用move获得变量所有权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%BB%93%E6%9D%9F"><span class="toc-text">线程结束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%A8%A1%E6%8B%9F%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%83%85%E5%86%B5"><span class="toc-text">代码模拟第二种情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%B1%8F%E9%9A%9C"><span class="toc-text">线程屏障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">线程局部变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E5%BA%93"><span class="toc-text">标准库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%BB%93%E6%9E%84%E4%BD%93%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">在结构体中使用线程局部变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="toc-text">条件变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AA%E8%83%BD%E8%B0%83%E7%94%A8%E4%B8%80%E6%AC%A1%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">只能调用一次的函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="toc-text">使用多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8move%E8%8E%B7%E5%BE%97%E5%8F%98%E9%87%8F%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">用move获得变量所有权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%BB%93%E6%9D%9F"><span class="toc-text">线程结束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%A8%A1%E6%8B%9F%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%83%85%E5%86%B5"><span class="toc-text">代码模拟第二种情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%B1%8F%E9%9A%9C"><span class="toc-text">线程屏障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">线程局部变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E5%BA%93"><span class="toc-text">标准库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%BB%93%E6%9E%84%E4%BD%93%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">在结构体中使用线程局部变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="toc-text">条件变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AA%E8%83%BD%E8%B0%83%E7%94%A8%E4%B8%80%E6%AC%A1%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">只能调用一次的函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-13</div>
+        <a href="/2023/08/13/rust%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><div class="recent-posts-item-content">rust使用多线程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-08</div>
+        <a href="/2023/08/08/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><div class="recent-posts-item-content">智能指针</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-07</div>
+        <a href="/2023/08/07/%E9%97%AD%E5%8C%85%E5%87%BD%E6%95%B0%E8%BF%AD%E4%BB%A3%E5%99%A8/"><div class="recent-posts-item-content">闭包函数迭代器</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-06</div>
+        <a href="/2023/08/06/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/"><div class="recent-posts-item-content">错误处理</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
