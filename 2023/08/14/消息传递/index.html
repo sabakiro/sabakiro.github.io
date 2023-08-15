@@ -45,7 +45,7 @@
         content="2023-08-14">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-14">
+        content="2023-08-15">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -286,7 +286,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>18</span>
+    <span>19</span>
     <span>Posts</span>
   </a>
   <a 
@@ -345,6 +345,12 @@
   <div class="tags-list">
     
       <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
         href="/tags/c/" 
         title="c#">
         <div class="tags-list-item">c#</div>
@@ -354,12 +360,6 @@
         href="/tags/linux/" 
         title="linux">
         <div class="tags-list-item">linux</div>
-      </a>
-    
-      <a 
-        href="/tags/rust/" 
-        title="rust">
-        <div class="tags-list-item">rust</div>
       </a>
     
   </div>
@@ -388,7 +388,7 @@
     
     
       <span class="dot"></span>
-      <span>1.1k words</span>
+      <span>1.2k words</span>
     
   </div>
   
@@ -440,6 +440,12 @@
 <p>在实际项目中，可以考虑使用一个带缓冲值的同步通道来避免这种风险。</p>
 <h2 id="使用枚举传输多种类型的数据"><a href="#使用枚举传输多种类型的数据" class="headerlink" title="使用枚举传输多种类型的数据"></a>使用枚举传输多种类型的数据</h2><pre class="highlight"><span class="line"><span class="keyword">use</span> std::sync::mpsc::&#123;<span class="keyword">self</span>, Receiver, Sender&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Fruit</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">Apple</span>(<span class="type">u8</span>),</span><br><span class="line">    <span class="title function_ invoke__">Orange</span>(<span class="type">String</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> (tx, rx): (Sender&lt;Fruit&gt;, Receiver&lt;Fruit&gt;) = mpsc::<span class="title function_ invoke__">channel</span>();</span><br><span class="line"></span><br><span class="line">    tx.<span class="title function_ invoke__">send</span>(Fruit::<span class="title function_ invoke__">Orange</span>(<span class="string">&quot;sweet&quot;</span>.<span class="title function_ invoke__">to_string</span>())).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//占用的内存依然和最大的成员相同, 因此会造成内存上的浪费</span></span><br><span class="line">    tx.<span class="title function_ invoke__">send</span>(Fruit::<span class="title function_ invoke__">Apple</span>(<span class="number">2</span>)).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">2</span> &#123;</span><br><span class="line">        <span class="keyword">match</span> rx.<span class="title function_ invoke__">recv</span>().<span class="title function_ invoke__">unwrap</span>() &#123;</span><br><span class="line">            Fruit::<span class="title function_ invoke__">Apple</span>(count) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;received &#123;&#125; apples&quot;</span>, count),</span><br><span class="line">            Fruit::<span class="title function_ invoke__">Orange</span>(flavor) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;received &#123;&#125; oranges&quot;</span>, flavor),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
 
+<p>消息传递适用的场景很多，主要的使用场景:</p>
+<ul>
+<li>需要可靠和简单的(简单不等于简洁)实现时</li>
+<li>需要模拟现实世界，例如用消息去通知某个目标执行相应的操作时</li>
+<li>需要一个任务处理流水线(管道)时，等等</li>
+</ul>
 
   </div>
   <div>
@@ -469,6 +475,20 @@
   </div>
 </article>
 <div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/08/15/%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">Prev</div>
+          
+            <div class="nav-title">共享内存 </div>
+          
+        </div>
+      </a>
+    </div>
   
   
     <div class="nav-item-next">
@@ -525,6 +545,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-15</div>
+        <a href="/2023/08/15/%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/"><div class="recent-posts-item-content">共享内存</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-14</div>
         <a href="/2023/08/14/%E6%B6%88%E6%81%AF%E4%BC%A0%E9%80%92/"><div class="recent-posts-item-content">消息传递</div></a>
       </div>
@@ -537,11 +562,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-08</div>
         <a href="/2023/08/08/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><div class="recent-posts-item-content">智能指针</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-08-07</div>
-        <a href="/2023/08/07/%E9%97%AD%E5%8C%85%E5%87%BD%E6%95%B0%E8%BF%AD%E4%BB%A3%E5%99%A8/"><div class="recent-posts-item-content">闭包函数迭代器</div></a>
       </div>
     
   </div>
