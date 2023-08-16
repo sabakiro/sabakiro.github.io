@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>原子类型与内存顺序</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="原子类型与内存顺序">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-16">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-16">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>21</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>3</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Atomic%E4%BD%9C%E4%B8%BA%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">使用Atomic作为全局变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F"><span class="toc-text">内存顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%90%E5%AE%9A%E5%86%85%E5%AD%98%E7%9A%845%E4%B8%AA%E8%A7%84%E5%88%99"><span class="toc-text">限定内存的5个规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">内存屏障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8Atomic"><span class="toc-text">在多线程中使用Atomic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Atomic-%E5%92%8C-%E9%94%81"><span class="toc-text">Atomic 和 锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Atomic%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">Atomic的应用场景</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      原子类型与内存顺序
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-16T01:37:19.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-16</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.7k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>原子类型内部使用了<code>CAS</code>循环，当大量的冲突发生时，该等待还是得等待<br>CAS 全称是 Compare and swap, 它通过一条指令读取指定的内存地址，然后判断其中的值是否等于给定的前置值，如果相等，则将其修改为新的值</p>
+<h1 id="使用Atomic作为全局变量"><a href="#使用Atomic作为全局变量" class="headerlink" title="使用Atomic作为全局变量"></a>使用Atomic作为全局变量</h1><pre class="highlight"><span class="line"><span class="keyword">use</span> std::ops::Sub;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::sync::atomic::&#123;AtomicU64, Ordering&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::thread::&#123;<span class="keyword">self</span>, JoinHandle&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::time::Instant;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> N_TIMES: <span class="type">u64</span> = <span class="number">10000000</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> N_THREADS: <span class="type">usize</span> = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> R: AtomicU64 = AtomicU64::<span class="title function_ invoke__">new</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  每个线程都在疯狂对全局变量进行加 1 操作, </span></span><br><span class="line"><span class="comment">  最后将它与`线程数 * 加1次数`进行比较</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">add_n_times</span>(n: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> JoinHandle&lt;()&gt; &#123;</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..n &#123;</span><br><span class="line">			<span class="comment">//`Atomic`的值和`Mutex`一样，</span></span><br><span class="line">			<span class="comment">//具有内部可变性，无需将其声明为`mut`</span></span><br><span class="line">			<span class="comment">//Ordering::Relaxed用于</span></span><br><span class="line">			<span class="comment">//控制原子操作使用的内存顺序</span></span><br><span class="line">            R.<span class="title function_ invoke__">fetch_add</span>(<span class="number">1</span>, Ordering::Relaxed);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">threads</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">with_capacity</span>(N_THREADS);</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..N_THREADS &#123;</span><br><span class="line">        threads.<span class="title function_ invoke__">push</span>(<span class="title function_ invoke__">add_n_times</span>(N_TIMES));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">thread</span> <span class="keyword">in</span> threads &#123;</span><br><span class="line"></span><br><span class="line">        thread.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(N_TIMES * N_THREADS <span class="keyword">as</span> <span class="type">u64</span>, R.<span class="title function_ invoke__">load</span>(Ordering::Relaxed));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,R.<span class="title function_ invoke__">load</span>(Ordering::Relaxed));<span class="comment">//100000000</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,Instant::<span class="title function_ invoke__">now</span>().<span class="title function_ invoke__">sub</span>(s));</span><br><span class="line">&#125;</span><br></pre>
+
+<h1 id="内存顺序"><a href="#内存顺序" class="headerlink" title="内存顺序"></a>内存顺序</h1><p>内存顺序是指 CPU 在访问内存时的顺序，该顺序可能受以下因素的影响：</p>
+<ol>
+<li><p>代码中的先后顺序</p>
+</li>
+<li><p>编译器优化导致在编译阶段发生改变(内存重排序 reordering)</p>
+<pre class="highlight"><span class="line"><span class="keyword">static</span> <span class="keyword">mut</span> X: <span class="type">u64</span> = <span class="number">0</span>; </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">mut</span> Y: <span class="type">u64</span> = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123; </span><br><span class="line">	... <span class="comment">// A </span></span><br><span class="line">	<span class="keyword">unsafe</span> &#123; </span><br><span class="line">	... <span class="comment">// B </span></span><br><span class="line">	X = <span class="number">1</span>; </span><br><span class="line">	... <span class="comment">// C </span></span><br><span class="line">	Y = <span class="number">3</span>; </span><br><span class="line">	... <span class="comment">// D </span></span><br><span class="line">	X = <span class="number">2</span>; </span><br><span class="line">	... <span class="comment">// E </span></span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//假如在`C`和`D`代码片段中，</span></span><br><span class="line"><span class="comment">//根本没有用到`X = 1`，</span></span><br><span class="line"><span class="comment">//那么编译器很可能会将`X = 1`和`X = 2`进行合并:</span></span><br><span class="line">... <span class="comment">// A </span></span><br><span class="line"><span class="keyword">unsafe</span> &#123; </span><br><span class="line">	... <span class="comment">// B </span></span><br><span class="line">	<span class="comment">//若代码`A`中创建了一个新的线程用于读取全局静态变量`X`，</span></span><br><span class="line">	<span class="comment">//则该线程将无法读取到`X = 1`的结果，</span></span><br><span class="line">	<span class="comment">//因为在编译阶段就已经被优化掉。</span></span><br><span class="line">	X = <span class="number">2</span>; </span><br><span class="line">	... <span class="comment">// C </span></span><br><span class="line">	Y = <span class="number">3</span>; </span><br><span class="line">	... <span class="comment">// D </span></span><br><span class="line">	... <span class="comment">// E</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+</li>
+<li><p>运行阶段因 CPU 的缓存机制导致顺序被打乱<br>假设之前的<code>X = 1</code>没有被优化掉，并且在代码片段<code>A</code>中有一个新的线程:</p>
+<pre class="highlight"><span class="line">initial state: X = <span class="number">0</span>, Y = <span class="number">1</span> </span><br><span class="line">THREAD Main       THREAD A </span><br><span class="line">X = <span class="number">1</span>;            <span class="keyword">if</span> X == <span class="number">1</span> &#123; </span><br><span class="line">Y = <span class="number">3</span>;                Y *= <span class="number">2</span>; </span><br><span class="line">X = <span class="number">2</span>;            &#125;</span><br></pre>
+<p><code>Y</code>最终的可能值(可能性依次降低):</p>
+</li>
+</ol>
+<ul>
+<li><code>Y = 3</code>: 线程<code>Main</code>运行完后才运行线程<code>A</code>，或者线程<code>A</code>运行完后再运行线程<code>Main</code></li>
+<li><code>Y = 6</code>: 线程<code>Main</code>的<code>Y = 3</code>运行完，但<code>X = 2</code>还没被运行， 此时线程 A 开始运行<code>Y *= 2</code>, 最后才运行<code>Main</code>线程的<code>X = 2</code></li>
+<li><code>Y = 2</code>: 线程<code>Main</code>正在运行<code>Y = 3</code>还没结束，此时线程<code>A</code>正在运行<code>Y *= 2</code>, 因此<code>Y</code>取到了值 1，然后<code>Main</code>的线程将<code>Y</code>设置为 3， 紧接着就被线程<code>A</code>的<code>Y = 2</code>所覆盖</li>
+<li><code>Y = 2</code>: 上面的还只是一般的数据竞争，这里虽然产生了相同的结果<code>2</code>，但是背后的原理大相径庭: 线程<code>Main</code>运行完<code>Y = 3</code>，但是 CPU 缓存中的<code>Y = 3</code>还没有被同步到其它 CPU 缓存中，此时线程<code>A</code>中的<code>Y *= 2</code>就开始读取<code>Y</code>，结果读到了值<code>1</code>，最终计算出结果<code>2</code></li>
+</ul>
+<h2 id="限定内存的5个规则"><a href="#限定内存的5个规则" class="headerlink" title="限定内存的5个规则"></a>限定内存的5个规则</h2><p>Ordering枚举的5个成员</p>
+<ul>
+<li><p><strong>Relaxed</strong>， 这是最宽松的规则，它对编译器和 CPU 不做任何限制，可以乱序</p>
+</li>
+<li><p><strong>Release 释放</strong>，设定内存屏障(Memory barrier)，保证它之前的操作永远在它之前，但是它后面的操作可能被重排到它前面</p>
+</li>
+<li><p><strong>Acquire 获取</strong>, 设定内存屏障，保证在它之后的访问永远在它之后，但是它之前的操作却有可能被重排到它后面，往往和<code>Release</code>在不同线程中联合使用</p>
+</li>
+<li><p><strong>AcqRel</strong>, 是 <em>Acquire</em> 和 <em>Release</em> 的结合，同时拥有它们俩提供的保证。比如你要对一个 <code>atomic</code> 自增 1，同时希望该操作之前和之后的读取或写入操作不会被重新排序</p>
+</li>
+<li><p><strong>SeqCst 顺序一致性</strong>， <code>SeqCst</code>就像是<code>AcqRel</code>的加强版，它不管原子操作是属于读取还是写入的操作，只要某个线程有用到<code>SeqCst</code>的原子操作，线程中该<code>SeqCst</code>操作前的数据操作绝对不会被重新排在该<code>SeqCst</code>操作之后，且该<code>SeqCst</code>操作后的数据操作也绝对不会被重新排在<code>SeqCst</code>操作前。</p>
+</li>
+</ul>
+<h2 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h2><pre class="highlight"><span class="line"><span class="keyword">use</span> std::sync::atomic::&#123;AtomicBool, Ordering&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::thread::&#123;<span class="keyword">self</span>, JoinHandle&#125;;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">mut</span> DATA: <span class="type">u64</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> READY: AtomicBool = AtomicBool::<span class="title function_ invoke__">new</span>(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">reset</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line"></span><br><span class="line">        DATA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    READY.<span class="title function_ invoke__">store</span>(<span class="literal">false</span>, Ordering::Relaxed);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">producer</span>() <span class="punctuation">-&gt;</span> JoinHandle&lt;()&gt; &#123;</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line"></span><br><span class="line">            DATA = <span class="number">100</span>; <span class="comment">// A</span></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">而`Release`用于写入。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">        READY.<span class="title function_ invoke__">store</span>(<span class="literal">true</span>, Ordering::Release); <span class="comment">// B: 内存屏障 ↑</span></span><br><span class="line"></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">consumer</span>() <span class="punctuation">-&gt;</span> JoinHandle&lt;()&gt; &#123;</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">原则上，`Acquire`用于读取，</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">        <span class="keyword">while</span> !READY.<span class="title function_ invoke__">load</span>(Ordering::Acquire) &#123;&#125; <span class="comment">// C: 内存屏障 ↓</span></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">        <span class="built_in">assert_eq!</span>(<span class="number">100</span>, <span class="keyword">unsafe</span> &#123; DATA &#125;); <span class="comment">// D</span></span><br><span class="line"></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">但是由于有些原子操作同时拥有读取和写入的功能，</span></span><br><span class="line"><span class="comment">此时就需要使用`AcqRel`来设置内存顺序了。</span></span><br><span class="line"><span class="comment">在内存屏障中被写入的数据，都可以被其它线程读取到，</span></span><br><span class="line"><span class="comment">不会有 CPU 缓存的问题。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">reset</span>();</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t_producer</span> = <span class="title function_ invoke__">producer</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t_consumer</span> = <span class="title function_ invoke__">consumer</span>();</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">        t_producer.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">        t_consumer.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre>
+
+<p><strong>内存顺序的选择</strong></p>
+<ol>
+<li>不知道怎么选择时，优先使用<code>SeqCst</code>，虽然会稍微减慢速度，但是慢一点也比出现错误好</li>
+<li>多线程只计数<code>fetch_add</code>而不使用该值触发其他逻辑分支的简单使用场景，可以使用<code>Relaxed</code></li>
+</ol>
+<h2 id="在多线程中使用Atomic"><a href="#在多线程中使用Atomic" class="headerlink" title="在多线程中使用Atomic"></a>在多线程中使用Atomic</h2><p>在多线程环境中要使用<code>Atomic</code>需要配合<code>Arc</code>：</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::sync::atomic::&#123;AtomicUsize, Ordering&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::sync::Arc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::&#123;hint, thread&#125;;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">spinlock</span> = Arc::<span class="title function_ invoke__">new</span>(AtomicUsize::<span class="title function_ invoke__">new</span>(<span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">spinlock_clone</span> = Arc::<span class="title function_ invoke__">clone</span>(&amp;spinlock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">thread</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line"></span><br><span class="line">        spinlock_clone.<span class="title function_ invoke__">store</span>(<span class="number">0</span>, Ordering::SeqCst);</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    自旋锁：</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    是指当一个线程在获取锁的时候，如果锁已经被其它线程获取，</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    那么该线程将循环等待，然后不断的判断锁是否能够被成功获取，</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    直到获取到锁才会退出循环。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    获取锁的线程一直处于活跃状态，但是并没有执行任何有效的任务，</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    使用这种锁会造成busy-waiting。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待其它线程释放锁</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> spinlock.<span class="title function_ invoke__">load</span>(Ordering::SeqCst) != <span class="number">0</span> &#123;</span><br><span class="line"></span><br><span class="line">        hint::<span class="title function_ invoke__">spin_loop</span>();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Err</span>(panic) = thread.<span class="title function_ invoke__">join</span>() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Thread had an error: &#123;:?&#125;&quot;</span>, panic);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="Atomic-和-锁"><a href="#Atomic-和-锁" class="headerlink" title="Atomic 和 锁"></a>Atomic 和 锁</h2><ul>
+<li>对于复杂的场景下，锁的使用简单粗暴，不容易有坑</li>
+<li><code>std::sync::atomic</code>包中仅提供了数值类型的原子操作：<code>AtomicBool</code>, <code>AtomicIsize</code>, <code>AtomicUsize</code>, <code>AtomicI8</code>, <code>AtomicU16</code>等，而锁可以应用于各种类型</li>
+<li>在有些情况下，必须使用锁来配合</li>
+</ul>
+<h2 id="Atomic的应用场景"><a href="#Atomic的应用场景" class="headerlink" title="Atomic的应用场景"></a>Atomic的应用场景</h2><ul>
+<li>无锁(lock free)数据结构</li>
+<li>全局变量，例如全局自增 ID</li>
+<li>跨线程计数器，例如可以用于统计指标</li>
+</ul>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/">
+            https://sabakiro.github.io/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/15/multipass/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">multipass </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Atomic%E4%BD%9C%E4%B8%BA%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">使用Atomic作为全局变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F"><span class="toc-text">内存顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%90%E5%AE%9A%E5%86%85%E5%AD%98%E7%9A%845%E4%B8%AA%E8%A7%84%E5%88%99"><span class="toc-text">限定内存的5个规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">内存屏障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8Atomic"><span class="toc-text">在多线程中使用Atomic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Atomic-%E5%92%8C-%E9%94%81"><span class="toc-text">Atomic 和 锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Atomic%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">Atomic的应用场景</span></a></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Atomic%E4%BD%9C%E4%B8%BA%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">使用Atomic作为全局变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F"><span class="toc-text">内存顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%90%E5%AE%9A%E5%86%85%E5%AD%98%E7%9A%845%E4%B8%AA%E8%A7%84%E5%88%99"><span class="toc-text">限定内存的5个规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="toc-text">内存屏障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8Atomic"><span class="toc-text">在多线程中使用Atomic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Atomic-%E5%92%8C-%E9%94%81"><span class="toc-text">Atomic 和 锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Atomic%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">Atomic的应用场景</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-16</div>
+        <a href="/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/"><div class="recent-posts-item-content">原子类型与内存顺序</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-15</div>
+        <a href="/2023/08/15/multipass/"><div class="recent-posts-item-content">multipass</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-15</div>
+        <a href="/2023/08/15/%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/"><div class="recent-posts-item-content">共享内存</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-14</div>
+        <a href="/2023/08/14/%E6%B6%88%E6%81%AF%E4%BC%A0%E9%80%92/"><div class="recent-posts-item-content">消息传递</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
