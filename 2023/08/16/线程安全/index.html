@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>结构体和枚举</title>
+  <title>线程安全</title>
   
     
       <meta 
         property="og:title" 
-        content="结构体和枚举">
+        content="线程安全">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/08/05/%E7%BB%93%E6%9E%84%E4%BD%93%E5%92%8C%E6%9E%9A%E4%B8%BE/index.html">
+        content="https://sabakiro.github.io/2023/08/16/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-08-05">
+        content="2023-08-16">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-06">
+        content="2023-08-16">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">结构体</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%83%E7%BB%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">元组结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%85%83%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">单元结构体</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE"><span class="toc-text">枚举</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Option%E6%9E%9A%E4%B8%BE"><span class="toc-text">Option枚举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Result%E6%9E%9A%E4%B8%BE"><span class="toc-text">Result枚举</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Send-%E5%92%8C-Sync"><span class="toc-text">Send 和 Sync</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8"><span class="toc-text">作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RwLock%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">RwLock的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mutex%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">Mutex的实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0Send"><span class="toc-text">实现Send</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E4%B8%BA%E5%AE%9E%E7%8E%B0Send%E5%92%8CSync%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-text">常见的为实现Send和Sync的类型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E8%A3%B8%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0Send"><span class="toc-text">为裸指针实现Send</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E8%A3%B8%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0Sync"><span class="toc-text">为裸指针实现Sync</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
       </div>
     </article>
   
@@ -374,21 +374,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      结构体和枚举
+      线程安全
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-08-05T02:51:07.000Z">
+    <time datetime="2023-08-16T02:53:57.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-08-05</span>
+      <span>2023-08-16</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>282 words</span>
+      <span>779 words</span>
     
   </div>
   
@@ -415,21 +415,34 @@
   <div 
     id="section" 
     class="post-content">
-    <h1 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h1><pre class="highlight"><span class="line"><span class="keyword">struct</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    active: <span class="type">bool</span>,</span><br><span class="line">    username: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user1</span> = User &#123;</span><br><span class="line">        active: <span class="literal">true</span>,</span><br><span class="line">        username: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;someusername123&quot;</span>),</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user2</span> = User &#123;</span><br><span class="line">        username: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;ciallo&quot;</span>),</span><br><span class="line">        ..user1</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="string">&quot;ciallo&quot;</span>, &amp;user2.username);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="literal">true</span>, user2.active);</span><br><span class="line">&#125;</span><br></pre>
+    <pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">`!`代表移除特征的相应实现，</span></span><br><span class="line"><span class="comment">上面代码中`Rc&lt;T&gt;`的`Send`和`Sync`特征被特地移除了实现，</span></span><br><span class="line"><span class="comment">而`Arc&lt;T&gt;`则相反，实现了`Sync + Send`</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Rc源码片段</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T: ?<span class="built_in">Sized</span>&gt; !marker::<span class="built_in">Send</span> <span class="keyword">for</span> <span class="title class_">Rc</span>&lt;T&gt; &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T: ?<span class="built_in">Sized</span>&gt; !marker::<span class="built_in">Sync</span> <span class="keyword">for</span> <span class="title class_">Rc</span>&lt;T&gt; &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//`Send`和`Sync`是在线程间安全使用一个值的关键。</span></span><br><span class="line"><span class="comment">// Arc源码片段</span></span><br><span class="line"><span class="keyword">unsafe</span> <span class="keyword">impl</span>&lt;T: ?<span class="built_in">Sized</span> + <span class="built_in">Sync</span> + <span class="built_in">Send</span>&gt; <span class="built_in">Send</span> <span class="keyword">for</span> <span class="title class_">Arc</span>&lt;T&gt; &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsafe</span> <span class="keyword">impl</span>&lt;T: ?<span class="built_in">Sized</span> + <span class="built_in">Sync</span> + <span class="built_in">Send</span>&gt; <span class="built_in">Sync</span> <span class="keyword">for</span> <span class="title class_">Arc</span>&lt;T&gt; &#123;&#125;</span><br></pre>
 
-<h2 id="所有权"><a href="#所有权" class="headerlink" title="所有权"></a>所有权</h2><pre class="highlight"><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    active: <span class="type">bool</span>,</span><br><span class="line">    username: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user1</span> = User &#123;</span><br><span class="line">        active: <span class="literal">true</span>,</span><br><span class="line">        username: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;someusername123&quot;</span>),</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user2</span>=User&#123;</span><br><span class="line">        active:<span class="literal">false</span>,</span><br><span class="line">        username:user1.username,</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,user1);<span class="comment">//error，被部分借用</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,user1.username);<span class="comment">//error, 被借用</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,user1.active);</span><br><span class="line">&#125;</span><br></pre>
+<h1 id="Send-和-Sync"><a href="#Send-和-Sync" class="headerlink" title="Send 和 Sync"></a>Send 和 Sync</h1><p><code>Send</code>和<code>Sync</code>是 Rust 安全并发的重中之重，<br>但是实际上它们只是标记特征(marker trait，该特征未定义任何行为)</p>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><ul>
+<li>实现<code>Send</code>的类型可以在线程间安全的传递其所有权</li>
+<li>实现<code>Sync</code>的类型可以在线程间安全的共享(通过引用)</li>
+</ul>
+<p><code>潜在的依赖</code>：一个类型要在线程间安全的共享的前提是，<br>指向它的引用必须能在线程间传递。<br>因为如果引用都不能被传递，<br>就无法在多个线程间使用引用去访问同一个数据了。<br><strong>若类型 T 的引用<code>&amp;T</code>是<code>Send</code>，则<code>T</code>是<code>Sync</code></strong></p>
+<h3 id="RwLock的实现"><a href="#RwLock的实现" class="headerlink" title="RwLock的实现"></a>RwLock的实现</h3><pre class="highlight"><span class="line"><span class="keyword">unsafe</span> <span class="keyword">impl</span>&lt;T: ?<span class="built_in">Sized</span> + <span class="built_in">Send</span> + <span class="built_in">Sync</span>&gt; <span class="built_in">Sync</span> <span class="keyword">for</span> <span class="title class_">RwLock</span>&lt;T&gt; &#123;&#125;</span><br><span class="line"><span class="comment">//`RwLock`可以在线程间安全的共享，那它肯定是实现了`Sync`</span></span><br><span class="line"><span class="comment">//`RwLock`可以并发的读，说明其中的值`T`必定也可以在线程间共享，</span></span><br><span class="line"><span class="comment">//那`T`必定要实现`Sync`</span></span><br></pre>
+<h3 id="Mutex的实现"><a href="#Mutex的实现" class="headerlink" title="Mutex的实现"></a>Mutex的实现</h3><pre class="highlight"><span class="line"><span class="keyword">unsafe</span> <span class="keyword">impl</span>&lt;T: ?<span class="built_in">Sized</span> + <span class="built_in">Send</span>&gt; <span class="built_in">Sync</span> <span class="keyword">for</span> <span class="title class_">Mutex</span>&lt;T&gt; &#123;&#125;</span><br></pre>
 
-<h2 id="元组结构体"><a href="#元组结构体" class="headerlink" title="元组结构体"></a>元组结构体</h2><p>结构体必须要有名称，但是结构体的字段可以没有名称</p>
-<pre class="highlight"><span class="line"><span class="keyword">struct</span> <span class="title class_">Color</span>&lt;<span class="symbol">&#x27;a</span>&gt;(<span class="type">i32</span>, <span class="type">u8</span>, &amp;<span class="symbol">&#x27;a</span> <span class="type">str</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">black</span> = <span class="title function_ invoke__">Color</span>(<span class="number">0</span>, <span class="number">0u8</span>,<span class="string">&quot;ciallo&quot;</span>);</span><br></pre>
+<h1 id="实现Send"><a href="#实现Send" class="headerlink" title="实现Send"></a>实现Send</h1><p>一个复合类型(例如结构体)<br>只要它内部的所有成员都实现了<code>Send</code>或者<code>Sync</code>，<br>那么它就自动实现了<code>Send</code>或<code>Sync</code></p>
+<h4 id="常见的为实现Send和Sync的类型"><a href="#常见的为实现Send和Sync的类型" class="headerlink" title="常见的为实现Send和Sync的类型"></a>常见的为实现Send和Sync的类型</h4><ul>
+<li>裸指针两者都没实现，因为它本身就没有任何安全保证</li>
+<li><code>UnsafeCell</code>不是<code>Sync</code>，因此<code>Cell</code>和<code>RefCell</code>也不是</li>
+<li><code>Rc</code>两者都没实现(因为内部的引用计数器不是线程安全的)</li>
+</ul>
+<p><strong>手动实现 <code>Send</code> 和 <code>Sync</code> 是不安全的</strong>，<br>通常并不需要手动实现 Send 和 Sync trait，<br>实现者需要使用<code>unsafe</code>小心维护并发安全保证</p>
+<h3 id="为裸指针实现Send"><a href="#为裸指针实现Send" class="headerlink" title="为裸指针实现Send"></a>为裸指针实现Send</h3><pre class="highlight"><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MyBox</span>(*<span class="keyword">mut</span> <span class="type">u8</span>);<span class="comment">//newtype</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unsafe</span> <span class="keyword">impl</span> <span class="title class_">Send</span> <span class="keyword">for</span> <span class="title class_">MyBox</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = <span class="title function_ invoke__">MyBox</span>(<span class="number">5</span> <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,p);</span><br><span class="line">    &#125;);</span><br><span class="line">    t.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre>
 
-<h2 id="单元结构体"><a href="#单元结构体" class="headerlink" title="单元结构体"></a>单元结构体</h2><pre class="highlight"><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span>;</span><br></pre>
+<h3 id="为裸指针实现Sync"><a href="#为裸指针实现Sync" class="headerlink" title="为裸指针实现Sync"></a>为裸指针实现Sync</h3><pre class="highlight"><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::sync::Arc;</span><br><span class="line"><span class="keyword">use</span> std::sync::Mutex;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MyBox</span>(*<span class="keyword">const</span> <span class="type">u8</span>);</span><br><span class="line"><span class="keyword">unsafe</span> <span class="keyword">impl</span> <span class="title class_">Send</span> <span class="keyword">for</span> <span class="title class_">MyBox</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsafe</span> <span class="keyword">impl</span> <span class="title class_">Sync</span> <span class="keyword">for</span> <span class="title class_">MyBox</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = &amp;<span class="title function_ invoke__">MyBox</span>(<span class="number">5</span> <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span> = Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(b));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">_v1</span> =  v.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">    t.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br></pre>
 
-<h1 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h1><pre class="highlight"><span class="line"><span class="keyword">enum</span> <span class="title class_">Stu</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">Age</span>(<span class="type">i32</span>),</span><br><span class="line">    <span class="title function_ invoke__">Name</span>(<span class="type">String</span>),</span><br><span class="line">    TTK,</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">age</span>=Stu::<span class="title function_ invoke__">Age</span>(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">name</span>=Stu::<span class="title function_ invoke__">Name</span>(<span class="string">&quot;ciallo world&quot;</span>.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ttk</span>=Stu::TTK;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">print_stu</span>=|e|&#123;</span><br><span class="line">        <span class="keyword">match</span> e &#123;</span><br><span class="line">            Stu::<span class="title function_ invoke__">Age</span>(i)=&gt;<span class="built_in">println!</span>(<span class="string">&quot;age:&#123;&#125;&quot;</span>,i),</span><br><span class="line">            Stu::<span class="title function_ invoke__">Name</span>(name)=&gt;<span class="built_in">println!</span>(<span class="string">&quot;name:&#123;&#125;&quot;</span>,name),</span><br><span class="line">            Stu::TTK=&gt;<span class="built_in">println!</span>(<span class="string">&quot;TTK yizimo yizimo TTK&quot;</span>),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="title function_ invoke__">print_stu</span>(age);</span><br><span class="line">    <span class="title function_ invoke__">print_stu</span>(name);</span><br><span class="line">    <span class="title function_ invoke__">print_stu</span>(ttk);</span><br><span class="line">&#125;</span><br></pre>
-
-<h2 id="Option枚举"><a href="#Option枚举" class="headerlink" title="Option枚举"></a>Option枚举</h2><pre class="highlight"><span class="line"><span class="keyword">enum</span> <span class="title class_">Option</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(T),</span><br><span class="line">    <span class="literal">None</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
-
-<h2 id="Result枚举"><a href="#Result枚举" class="headerlink" title="Result枚举"></a>Result枚举</h2><pre class="highlight"><span class="line"><span class="keyword">enum</span> <span class="title class_">Result</span>&lt;T,E&gt;&#123;</span><br><span class="line">    <span class="title function_ invoke__">ok</span>(T),</span><br><span class="line">    <span class="title function_ invoke__">Error</span>(E),</span><br><span class="line">&#125;</span><br></pre>
-
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>实现<code>Send</code>的类型可以在线程间安全的传递其所有权, 实现<code>Sync</code>的类型可以在线程间安全的共享(通过引用)</li>
+<li>绝大部分类型都实现了<code>Send</code>和<code>Sync</code>，常见的未实现的有：裸指针、<code>Cell</code>、<code>RefCell</code>、<code>Rc</code> 等</li>
+<li>可以为自定义类型实现<code>Send</code>和<code>Sync</code>，但是需要<code>unsafe</code>代码块</li>
+<li>可以为部分 Rust 中的类型实现<code>Send</code>、<code>Sync</code>，但是需要使用<code>newtype</code></li>
+</ol>
 
   </div>
   <div>
@@ -449,8 +462,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/08/05/%E7%BB%93%E6%9E%84%E4%BD%93%E5%92%8C%E6%9E%9A%E4%B8%BE/">
-            https://sabakiro.github.io/2023/08/05/%E7%BB%93%E6%9E%84%E4%BD%93%E5%92%8C%E6%9E%9A%E4%B8%BE/
+            href="https://sabakiro.github.io/2023/08/16/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
+            https://sabakiro.github.io/2023/08/16/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -460,29 +473,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/05/%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">流程控制 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/08/05/%E5%85%83%E7%BB%84%E6%95%B0%E7%BB%84/" 
+        href="/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">元组数组 </div>
+            <div class="nav-title">原子类型与内存顺序 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -500,7 +499,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">结构体</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%83%E7%BB%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">元组结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%85%83%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">单元结构体</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE"><span class="toc-text">枚举</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Option%E6%9E%9A%E4%B8%BE"><span class="toc-text">Option枚举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Result%E6%9E%9A%E4%B8%BE"><span class="toc-text">Result枚举</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Send-%E5%92%8C-Sync"><span class="toc-text">Send 和 Sync</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8"><span class="toc-text">作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RwLock%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">RwLock的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mutex%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">Mutex的实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0Send"><span class="toc-text">实现Send</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E4%B8%BA%E5%AE%9E%E7%8E%B0Send%E5%92%8CSync%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-text">常见的为实现Send和Sync的类型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E8%A3%B8%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0Send"><span class="toc-text">为裸指针实现Send</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E8%A3%B8%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0Sync"><span class="toc-text">为裸指针实现Sync</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -514,7 +513,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">结构体</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">所有权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%83%E7%BB%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">元组结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%85%83%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">单元结构体</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE"><span class="toc-text">枚举</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Option%E6%9E%9A%E4%B8%BE"><span class="toc-text">Option枚举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Result%E6%9E%9A%E4%B8%BE"><span class="toc-text">Result枚举</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Send-%E5%92%8C-Sync"><span class="toc-text">Send 和 Sync</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8"><span class="toc-text">作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RwLock%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">RwLock的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mutex%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">Mutex的实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0Send"><span class="toc-text">实现Send</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E4%B8%BA%E5%AE%9E%E7%8E%B0Send%E5%92%8CSync%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-text">常见的为实现Send和Sync的类型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E8%A3%B8%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0Send"><span class="toc-text">为裸指针实现Send</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E8%A3%B8%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0Sync"><span class="toc-text">为裸指针实现Sync</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
     </article>
   
   
