@@ -45,7 +45,7 @@
         content="2023-08-13">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-13">
+        content="2023-08-21">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -286,7 +286,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>23</span>
+    <span>24</span>
     <span>Posts</span>
   </a>
   <a 
@@ -438,7 +438,7 @@
 
 <h2 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h2><p>条件变量(Condition Variables)经常和 <code>Mutex</code> 一起使用，</p>
 <p>可以让线程挂起，直到某个条件发生后再继续执行</p>
-<pre class="highlight"><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Condvar, Mutex&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     main 线程首先进入 while 循环，调用 wait 方法挂起等待子线程的通知，</span></span><br><span class="line"><span class="comment">     并释放了锁 started</span></span><br><span class="line"><span class="comment">    子线程获取到锁，并将其修改为 true，</span></span><br><span class="line"><span class="comment">    然后调用条件变量的 notify_one 方法来通知主线程继续执行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pair</span> = Arc::<span class="title function_ invoke__">new</span>((Mutex::<span class="title function_ invoke__">new</span>(<span class="literal">false</span>), Condvar::<span class="title function_ invoke__">new</span>()));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pair2</span> = pair.<span class="title function_ invoke__">clone</span>();</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="comment">//2.</span></span><br><span class="line">        <span class="keyword">let</span> (lock, cvar) = &amp;*pair2;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">started</span> = lock.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;changing started&quot;</span>);</span><br><span class="line">        *started = <span class="literal">true</span>;</span><br><span class="line">        cvar.<span class="title function_ invoke__">notify_one</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> (lock, cvar) = &amp;*pair;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">started</span> = lock.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">while</span> !*started &#123;</span><br><span class="line">        <span class="comment">//1.</span></span><br><span class="line">        started = cvar.<span class="title function_ invoke__">wait</span>(started).<span class="title function_ invoke__">unwrap</span>();<span class="comment">//2.挂起</span></span><br><span class="line">        <span class="comment">//4.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;started changed&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Condvar, Mutex&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     main 线程首先进入 while 循环，调用 wait 方法挂起等待子线程的通知，</span></span><br><span class="line"><span class="comment">     并释放了锁 started</span></span><br><span class="line"><span class="comment">    子线程获取到锁，并将其修改为 true，</span></span><br><span class="line"><span class="comment">    然后调用条件变量的 notify_one 方法来通知主线程继续执行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pair</span> = Arc::<span class="title function_ invoke__">new</span>((Mutex::<span class="title function_ invoke__">new</span>(<span class="literal">false</span>), Condvar::<span class="title function_ invoke__">new</span>()));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pair2</span> = pair.<span class="title function_ invoke__">clone</span>();</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="comment">//3.</span></span><br><span class="line">        <span class="keyword">let</span> (lock, cvar) = &amp;*pair2;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">started</span> = lock.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;changing started&quot;</span>);</span><br><span class="line">        *started = <span class="literal">true</span>;</span><br><span class="line">        cvar.<span class="title function_ invoke__">notify_one</span>();<span class="comment">//4唤醒</span></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> (lock, cvar) = &amp;*pair;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">started</span> = lock.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">while</span> !*started &#123;</span><br><span class="line">        <span class="comment">//1.</span></span><br><span class="line">        started = cvar.<span class="title function_ invoke__">wait</span>(started).<span class="title function_ invoke__">unwrap</span>();<span class="comment">//2.挂起</span></span><br><span class="line">        <span class="comment">//5.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;started changed&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
 
 
 
@@ -565,6 +565,11 @@
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-20</div>
+        <a href="/2023/08/20/rust%E7%89%B9%E5%BE%81future%E5%BA%95%E5%B1%82/"><div class="recent-posts-item-content">rust特征future底层</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-20</div>
         <a href="/2023/08/20/rust%E5%BC%82%E6%AD%A5%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">rust异步入门</div></a>
       </div>
     
@@ -576,11 +581,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-16</div>
         <a href="/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/"><div class="recent-posts-item-content">原子类型与内存顺序</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-08-15</div>
-        <a href="/2023/08/15/multipass/"><div class="recent-posts-item-content">multipass</div></a>
       </div>
     
   </div>
