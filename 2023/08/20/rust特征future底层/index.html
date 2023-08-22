@@ -286,7 +286,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>24</span>
+    <span>25</span>
     <span>Posts</span>
   </a>
   <a 
@@ -298,7 +298,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>3</span>
+    <span>4</span>
     <span>Tags</span>
   </a>
 </div>
@@ -345,21 +345,27 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/rust/" 
-        title="rust">
-        <div class="tags-list-item">rust</div>
-      </a>
-    
-      <a 
         href="/tags/c/" 
         title="c#">
         <div class="tags-list-item">c#</div>
       </a>
     
       <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
         href="/tags/linux/" 
         title="linux">
         <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
       </a>
     
   </div>
@@ -428,7 +434,7 @@
         该函数将被调用以通知执行器：我们的 Future 已经准备好了，可以继续执行。
 </code></pre>
 <pre class="highlight"><span class="line"><span class="comment">//SocketRead 结构体就是一个 Future</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">SocketRead</span>&lt;<span class="symbol">&#x27;a</span>&gt; &#123;</span><br><span class="line">    socket: &amp;<span class="symbol">&#x27;a</span> Socket,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">SimpleFuture</span> <span class="keyword">for</span> <span class="title class_">SocketRead</span>&lt;<span class="symbol">&#x27;_</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span> = <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, wake: <span class="title function_ invoke__">fn</span>()) <span class="punctuation">-&gt;</span> Poll&lt;<span class="keyword">Self</span>::Output&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.socket.<span class="title function_ invoke__">has_data_to_read</span>() &#123;</span><br><span class="line">            <span class="comment">// socket有数据，写入buffer中并返回</span></span><br><span class="line">            Poll::<span class="title function_ invoke__">Ready</span>(<span class="keyword">self</span>.socket.<span class="title function_ invoke__">read_buf</span>())</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// socket中还没数据</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 注册一个`wake`函数，当数据可用时，该函数会被调用，</span></span><br><span class="line">            <span class="comment">// 然后当前Future的执行器会再次调用`poll`方法，此时就可以读取到数据</span></span><br><span class="line">            <span class="keyword">self</span>.socket.<span class="title function_ invoke__">set_readable_callback</span>(wake);</span><br><span class="line">            Poll::Pending</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
-<p>这种 Future 模型允许将多个异步操作组合在一起，同时还无需任何内存分配。<br>不仅仅如此，如果需要同时运行多个 Future或链式调用多个 Future ，也可以通过无内存分配的状态机实现，</p>
+<p>这种 Future 模型允许将多个异步操作组合在一起，同时还无需任何内存分配。<br>不仅仅如此，如果需要同时运行多个 Future或链式调用多个 Future ，<br>也可以通过无内存分配的状态机实现，</p>
 <h5 id="同时运行多个future"><a href="#同时运行多个future" class="headerlink" title="同时运行多个future"></a>同时运行多个<code>future</code></h5><pre class="highlight"><span class="line"><span class="keyword">trait</span> <span class="title class_">SimpleFuture</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, wake: <span class="title function_ invoke__">fn</span>()) <span class="punctuation">-&gt;</span> Poll&lt;<span class="keyword">Self</span>::Output&gt;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Poll</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Ready</span>(T),</span><br><span class="line">    Pending,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 一个SimpleFuture，它会并发地运行两个Future直到它们完成</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 之所以可以并发，是因为两个Future的轮询可以交替进行，一个阻塞，另一个就可以立刻执行，反之亦然</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Join</span>&lt;FutureA, FutureB&gt; &#123;</span><br><span class="line">    <span class="comment">// 结构体的每个字段都包含一个Future，可以运行直到完成.</span></span><br><span class="line">    <span class="comment">// 等到Future完成后，字段会被设置为 `None`. 这样Future完成后，就不会再被轮询</span></span><br><span class="line">    a: <span class="type">Option</span>&lt;FutureA&gt;,</span><br><span class="line">    b: <span class="type">Option</span>&lt;FutureB&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;FutureA, FutureB&gt; SimpleFuture <span class="keyword">for</span> <span class="title class_">Join</span>&lt;FutureA, FutureB&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    FutureA: SimpleFuture&lt;Output = ()&gt;,</span><br><span class="line">    FutureB: SimpleFuture&lt;Output = ()&gt;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span> = ();</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, wake: <span class="title function_ invoke__">fn</span>()) <span class="punctuation">-&gt;</span> Poll&lt;<span class="keyword">Self</span>::Output&gt; &#123;</span><br><span class="line">        <span class="comment">// 尝试去完成一个 Future `a`</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(a) = &amp;<span class="keyword">mut</span> <span class="keyword">self</span>.a &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Poll</span>::<span class="title function_ invoke__">Ready</span>(()) = a.<span class="title function_ invoke__">poll</span>(wake) &#123;</span><br><span class="line">                <span class="keyword">self</span>.a.<span class="title function_ invoke__">take</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 尝试去完成一个 Future `b`</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(b) = &amp;<span class="keyword">mut</span> <span class="keyword">self</span>.b &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Poll</span>::<span class="title function_ invoke__">Ready</span>(()) = b.<span class="title function_ invoke__">poll</span>(wake) &#123;</span><br><span class="line">                <span class="keyword">self</span>.b.<span class="title function_ invoke__">take</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.a.<span class="title function_ invoke__">is_none</span>() &amp;&amp; <span class="keyword">self</span>.b.<span class="title function_ invoke__">is_none</span>() &#123;</span><br><span class="line">            <span class="comment">// 两个 Future都已完成 - 我们可以成功地返回了</span></span><br><span class="line">            Poll::<span class="title function_ invoke__">Ready</span>(())</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 至少还有一个 Future 没有完成任务，因此返回 `Poll::Pending`.</span></span><br><span class="line">            <span class="comment">// 当该 Future 再次准备好时，通过调用`wake()`函数来继续执行</span></span><br><span class="line">            Poll::Pending</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
 <h5 id="多个Future一个接一个的连续运行"><a href="#多个Future一个接一个的连续运行" class="headerlink" title="多个Future一个接一个的连续运行"></a>多个Future<code>一个接一个的连续运行</code></h5><pre class="highlight"><span class="line"><span class="comment">/// 一个SimpleFuture, 它使用顺序的方式，一个接一个地运行两个Future</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// 注意: 由于本例子用于演示，因此功能简单，`AndThenFut` 会假设两个 Future 在创建时就可用了.</span></span><br><span class="line"><span class="comment">// 而真实的`Andthen`允许根据第一个`Future`的输出来创建第二个`Future`，因此复杂的多。</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">AndThenFut</span>&lt;FutureA, FutureB&gt; &#123;</span><br><span class="line">    first: <span class="type">Option</span>&lt;FutureA&gt;,</span><br><span class="line">    second: FutureB,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;FutureA, FutureB&gt; SimpleFuture <span class="keyword">for</span> <span class="title class_">AndThenFut</span>&lt;FutureA, FutureB&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    FutureA: SimpleFuture&lt;Output = ()&gt;,</span><br><span class="line">    FutureB: SimpleFuture&lt;Output = ()&gt;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span> = ();</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, wake: <span class="title function_ invoke__">fn</span>()) <span class="punctuation">-&gt;</span> Poll&lt;<span class="keyword">Self</span>::Output&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(first) = &amp;<span class="keyword">mut</span> <span class="keyword">self</span>.first &#123;</span><br><span class="line">            <span class="keyword">match</span> first.<span class="title function_ invoke__">poll</span>(wake) &#123;</span><br><span class="line">                <span class="comment">// 我们已经完成了第一个 Future， 可以将它移除， 然后准备开始运行第二个</span></span><br><span class="line">                Poll::<span class="title function_ invoke__">Ready</span>(()) =&gt; <span class="keyword">self</span>.first.<span class="title function_ invoke__">take</span>(),</span><br><span class="line">                <span class="comment">// 第一个 Future 还不能完成</span></span><br><span class="line">                Poll::Pending =&gt; <span class="keyword">return</span> Poll::Pending,</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 运行到这里，说明第一个Future已经完成，尝试去完成第二个</span></span><br><span class="line">        <span class="keyword">self</span>.second.<span class="title function_ invoke__">poll</span>(wake)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
 <h2 id="真实的-Future-特征"><a href="#真实的-Future-特征" class="headerlink" title="真实的 Future 特征"></a>真实的 Future 特征</h2><pre class="highlight"><span class="line"><span class="keyword">trait</span> <span class="title class_">Future</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(</span><br><span class="line">        <span class="comment">// 首先值得注意的地方是，`self`的类型从`&amp;mut self`变成了`Pin&lt;&amp;mut Self&gt;`:</span></span><br><span class="line">        <span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;,<span class="comment">//创建一个无法被移动的 Future</span></span><br><span class="line">        <span class="comment">// 其次将`wake: fn()` 修改为 `cx: &amp;mut Context&lt;&#x27;_&gt;`:</span></span><br><span class="line">        cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;,</span><br><span class="line">        <span class="comment">//从 wake: fn() 变成了 &amp;mut Context&lt;&#x27;_&gt; 。意味着 wake 函数可以携带数据了</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">//在正式场景要进行 wake ，就必须携带上数据。 </span></span><br><span class="line">		<span class="comment">//而 Context 类型通过提供一个 Waker 类型的值，就可以用来唤醒特定的的任务</span></span><br><span class="line">    ) <span class="punctuation">-&gt;</span> Poll&lt;<span class="keyword">Self</span>::Output&gt;;</span><br><span class="line">&#125;</span><br></pre>
@@ -477,6 +483,20 @@
   </div>
 </article>
 <div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/08/21/Gpm%E6%A8%A1%E5%9E%8B/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">Prev</div>
+          
+            <div class="nav-title">Gpm模型 </div>
+          
+        </div>
+      </a>
+    </div>
   
   
     <div class="nav-item-next">
@@ -533,6 +553,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-21</div>
+        <a href="/2023/08/21/Gpm%E6%A8%A1%E5%9E%8B/"><div class="recent-posts-item-content">Gpm模型</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-20</div>
         <a href="/2023/08/20/rust%E7%89%B9%E5%BE%81future%E5%BA%95%E5%B1%82/"><div class="recent-posts-item-content">rust特征future底层</div></a>
       </div>
@@ -545,11 +570,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-16</div>
         <a href="/2023/08/16/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/"><div class="recent-posts-item-content">线程安全</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-08-16</div>
-        <a href="/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/"><div class="recent-posts-item-content">原子类型与内存顺序</div></a>
       </div>
     
   </div>
