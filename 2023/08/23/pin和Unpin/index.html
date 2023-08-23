@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>pin和Unpin</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="pin和Unpin">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/23/pin%E5%92%8CUnpin/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-23">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-23">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>26</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>4</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Unpin"><span class="toc-text">Unpin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pin"><span class="toc-text">pin</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%80%BC%E5%9B%BA%E5%AE%9A%E5%88%B0%E6%A0%88%E4%B8%8A"><span class="toc-text">将值固定到栈上</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E5%9C%A8%E5%A0%86%E4%B8%8A"><span class="toc-text">固定在堆上</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%9B%BA%E5%AE%9A%E7%9A%84Future%E5%8F%98%E4%B8%BAUnpin"><span class="toc-text">将固定的Future变为Unpin</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      pin和Unpin
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-23T02:02:30.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-23</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.2k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="Unpin"><a href="#Unpin" class="headerlink" title="Unpin"></a>Unpin</h2><p>绝大多数类型都不在意是否被移动，<br>因此它们都自动实现了 Unpin 特征。</p>
+<pre class="highlight"><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Pin</span>&lt;P&gt; &#123;</span><br><span class="line">    pointer: P,</span><br><span class="line">&#125;</span><br></pre>
+<p>它包裹一个指针，并且能确保该指针指向的数据不会被移动</p>
+<ol>
+<li><code>Unpin</code> 才是一个特征，它表明一个类型可以随意被移动</li>
+<li>可以被 Pin 住的值实现的特征是 <code>!Unpin</code></li>
+<li>类型如果实现了 Unpin 特征，还是可以 Pin 的，<br>毕竟它只是一个结构体，可以随意使用，<br>但是不再有任何效果而已，该值一样可以被移动！<br>例如 Pin&lt;&amp;mut u8&gt; ，显然 u8 实现了 Unpin 特征，<br>它可以在内存中被移动，</li>
+<li>一个类型如果<code>不能被移动</code>，它必须实现 <code>!Unpin</code> 特征</li>
+</ol>
+<h2 id="pin"><a href="#pin" class="headerlink" title="pin"></a>pin</h2><h4 id="将值固定到栈上"><a href="#将值固定到栈上" class="headerlink" title="将值固定到栈上"></a>将值固定到栈上</h4><pre class="highlight"><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::marker::PhantomPinned;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    a: <span class="type">String</span>,</span><br><span class="line">    b: *<span class="keyword">const</span> <span class="type">String</span>,</span><br><span class="line">    _marker: PhantomPinned,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>(txt: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        Test &#123;</span><br><span class="line">            a: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(txt),</span><br><span class="line">            b: std::ptr::<span class="title function_ invoke__">null</span>(),</span><br><span class="line">            _marker: PhantomPinned, <span class="comment">// 这个标记可以让我们的类型自动实现特征`!Unpin`</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">init</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;) &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">self_ptr</span>: *<span class="keyword">const</span> <span class="type">String</span> = &amp;<span class="keyword">self</span>.a;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">this</span> = <span class="keyword">unsafe</span> &#123; <span class="keyword">self</span>.<span class="title function_ invoke__">get_unchecked_mut</span>() &#125;;</span><br><span class="line">        this.b = self_ptr;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">a</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">Self</span>&gt;) <span class="punctuation">-&gt;</span> &amp;<span class="type">str</span> &#123;</span><br><span class="line">        &amp;<span class="keyword">self</span>.<span class="title function_ invoke__">get_ref</span>().a</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">b</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">Self</span>&gt;) <span class="punctuation">-&gt;</span> &amp;<span class="type">String</span> &#123;</span><br><span class="line">        <span class="built_in">assert!</span>(!<span class="keyword">self</span>.b.<span class="title function_ invoke__">is_null</span>(), <span class="string">&quot;Test::b called without Test::init being called first&quot;</span>);</span><br><span class="line">        <span class="keyword">unsafe</span> &#123; &amp;*(<span class="keyword">self</span>.b) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// 此时的`test1`可以被安全的移动</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">test1</span> = Test::<span class="title function_ invoke__">new</span>(<span class="string">&quot;test1&quot;</span>);</span><br><span class="line">    <span class="comment">// 新的`test1`由于使用了`Pin`，因此无法再被移动，这里的声明会将之前的`test1`遮蔽掉(shadow)</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">test1</span> = <span class="keyword">unsafe</span> &#123; Pin::<span class="title function_ invoke__">new_unchecked</span>(&amp;<span class="keyword">mut</span> test1) &#125;;</span><br><span class="line">    Test::<span class="title function_ invoke__">init</span>(test1.<span class="title function_ invoke__">as_mut</span>());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">test2</span> = Test::<span class="title function_ invoke__">new</span>(<span class="string">&quot;test2&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">test2</span> = <span class="keyword">unsafe</span> &#123; Pin::<span class="title function_ invoke__">new_unchecked</span>(&amp;<span class="keyword">mut</span> test2) &#125;;</span><br><span class="line">    Test::<span class="title function_ invoke__">init</span>(test2.<span class="title function_ invoke__">as_mut</span>());</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a: &#123;&#125;, b: &#123;&#125;&quot;</span>, Test::<span class="title function_ invoke__">a</span>(test1.<span class="title function_ invoke__">as_ref</span>()), Test::<span class="title function_ invoke__">b</span>(test1.<span class="title function_ invoke__">as_ref</span>()));</span><br><span class="line">    <span class="comment">// std::mem::swap(test1.get_mut(), test2.get_mut());//error</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a: &#123;&#125;, b: &#123;&#125;&quot;</span>, Test::<span class="title function_ invoke__">a</span>(test2.<span class="title function_ invoke__">as_ref</span>()), Test::<span class="title function_ invoke__">b</span>(test2.<span class="title function_ invoke__">as_ref</span>()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+<h4 id="固定在堆上"><a href="#固定在堆上" class="headerlink" title="固定在堆上"></a>固定在堆上</h4><p>将一个 !Unpin 类型的值固定到堆上，会给予该值一个稳定的内存地址，<br>它指向的堆中的值在 Pin 后是无法被移动的。而且与固定在栈上不同，<br>堆上的值在整个生命周期内都会被稳稳地固定住。</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::marker::PhantomPinned;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    a: <span class="type">String</span>,</span><br><span class="line">    b: *<span class="keyword">const</span> <span class="type">String</span>,</span><br><span class="line">    _marker: PhantomPinned,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>(txt: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> Pin&lt;<span class="type">Box</span>&lt;<span class="keyword">Self</span>&gt;&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t</span> = Test &#123;</span><br><span class="line">            a: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(txt),</span><br><span class="line">            b: std::ptr::<span class="title function_ invoke__">null</span>(),</span><br><span class="line">            _marker: PhantomPinned,</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">boxed</span> = <span class="type">Box</span>::<span class="title function_ invoke__">pin</span>(t);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">self_ptr</span>: *<span class="keyword">const</span> <span class="type">String</span> = &amp;boxed.<span class="title function_ invoke__">as_ref</span>().a;</span><br><span class="line">        <span class="keyword">unsafe</span> &#123; boxed.<span class="title function_ invoke__">as_mut</span>().<span class="title function_ invoke__">get_unchecked_mut</span>().b = self_ptr &#125;;</span><br><span class="line"></span><br><span class="line">        boxed</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">a</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">Self</span>&gt;) <span class="punctuation">-&gt;</span> &amp;<span class="type">str</span> &#123;</span><br><span class="line">        &amp;<span class="keyword">self</span>.<span class="title function_ invoke__">get_ref</span>().a</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">b</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">Self</span>&gt;) <span class="punctuation">-&gt;</span> &amp;<span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">unsafe</span> &#123; &amp;*(<span class="keyword">self</span>.b) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">test1</span> = Test::<span class="title function_ invoke__">new</span>(<span class="string">&quot;test1&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">test2</span> = Test::<span class="title function_ invoke__">new</span>(<span class="string">&quot;test2&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a: &#123;&#125;, b: &#123;&#125;&quot;</span>,test1.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">a</span>(), test1.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">b</span>());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a: &#123;&#125;, b: &#123;&#125;&quot;</span>,test2.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">a</span>(), test2.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">b</span>());</span><br><span class="line">&#125;</span><br></pre>
+<h4 id="将固定的Future变为Unpin"><a href="#将固定的Future变为Unpin" class="headerlink" title="将固定的Future变为Unpin"></a>将固定的Future变为Unpin</h4><p>async 函数返回的 Future 默认就是 !Unpin 的<br>一些函数会要求它们处理的 Future 是 Unpin 的，此时，<br>    使用的 Future 是 !Unpin 的，必须要使用以下的方法先将 Future 进行固定:<br>        1. <code>Box::pin</code>，创建一个  <code>Pin&lt;Box&lt;T&gt;&gt;</code><br>        2. <code>pin_utils::pin_mut!</code>， 创建一个 <code>Pin&lt;&amp;mut T&gt;</code><br>固定后获得的 <code>Pin&lt;Box&lt;T&gt;&gt;</code> 和 <code>Pin&lt;&amp;mut T&gt;</code> 既可以用于 <code>Future</code> ，又会自动实现 <code>Unpin</code></p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> pin_utils::pin_mut; <span class="comment">// `pin_utils` 可以在crates.io中找到</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数的参数是一个`Future`，但是要求该`Future`实现`Unpin`</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">execute_unpin_future</span>(x: <span class="keyword">impl</span> <span class="title class_">Future</span>&lt;Output = ()&gt; + Unpin) &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">fut</span> = <span class="keyword">async</span> &#123; <span class="comment">/* ... */</span> &#125;;</span><br><span class="line"><span class="comment">// 下面代码报错: 默认情况下，`fut` 实现的是`!Unpin`，并没有实现`Unpin`</span></span><br><span class="line"><span class="comment">// execute_unpin_future(fut);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用`Box`进行固定</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">fut</span> = <span class="keyword">async</span> &#123; <span class="comment">/* ... */</span> &#125;;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">fut</span> = <span class="type">Box</span>::<span class="title function_ invoke__">pin</span>(fut);</span><br><span class="line"><span class="title function_ invoke__">execute_unpin_future</span>(fut); <span class="comment">// OK</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用`pin_mut!`进行固定</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">fut</span> = <span class="keyword">async</span> &#123; <span class="comment">/* ... */</span> &#125;;</span><br><span class="line">pin_mut!(fut);</span><br><span class="line"><span class="title function_ invoke__">execute_unpin_future</span>(fut); <span class="comment">// OK</span></span><br></pre>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>若 T: Unpin ( Rust 类型的默认实现)，那么 Pin&lt;’a, T&gt; 跟 &amp;’a mut T 完全相同，也就是 Pin 将没有任何效果, 该移动还是照常移动</li>
+<li>绝大多数标准库类型都实现了 Unpin ，事实上，对于 Rust 中你能遇到的绝大多数类型，该结论依然成立 ，其中一个例外就是：async&#x2F;await 生成的 Future 没有实现 Unpin</li>
+<li>可以通过以下方法为自己的类型添加 !Unpin 约束：<br> 使用文中提到的 std::marker::PhantomPinned，<br> 可以将值固定到栈上，也可以固定到堆上。<br> 将 !Unpin 值固定到栈上需要使用 unsafe<br> 将 !Unpin 值固定到堆上无需 unsafe ，可以通过 Box::pin 来简单的实现</li>
+<li>当固定类型 T: !Unpin 时，需要保证数据从被固定到被 drop 这段时期内，<br> 其内存不会变得非法或者被重用</li>
+</ol>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/23/pin%E5%92%8CUnpin/">
+            https://sabakiro.github.io/2023/08/23/pin%E5%92%8CUnpin/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/21/Gpm%E6%A8%A1%E5%9E%8B/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">Gpm模型 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Unpin"><span class="toc-text">Unpin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pin"><span class="toc-text">pin</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%80%BC%E5%9B%BA%E5%AE%9A%E5%88%B0%E6%A0%88%E4%B8%8A"><span class="toc-text">将值固定到栈上</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E5%9C%A8%E5%A0%86%E4%B8%8A"><span class="toc-text">固定在堆上</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%9B%BA%E5%AE%9A%E7%9A%84Future%E5%8F%98%E4%B8%BAUnpin"><span class="toc-text">将固定的Future变为Unpin</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Unpin"><span class="toc-text">Unpin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pin"><span class="toc-text">pin</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%80%BC%E5%9B%BA%E5%AE%9A%E5%88%B0%E6%A0%88%E4%B8%8A"><span class="toc-text">将值固定到栈上</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E5%9C%A8%E5%A0%86%E4%B8%8A"><span class="toc-text">固定在堆上</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%9B%BA%E5%AE%9A%E7%9A%84Future%E5%8F%98%E4%B8%BAUnpin"><span class="toc-text">将固定的Future变为Unpin</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-23</div>
+        <a href="/2023/08/23/pin%E5%92%8CUnpin/"><div class="recent-posts-item-content">pin和Unpin</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-21</div>
+        <a href="/2023/08/21/Gpm%E6%A8%A1%E5%9E%8B/"><div class="recent-posts-item-content">Gpm模型</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-20</div>
+        <a href="/2023/08/20/rust%E7%89%B9%E5%BE%81future%E5%BA%95%E5%B1%82/"><div class="recent-posts-item-content">rust特征future底层</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-20</div>
+        <a href="/2023/08/20/rust%E5%BC%82%E6%AD%A5%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">rust异步入门</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
