@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>async/await和stream流处理</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="async/await和stream流处理">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/23/async-await%E5%92%8Cstream%E6%B5%81%E5%A4%84%E7%90%86/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-23">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-23">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>27</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>4</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#async%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">async的生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#async-move"><span class="toc-text">async move</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%93-await-%E9%81%87%E8%A7%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-text">当.await 遇见多线程执行器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stream%E6%B5%81%E5%A4%84%E7%90%86"><span class="toc-text">stream流处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%92%8C%E5%B9%B6%E5%8F%91"><span class="toc-text">迭代和并发</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      async/await和stream流处理
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-23T02:59:35.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-23</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.6k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p><code>async/.await</code> 是 Rust 语法的一部分，<br>它在遇到阻塞操作时( 例如 IO )会<code>让出当前线程的所有权</code><br>而<code>不是阻塞当前线程</code>，<br>这样就允许当前线程继续去执行其它代码，最终实现并发。</p>
+<h2 id="async的生命周期"><a href="#async的生命周期" class="headerlink" title="async的生命周期"></a>async的生命周期</h2><p>async fn 函数如果<code>拥有引用类型的参数</code>，<br>那它返回的 Future 的生命周期就会被这些参数的<code>生命周期所限制</code>:</p>
+<p>async fn 函数返回的 Future 必须满足以下条件:<br>    当 x 依然有效时， 该 Future 就必须继续等待( .await ),<br>        也就是说 x 必须比 Future 活得更久</p>
+<pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">在一般情况下，在函数调用后就立即 .await 不会存在任何问题，</span></span><br><span class="line"><span class="comment">例如foo(&amp;x).await。</span></span><br><span class="line"><span class="comment">但是，若 Future 被先存起来或发送到另一个任务或者线程，</span></span><br><span class="line"><span class="comment">就可能存在问题了</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">bad</span>() <span class="punctuation">-&gt;</span> <span class="keyword">impl</span> <span class="title class_">Future</span>&lt;Output = <span class="type">u8</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">5</span>;</span><br><span class="line">    <span class="title function_ invoke__">borrow_x</span>(&amp;x) <span class="comment">// ERROR: `x` does not live long enough</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">borrow_x</span>(x: &amp;<span class="type">u8</span>) <span class="punctuation">-&gt;</span> <span class="type">u8</span> &#123; *x &#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">一个常用的解决方法就是</span></span><br><span class="line"><span class="comment">将具有引用参数的 async fn 函数转变成</span></span><br><span class="line"><span class="comment">一个具有 &#x27;static 生命周期的 Future</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">borrow_x</span>(x: &amp;<span class="type">u8</span>) <span class="punctuation">-&gt;</span> <span class="type">u8</span> &#123; *x &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">good</span>() <span class="punctuation">-&gt;</span> <span class="keyword">impl</span> <span class="title class_">Future</span>&lt;Output = <span class="type">u8</span>&gt; &#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">通过将参数移动到 async 语句块内，</span></span><br><span class="line"><span class="comment">将它的生命周期扩展到 &#x27;static，</span></span><br><span class="line"><span class="comment">并跟返回的 Future 保持了一致。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    <span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">5</span>;</span><br><span class="line">        <span class="title function_ invoke__">borrow_x</span>(&amp;x).<span class="keyword">await</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h2 id="async-move"><a href="#async-move" class="headerlink" title="async move"></a>async move</h2><p>async 允许我们使用 move 关键字来将环境中变量的所有权转移到语句块内，<br>就像闭包那样，<br>好处是你不再发愁该如何解决借用生命周期的问题，<br>坏处就是无法跟其它代码实现对变量的共享</p>
+<pre class="highlight"><span class="line"><span class="comment">// 多个不同的 `async` 语句块可以访问同一个本地变量，</span></span><br><span class="line"><span class="comment">//只要它们在该变量的作用域内执行</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">blocks</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">my_string</span> = <span class="string">&quot;foo&quot;</span>.<span class="title function_ invoke__">to_string</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">future_one</span> = <span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;my_string&#125;&quot;</span>);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">future_two</span> = <span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;my_string&#125;&quot;</span>);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 运行两个 Future 直到完成</span></span><br><span class="line">    <span class="keyword">let</span> ((), ()) = futures::join!(future_one, future_two);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//-------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">// 由于 `async move` 会捕获环境中的变量，</span></span><br><span class="line"><span class="comment">//因此只有一个 `async move` 语句块可以访问该变量，</span></span><br><span class="line"><span class="comment">// 但是它也有非常明显的好处： 变量可以转移到返回的 Future 中，</span></span><br><span class="line"><span class="comment">//不再受借用生命周期的限制</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">move_block</span>() <span class="punctuation">-&gt;</span> <span class="keyword">impl</span> <span class="title class_">Future</span>&lt;Output = ()&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">my_string</span> = <span class="string">&quot;foo&quot;</span>.<span class="title function_ invoke__">to_string</span>();</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">move</span> &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;my_string&#125;&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h2 id="当-await-遇见多线程执行器"><a href="#当-await-遇见多线程执行器" class="headerlink" title="当.await 遇见多线程执行器"></a>当.await 遇见多线程执行器</h2><p>当使用多线程 Future 执行器( executor )时，<br>Future 可能会在线程间被移动，<br>因此 async 语句块中的变量必须要能在线程间传递。</p>
+<p>至于 Future 会在线程间移动的原因是：<br>它内部的任何.await都可能导致它被切换到一个新线程上去执行。</p>
+<p>由于需要在多线程环境使用，<br>意味着 Rc、 RefCell 、没有实现 Send 的所有权类型、没有实现 Sync 的引用类型，<br>它们都是不安全的，因此无法被使用</p>
+<p>需要注意！实际上它们还是有可能被使用的，<br>只要在 .await 调用期间，它们没有在作用域范围内。</p>
+<p>类似的原因，在 .await 时使用普通的锁也不安全，例如 Mutex 。<br>原因是，它可能会导致线程池被锁：当一个任务获取锁 A 后，<br>若它将线程的控制权还给执行器，然后执行器又调度运行另一个任务，<br>该任务也去尝试获取了锁 A ，结果当前线程会直接卡死，最终陷入死锁中。<br>因此，为了避免这种情况的发生，<br>需要使用 futures 包下的锁 futures::lock 来替代 Mutex 完成任务。</p>
+<h2 id="stream流处理"><a href="#stream流处理" class="headerlink" title="stream流处理"></a>stream流处理</h2><p>在完成前可以生成多个值，这种行为跟标准库中的 Iterator 特征倒是颇为相似</p>
+<pre class="highlight"><span class="line"><span class="keyword">trait</span> <span class="title class_">Stream</span> &#123;</span><br><span class="line">    <span class="comment">// Stream生成的值的类型</span></span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 尝试去解析Stream中的下一个值,</span></span><br><span class="line">    <span class="comment">// 若无数据，返回`Poll::Pending`, 若有数据，</span></span><br><span class="line">    <span class="comment">//返回 `Poll::Ready(Some(x))`, `Stream`完成则返回 `Poll::Ready(None)`</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll_next</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;)</span><br><span class="line">        <span class="punctuation">-&gt;</span> Poll&lt;<span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt;&gt;;</span><br><span class="line">&#125;</span><br></pre>
+<p>关于 Stream 的一个常见例子是消息通道（ futures 包中的）的消费者 Receiver。<br>每次有消息从 Send 端发送后，它都可以接收到一个 Some(val) 值，<br>一旦 Send 端关闭( drop )，且消息通道中没有消息后，它会接收到一个 None 值。</p>
+<pre class="highlight"><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">send_recv</span>() &#123;</span><br><span class="line">    <span class="keyword">const</span> BUFFER_SIZE: <span class="type">usize</span> = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">let</span> (<span class="keyword">mut</span> tx, <span class="keyword">mut</span> rx) = mpsc::channel::&lt;<span class="type">i32</span>&gt;(BUFFER_SIZE);</span><br><span class="line"></span><br><span class="line">    tx.<span class="title function_ invoke__">send</span>(<span class="number">1</span>).<span class="keyword">await</span>.<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    tx.<span class="title function_ invoke__">send</span>(<span class="number">2</span>).<span class="keyword">await</span>.<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="title function_ invoke__">drop</span>(tx);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// `StreamExt::next` 类似于 `Iterator::next`, </span></span><br><span class="line">    <span class="comment">//但是前者返回的不是值，而是一个 `Future&lt;Output = Option&lt;T&gt;&gt;`，</span></span><br><span class="line">    <span class="comment">// 因此还需要使用`.await`来获取具体的值</span></span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="title function_ invoke__">Some</span>(<span class="number">1</span>), rx.<span class="title function_ invoke__">next</span>().<span class="keyword">await</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="title function_ invoke__">Some</span>(<span class="number">2</span>), rx.<span class="title function_ invoke__">next</span>().<span class="keyword">await</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="literal">None</span>, rx.<span class="title function_ invoke__">next</span>().<span class="keyword">await</span>);</span><br><span class="line">&#125;</span><br></pre>
+<h4 id="迭代和并发"><a href="#迭代和并发" class="headerlink" title="迭代和并发"></a>迭代和并发</h4><p>跟迭代器类似，可以迭代一个 Stream。<br>例如使用 map，filter，fold 方法，<br>以及它们的遇到错误提前返回的版本： try_map，try_filter，try_fold。</p>
+<p>但是跟迭代器又有所不同，for 循环无法在这里使用，<br>但是命令式风格的循环while let是可以用的，<br>同时还可以使用next 和 try_next 方法:</p>
+<pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">一次处理一个值的模式，但是需要注意的是：</span></span><br><span class="line"><span class="comment">如果选择一次处理一个值的模式，可能会造成无法并发，</span></span><br><span class="line"><span class="comment">这就失去了异步编程的意义</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">sum_with_next</span>(<span class="keyword">mut</span> stream: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">dyn</span> Stream&lt;Item = <span class="type">i32</span>&gt;&gt;) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    <span class="keyword">use</span> futures::stream::StreamExt; <span class="comment">// 引入 next</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">sum</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(item) = stream.<span class="title function_ invoke__">next</span>().<span class="keyword">await</span> &#123;</span><br><span class="line">        sum += item;</span><br><span class="line">    &#125;</span><br><span class="line">    sum</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">sum_with_try_next</span>(</span><br><span class="line">    <span class="keyword">mut</span> stream: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">dyn</span> Stream&lt;Item = <span class="type">Result</span>&lt;<span class="type">i32</span>, io::Error&gt;&gt;&gt;,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">i32</span>, io::Error&gt; &#123;</span><br><span class="line">    <span class="keyword">use</span> futures::stream::TryStreamExt; <span class="comment">// 引入 try_next</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">sum</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(item) = stream.<span class="title function_ invoke__">try_next</span>().<span class="keyword">await</span>? &#123;</span><br><span class="line">        sum += item;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(sum)</span><br><span class="line">&#125;</span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">如果可以的话我们还是要选择从一个 Stream 并发处理多个值的方式，</span></span><br><span class="line"><span class="comment">通过 for_each_concurrent </span></span><br><span class="line"><span class="comment">或 try_for_each_concurrent 方法来实现:*/</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">jump_around</span>(</span><br><span class="line">    <span class="keyword">mut</span> stream: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">dyn</span> Stream&lt;Item = <span class="type">Result</span>&lt;<span class="type">u8</span>, io::Error&gt;&gt;&gt;,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), io::Error&gt; &#123;</span><br><span class="line">    <span class="keyword">use</span> futures::stream::TryStreamExt; <span class="comment">// 引入 `try_for_each_concurrent`</span></span><br><span class="line">    <span class="keyword">const</span> MAX_CONCURRENT_JUMPERS: <span class="type">usize</span> = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">    stream.<span class="title function_ invoke__">try_for_each_concurrent</span>(MAX_CONCURRENT_JUMPERS, |num| <span class="keyword">async</span> <span class="keyword">move</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">jump_n_times</span>(num).<span class="keyword">await</span>?;</span><br><span class="line">        <span class="title function_ invoke__">report_n_jumps</span>(num).<span class="keyword">await</span>?;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">    &#125;).<span class="keyword">await</span>?;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/23/async-await%E5%92%8Cstream%E6%B5%81%E5%A4%84%E7%90%86/">
+            https://sabakiro.github.io/2023/08/23/async-await%E5%92%8Cstream%E6%B5%81%E5%A4%84%E7%90%86/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/23/pin%E5%92%8CUnpin/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">pin和Unpin </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#async%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">async的生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#async-move"><span class="toc-text">async move</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%93-await-%E9%81%87%E8%A7%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-text">当.await 遇见多线程执行器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stream%E6%B5%81%E5%A4%84%E7%90%86"><span class="toc-text">stream流处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%92%8C%E5%B9%B6%E5%8F%91"><span class="toc-text">迭代和并发</span></a></li></ol></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#async%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">async的生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#async-move"><span class="toc-text">async move</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%93-await-%E9%81%87%E8%A7%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-text">当.await 遇见多线程执行器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stream%E6%B5%81%E5%A4%84%E7%90%86"><span class="toc-text">stream流处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%92%8C%E5%B9%B6%E5%8F%91"><span class="toc-text">迭代和并发</span></a></li></ol></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-23</div>
+        <a href="/2023/08/23/async-await%E5%92%8Cstream%E6%B5%81%E5%A4%84%E7%90%86/"><div class="recent-posts-item-content">async/await和stream流处理</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-23</div>
+        <a href="/2023/08/23/pin%E5%92%8CUnpin/"><div class="recent-posts-item-content">pin和Unpin</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-21</div>
+        <a href="/2023/08/21/Gpm%E6%A8%A1%E5%9E%8B/"><div class="recent-posts-item-content">Gpm模型</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-20</div>
+        <a href="/2023/08/20/rust%E7%89%B9%E5%BE%81future%E5%BA%95%E5%B1%82/"><div class="recent-posts-item-content">rust特征future底层</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
