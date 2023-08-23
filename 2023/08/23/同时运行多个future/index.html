@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>同时运行多个future</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="同时运行多个future">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/23/%E5%90%8C%E6%97%B6%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAfuture/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-23">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-23">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>28</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>4</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#join"><span class="toc-text">join!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#try-join"><span class="toc-text">try_join!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select"><span class="toc-text">select!</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#defult%E5%92%8Ccomplete"><span class="toc-text">defult和complete</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%9FUnpin%E5%92%8CFusedFuture%E8%BF%9B%E8%A1%8C%E4%BA%A4%E4%BA%92"><span class="toc-text">跟Unpin和FusedFuture进行交互</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8select%E5%BE%AA%E7%8E%AF%E4%B8%AD%E5%B9%B6%E5%8F%91"><span class="toc-text">在select循环中并发</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-text">注意</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      同时运行多个future
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-23T08:17:08.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-23</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.5k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="join"><a href="#join" class="headerlink" title="join!"></a>join!</h2><pre class="highlight"><span class="line"><span class="keyword">use</span> futures::join;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">enjoy_book_and_music</span>() <span class="punctuation">-&gt;</span> (Book, Music) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">book_fut</span> = <span class="title function_ invoke__">enjoy_book</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">music_fut</span> = <span class="title function_ invoke__">enjoy_music</span>();</span><br><span class="line">    join!(book_fut, music_fut)</span><br><span class="line">&#125;</span><br></pre>
+<p>如果希望同时运行一个数组里的多个异步任务，<br>可以使用 futures::future::join_all 方法</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> futures::executor::block_on;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">A</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">start</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = <span class="title function_ invoke__">A</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = <span class="title function_ invoke__">A</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">future_s</span> = <span class="built_in">vec!</span>[a, b];</span><br><span class="line">    futures::future::<span class="title function_ invoke__">join_all</span>(future_s).<span class="keyword">await</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">block_on</span>(<span class="title function_ invoke__">start</span>());</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+<h2 id="try-join"><a href="#try-join" class="headerlink" title="try_join!"></a>try_join!</h2><p>由于 join! 必须等待它管理的所有 Future 完成后才能完成，<br>如果你希望在某一个 Future 报错后<br>就立即停止所有 Future 的执行，可以使用 try_join!</p>
+<p>有一点需要注意，<br>传给 try_join! 的所有 Future 都必须拥有相同的错误类型。<br>如果错误类型不同，<br>可以考虑使用来自 futures::future::TryFutureExt 模块的<br>map_err 和 err_info 方法将错误进行转换:</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> futures::&#123;</span><br><span class="line">    future::TryFutureExt,</span><br><span class="line">    try_join,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">get_book</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;Book, ()&gt; &#123; <span class="comment">/* ... */</span> <span class="title function_ invoke__">Ok</span>(Book) &#125;</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">get_music</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;Music, <span class="type">String</span>&gt; &#123; <span class="comment">/* ... */</span> <span class="title function_ invoke__">Ok</span>(Music) &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">get_book_and_music</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(Book, Music), <span class="type">String</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">book_fut</span> = <span class="title function_ invoke__">get_book</span>().<span class="title function_ invoke__">map_err</span>(|()| <span class="string">&quot;Unable to get book&quot;</span>.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">music_fut</span> = <span class="title function_ invoke__">get_music</span>();</span><br><span class="line">    try_join!(book_fut, music_fut)</span><br><span class="line">&#125;</span><br></pre>
+<h2 id="select"><a href="#select" class="headerlink" title="select!"></a>select!</h2><p>同时等待多个 Future ，且任何一个 Future 结束后，<br>都可以立即被处理，可以考虑使用 futures::select!:</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> futures::&#123;</span><br><span class="line">    future::FutureExt, <span class="comment">// for `.fuse()`</span></span><br><span class="line">    pin_mut,</span><br><span class="line">    select,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">task_one</span>() &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">task_two</span>() &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">race_tasks</span>() &#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">首先，.fuse() 方法可以让 Future 实现 FusedFuture 特征， </span></span><br><span class="line"><span class="comment">而 pin_mut! 宏会为 Future 实现 Unpin 特征，</span></span><br><span class="line"><span class="comment">这两个特征恰恰是使用 select 所必须的:</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">Unpin，由于 select 不会通过拿走所有权的方式使用 Future，</span></span><br><span class="line"><span class="comment">而是通过可变引用的方式去使用，这样当 select 结束后，</span></span><br><span class="line"><span class="comment">该 Future 若没有被完成，它的所有权还可以继续被其它代码使用。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">FusedFuture 的原因跟上面类似，当 Future 一旦完成后，</span></span><br><span class="line"><span class="comment">那 select 就不能再对其进行轮询使用。</span></span><br><span class="line"><span class="comment">Fuse 意味着熔断，相当于 Future 一旦完成，</span></span><br><span class="line"><span class="comment">再次调用 poll 会直接返回 Poll::Pending。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">只有实现了 FusedFuture，</span></span><br><span class="line"><span class="comment">select 才能配合 loop 一起使用。假如没有实现，</span></span><br><span class="line"><span class="comment">就算一个 Future 已经完成了，它依然会被 select 不停的轮询执行。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t1</span> = <span class="title function_ invoke__">task_one</span>().<span class="title function_ invoke__">fuse</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t2</span> = <span class="title function_ invoke__">task_two</span>().<span class="title function_ invoke__">fuse</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//let foo = Foo &#123; /* ... */ &#125;;</span></span><br><span class="line">    <span class="comment">//pin_mut!(foo);</span></span><br><span class="line">    <span class="comment">//let _: Pin&lt;&amp;mut Foo&gt; = foo;</span></span><br><span class="line">    pin_mut!(t1, t2);</span><br><span class="line">	<span class="comment">//相当于</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">t1</span>=<span class="type">Box</span>::<span class="title function_ invoke__">pin</span>(t1);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">t2</span>=<span class="type">Box</span>::<span class="title function_ invoke__">pin</span>(t2);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">select!</span> &#123;</span><br><span class="line">        () = t1 =&gt; <span class="built_in">println!</span>(<span class="string">&quot;任务1率先完成&quot;</span>),</span><br><span class="line">        () = t2 =&gt; <span class="built_in">println!</span>(<span class="string">&quot;任务2率先完成&quot;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<p>上面的代码会同时并发地运行 t1 和 t2， 无论两者哪个先完成，<br>都会调用对应的 println! 打印相应的输出，<br>然后函数结束且不会等待另一个任务的完成。</p>
+<h4 id="defult和complete"><a href="#defult和complete" class="headerlink" title="defult和complete"></a>defult和complete</h4><p>complete 分支当所有的 Future 和 Stream 完成后才会被执行，<br>    它往往配合 loop 使用，loop 用于循环完成所有的 Future<br>default 分支，若没有任何 Future 或 Stream 处于 Ready 状态，<br>    则该分支会被立即执行</p>
+<h4 id="跟Unpin和FusedFuture进行交互"><a href="#跟Unpin和FusedFuture进行交互" class="headerlink" title="跟Unpin和FusedFuture进行交互"></a>跟Unpin和FusedFuture进行交互</h4><p>Stream 使用的特征是 FusedStream。<br>通过 .fuse()(也可以手动实现)实现了该特征的 Stream，<br>对其调用 .next() 或 .try_next() 方法<br>可以获取实现了 FusedFuture 特征的Future:</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> futures::&#123;</span><br><span class="line">    stream::&#123;Stream, StreamExt, FusedStream&#125;,</span><br><span class="line">    select,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">add_two_streams</span>(</span><br><span class="line">    <span class="keyword">mut</span> s1: <span class="keyword">impl</span> <span class="title class_">Stream</span>&lt;Item = <span class="type">u8</span>&gt; + FusedStream + Unpin,</span><br><span class="line">    <span class="keyword">mut</span> s2: <span class="keyword">impl</span> <span class="title class_">Stream</span>&lt;Item = <span class="type">u8</span>&gt; + FusedStream + Unpin,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">u8</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">total</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">item</span> = <span class="built_in">select!</span> &#123;</span><br><span class="line">            x = s1.<span class="title function_ invoke__">next</span>() =&gt; x,</span><br><span class="line">            x = s2.<span class="title function_ invoke__">next</span>() =&gt; x,</span><br><span class="line">            complete =&gt; <span class="keyword">break</span>,</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(next_num) = item &#123;</span><br><span class="line">            total += next_num;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    total</span><br><span class="line">&#125;</span><br></pre>
+<h2 id="在select循环中并发"><a href="#在select循环中并发" class="headerlink" title="在select循环中并发"></a>在select循环中并发</h2><p>Fuse::terminated() ，可以使用它构建一个空的 Future ，后面再被填充<br>使用场景<br>当你要在 select 循环中运行一个任务，但是该任务却是在 select 循环内部创建</p>
+<pre class="highlight"><span class="line"><span class="comment">//一旦创建新的就终止旧的</span></span><br><span class="line"><span class="keyword">use</span> futures::&#123;</span><br><span class="line">    future::&#123;Fuse, FusedFuture, FutureExt&#125;,</span><br><span class="line">    stream::&#123;FusedStream, Stream, StreamExt&#125;,</span><br><span class="line">    pin_mut,</span><br><span class="line">    select,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">get_new_num</span>() <span class="punctuation">-&gt;</span> <span class="type">u8</span> &#123; <span class="comment">/* ... */</span> <span class="number">5</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">run_on_new_num</span>(_: <span class="type">u8</span>) &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">run_loop</span>(</span><br><span class="line">    <span class="keyword">mut</span> interval_timer: <span class="keyword">impl</span> <span class="title class_">Stream</span>&lt;Item = ()&gt; + FusedStream + Unpin,</span><br><span class="line">    starting_num: <span class="type">u8</span>,</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">run_on_new_num_fut</span> = <span class="title function_ invoke__">run_on_new_num</span>(starting_num).<span class="title function_ invoke__">fuse</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">get_new_num_fut</span> = Fuse::<span class="title function_ invoke__">terminated</span>();</span><br><span class="line">    pin_mut!(run_on_new_num_fut, get_new_num_fut);</span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="built_in">select!</span> &#123;</span><br><span class="line">            () = interval_timer.<span class="title function_ invoke__">select_next_some</span>() =&gt; &#123;</span><br><span class="line">                <span class="comment">// 定时器已结束，若`get_new_num_fut`没有在运行，就创建一个新的</span></span><br><span class="line">                <span class="keyword">if</span> get_new_num_fut.<span class="title function_ invoke__">is_terminated</span>() &#123;</span><br><span class="line">                    get_new_num_fut.<span class="title function_ invoke__">set</span>(<span class="title function_ invoke__">get_new_num</span>().<span class="title function_ invoke__">fuse</span>());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            new_num = get_new_num_fut =&gt; &#123;</span><br><span class="line">                <span class="comment">// 收到新的数字 -- 创建一个新的`run_on_new_num_fut`并丢弃掉旧的</span></span><br><span class="line">                run_on_new_num_fut.<span class="title function_ invoke__">set</span>(<span class="title function_ invoke__">run_on_new_num</span>(new_num).<span class="title function_ invoke__">fuse</span>());</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="comment">// 运行 `run_on_new_num_fut`</span></span><br><span class="line">            () = run_on_new_num_fut =&gt; &#123;&#125;,</span><br><span class="line">            <span class="comment">// 若所有任务都完成，直接 `panic`， </span></span><br><span class="line">            <span class="comment">//原因是 `interval_timer` 应该连续不断的产生值，</span></span><br><span class="line">            <span class="comment">//而不是结束后，执行到 `complete` 分支</span></span><br><span class="line">            complete =&gt; <span class="built_in">panic!</span>(<span class="string">&quot;`interval_timer` completed unexpectedly&quot;</span>),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>当某个 Future 有多个拷贝都需要同时运行时，可以使用 FuturesUnordered 类型</p>
+<pre class="highlight"><span class="line"><span class="comment">//将 run_on_new_num_fut 的每一个拷贝都运行到完成</span></span><br><span class="line"><span class="keyword">use</span> futures::&#123;</span><br><span class="line">    future::&#123;Fuse, FusedFuture, FutureExt&#125;,</span><br><span class="line">    stream::&#123;FusedStream, FuturesUnordered, Stream, StreamExt&#125;,</span><br><span class="line">    pin_mut,</span><br><span class="line">    select,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">get_new_num</span>() <span class="punctuation">-&gt;</span> <span class="type">u8</span> &#123; <span class="comment">/* ... */</span> <span class="number">5</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">run_on_new_num</span>(_: <span class="type">u8</span>) <span class="punctuation">-&gt;</span> <span class="type">u8</span> &#123; <span class="comment">/* ... */</span> <span class="number">5</span> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用从 `get_new_num` 获取的最新数字 来运行 `run_on_new_num`</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// 每当计时器结束后，`get_new_num` 就会运行一次，</span></span><br><span class="line"><span class="comment">//它会立即取消当前正在运行的`run_on_new_num` ,</span></span><br><span class="line"><span class="comment">// 并且使用新返回的值来替换</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">run_loop</span>(</span><br><span class="line">    <span class="keyword">mut</span> interval_timer: <span class="keyword">impl</span> <span class="title class_">Stream</span>&lt;Item = ()&gt; + FusedStream + Unpin,</span><br><span class="line">    starting_num: <span class="type">u8</span>,</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">run_on_new_num_futs</span> = FuturesUnordered::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    run_on_new_num_futs.<span class="title function_ invoke__">push</span>(<span class="title function_ invoke__">run_on_new_num</span>(starting_num));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">get_new_num_fut</span> = Fuse::<span class="title function_ invoke__">terminated</span>();</span><br><span class="line">    pin_mut!(get_new_num_fut);</span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="built_in">select!</span> &#123;</span><br><span class="line">            () = interval_timer.<span class="title function_ invoke__">select_next_some</span>() =&gt; &#123;</span><br><span class="line">                 <span class="comment">// 定时器已结束，若 `get_new_num_fut` 没有在运行，就创建一个新的</span></span><br><span class="line">                <span class="keyword">if</span> get_new_num_fut.<span class="title function_ invoke__">is_terminated</span>() &#123;</span><br><span class="line">                    get_new_num_fut.<span class="title function_ invoke__">set</span>(<span class="title function_ invoke__">get_new_num</span>().<span class="title function_ invoke__">fuse</span>());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            new_num = get_new_num_fut =&gt; &#123;</span><br><span class="line">            <span class="comment">// 收到新的数字 -- </span></span><br><span class="line">            <span class="comment">//创建一个新的 `run_on_new_num_fut` (并没有像之前的例子那样丢弃掉旧值)</span></span><br><span class="line">                run_on_new_num_futs.<span class="title function_ invoke__">push</span>(<span class="title function_ invoke__">run_on_new_num</span>(new_num));</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="comment">// 运行 `run_on_new_num_futs`, 并检查是否有已经完成的</span></span><br><span class="line">            res = run_on_new_num_futs.<span class="title function_ invoke__">select_next_some</span>() =&gt; &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot;run_on_new_num_fut returned &#123;:?&#125;&quot;</span>, res);</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="comment">// 若所有任务都完成，直接 `panic`， </span></span><br><span class="line">            <span class="comment">//原因是 `interval_timer` 应该连续不断的产生值，</span></span><br><span class="line">            <span class="comment">//而不是结束后，执行到 `complete` 分支</span></span><br><span class="line">            complete =&gt; <span class="built_in">panic!</span>(<span class="string">&quot;`interval_timer` completed unexpectedly&quot;</span>),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><p>自变量名&#x2F;路径的future要求其实现Unpin+FusedFuture，<br>对于来自表达式的future可以放宽Unpin的限制</p>
+<pre class="highlight"><span class="line"><span class="comment">// Ok! Unpin+FusedFuture</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">t1</span> = <span class="title function_ invoke__">task_one</span>().<span class="title function_ invoke__">fuse</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">t2</span> = <span class="title function_ invoke__">task_two</span>().<span class="title function_ invoke__">fuse</span>();</span><br><span class="line">pin_mut!(t1, t2);</span><br><span class="line"><span class="built_in">select!</span> &#123;</span><br><span class="line">    () = t1 =&gt; <span class="built_in">println!</span>(<span class="string">&quot;任务1率先完成&quot;</span>),</span><br><span class="line">    () = t2 =&gt; <span class="built_in">println!</span>(<span class="string">&quot;任务2率先完成&quot;</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Ok! only FusedFuture</span></span><br><span class="line"><span class="built_in">select!</span> &#123;</span><br><span class="line">    () = <span class="title function_ invoke__">task_one</span>().<span class="title function_ invoke__">fuse</span>() =&gt; <span class="built_in">println!</span>(<span class="string">&quot;任务1率先完成&quot;</span>),</span><br><span class="line">    () = <span class="title function_ invoke__">task_two</span>().<span class="title function_ invoke__">fuse</span>() =&gt; <span class="built_in">println!</span>(<span class="string">&quot;任务2率先完成&quot;</span>),</span><br><span class="line">&#125;</span><br></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/23/%E5%90%8C%E6%97%B6%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAfuture/">
+            https://sabakiro.github.io/2023/08/23/%E5%90%8C%E6%97%B6%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAfuture/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/23/async-await%E5%92%8Cstream%E6%B5%81%E5%A4%84%E7%90%86/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">async/await和stream流处理 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#join"><span class="toc-text">join!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#try-join"><span class="toc-text">try_join!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select"><span class="toc-text">select!</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#defult%E5%92%8Ccomplete"><span class="toc-text">defult和complete</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%9FUnpin%E5%92%8CFusedFuture%E8%BF%9B%E8%A1%8C%E4%BA%A4%E4%BA%92"><span class="toc-text">跟Unpin和FusedFuture进行交互</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8select%E5%BE%AA%E7%8E%AF%E4%B8%AD%E5%B9%B6%E5%8F%91"><span class="toc-text">在select循环中并发</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-text">注意</span></a></li></ol></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#join"><span class="toc-text">join!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#try-join"><span class="toc-text">try_join!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select"><span class="toc-text">select!</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#defult%E5%92%8Ccomplete"><span class="toc-text">defult和complete</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%9FUnpin%E5%92%8CFusedFuture%E8%BF%9B%E8%A1%8C%E4%BA%A4%E4%BA%92"><span class="toc-text">跟Unpin和FusedFuture进行交互</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8select%E5%BE%AA%E7%8E%AF%E4%B8%AD%E5%B9%B6%E5%8F%91"><span class="toc-text">在select循环中并发</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-text">注意</span></a></li></ol></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-23</div>
+        <a href="/2023/08/23/%E5%90%8C%E6%97%B6%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAfuture/"><div class="recent-posts-item-content">同时运行多个future</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-23</div>
+        <a href="/2023/08/23/async-await%E5%92%8Cstream%E6%B5%81%E5%A4%84%E7%90%86/"><div class="recent-posts-item-content">async/await和stream流处理</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-23</div>
+        <a href="/2023/08/23/pin%E5%92%8CUnpin/"><div class="recent-posts-item-content">pin和Unpin</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-21</div>
+        <a href="/2023/08/21/Gpm%E6%A8%A1%E5%9E%8B/"><div class="recent-posts-item-content">Gpm模型</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
