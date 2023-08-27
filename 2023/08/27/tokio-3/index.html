@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>tokio_3 帧</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="tokio_3 帧">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/27/tokio-3/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-27">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-27">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>32</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>4</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A7-frame"><span class="toc-text">帧 frame</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E8%AF%BB%E5%8F%96"><span class="toc-text">缓冲读取</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0read-buf"><span class="toc-text">实现read_buf</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%A7%E8%A7%A3%E6%9E%90"><span class="toc-text">帧解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%86%99%E5%85%A5"><span class="toc-text">缓冲写入</span></a>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      tokio_3 帧
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-27T02:37:24.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-27</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>2.7k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h4 id="帧-frame"><a href="#帧-frame" class="headerlink" title="帧 frame"></a>帧 frame</h4><p>通过帧可以将字节流转换成帧组成的流。<br>每个帧就是一个数据单元，<br>例如客户端发送的一次请求就是一个帧</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> bytes::Bytes;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Frame</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">Simple</span>(<span class="type">String</span>),</span><br><span class="line">    <span class="title function_ invoke__">Error</span>(<span class="type">String</span>),</span><br><span class="line">    <span class="title function_ invoke__">Integer</span>(<span class="type">u64</span>),</span><br><span class="line">    <span class="title function_ invoke__">Bulk</span>(Bytes),</span><br><span class="line">    Null,</span><br><span class="line">    <span class="title function_ invoke__">Array</span>(<span class="type">Vec</span>&lt;Frame&gt;),</span><br><span class="line">&#125;</span><br></pre>
+
+<p>命令解析和实现会在更高的层次进行(相比帧解析层）。<br>HTTP ：</p>
+<pre class="highlight"><span class="line"><span class="keyword">enum</span> <span class="title class_">HttpFrame</span> &#123;</span><br><span class="line">    RequestHead &#123;</span><br><span class="line">        method: Method,</span><br><span class="line">        uri: Uri,</span><br><span class="line">        version: Version,</span><br><span class="line">        headers: HeaderMap,</span><br><span class="line">    &#125;,</span><br><span class="line">    ResponseHead &#123;</span><br><span class="line">        status: StatusCode,</span><br><span class="line">        version: Version,</span><br><span class="line">        headers: HeaderMap,</span><br><span class="line">    &#125;,</span><br><span class="line">    BodyChunk &#123;</span><br><span class="line">        chunk: Bytes,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre>
+<h3 id="缓冲读取"><a href="#缓冲读取" class="headerlink" title="缓冲读取"></a>缓冲读取</h3><p>read_frame 方法会等到<code>一个完整的帧</code>都读取完毕后才返回，<br>与之相比，<br>它底层调用的TcpStream::read 只会返回<code>任意多的数据</code>(填满传入的缓冲区 buffer )，<br>它可能返回帧的一部分、一个帧、多个帧，总之这种读取行为是不确定的。</p>
+<p>当 read_frame 的底层调用 TcpStream::read 读取到<code>部分帧</code>时，<br><code>会将数据先缓冲起来，接着继续等待并读取数据</code>。<br><code>如果读到多个帧，那第一个帧会被返回</code>，<br>然后<code>剩下的数据依然被缓冲起来</code>，等待下一次<code> read_frame</code> 被调用。</p>
+<p>为了实现这种功能，需要为 Connection 增加一个读取缓冲区。<br>数据首先从 socket 中读取到缓冲区中，接着这些数据会被解析为帧,，<br>当一个帧被解析后，该帧对应的数据会从缓冲区被移除。</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> bytes::BytesMut;</span><br><span class="line"><span class="keyword">use</span> tokio::net::TcpStream;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Connection</span> &#123;</span><br><span class="line">    stream: TcpStream,</span><br><span class="line">    buffer: BytesMut,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Connection</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(stream: TcpStream) <span class="punctuation">-&gt;</span> Connection &#123;</span><br><span class="line">        Connection &#123;</span><br><span class="line">            stream,</span><br><span class="line">            <span class="comment">// 分配一个缓冲区，具有4kb的缓冲长度</span></span><br><span class="line">            buffer: BytesMut::<span class="title function_ invoke__">with_capacity</span>(<span class="number">4096</span>),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">	read_frame 内部使用循环的方式读取数据，</span></span><br><span class="line"><span class="comment">	直到一个完整的帧被读取到时，才会返回。</span></span><br><span class="line"><span class="comment">	</span></span><br><span class="line"><span class="comment">	当远程的对端关闭了连接后，也会返回。</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="keyword">pub</span> <span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">read_frame</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>)</span><br><span class="line">	    <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Option</span>&lt;Frame&gt;&gt;</span><br><span class="line">	&#123;</span><br><span class="line">	    <span class="keyword">loop</span> &#123;</span><br><span class="line">	        <span class="comment">// 尝试从缓冲区的数据中解析出一个数据帧，</span></span><br><span class="line">	        <span class="comment">// 只有当数据足够被解析时，才返回对应的帧</span></span><br><span class="line">	        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(frame) = <span class="keyword">self</span>.<span class="title function_ invoke__">parse_frame</span>()? &#123;</span><br><span class="line">	            <span class="keyword">return</span> <span class="title function_ invoke__">Ok</span>(<span class="title function_ invoke__">Some</span>(frame));</span><br><span class="line">	        &#125;</span><br><span class="line">	        <span class="comment">// 如果缓冲区中的数据还不足以被解析为一个数据帧，</span></span><br><span class="line">	        <span class="comment">// 那么我们需要从 socket 中读取更多的数据</span></span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	        <span class="comment">// 读取成功时，会返回读取到的字节数，0 代表着读到了数据流的末尾</span></span><br><span class="line">	        <span class="keyword">if</span> <span class="number">0</span> == <span class="keyword">self</span>.stream.<span class="title function_ invoke__">read_buf</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.buffer).<span class="keyword">await</span>? &#123;</span><br><span class="line">	            <span class="comment">// 代码能执行到这里，说明了对端关闭了连接，</span></span><br><span class="line">	            <span class="comment">// 需要看看缓冲区是否还有数据，若没有数据，说明所有数据成功被处理，</span></span><br><span class="line">	            <span class="comment">// 若还有数据，说明对端在发送帧的过程中断开了连接，导致只发送了部分数据</span></span><br><span class="line">	            <span class="keyword">if</span> <span class="keyword">self</span>.buffer.<span class="title function_ invoke__">is_empty</span>() &#123;</span><br><span class="line">	                <span class="keyword">return</span> <span class="title function_ invoke__">Ok</span>(<span class="literal">None</span>);</span><br><span class="line">	            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	                <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(<span class="string">&quot;connection reset by peer&quot;</span>.<span class="title function_ invoke__">into</span>());</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+<h5 id="实现read-buf"><a href="#实现read-buf" class="headerlink" title="实现read_buf"></a>实现read_buf</h5><pre class="highlight"><span class="line"><span class="keyword">use</span> tokio::net::TcpStream;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Connection</span> &#123;</span><br><span class="line">    stream: TcpStream,</span><br><span class="line">    buffer: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;,</span><br><span class="line">    cursor: <span class="type">usize</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Connection</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(stream: TcpStream) <span class="punctuation">-&gt;</span> Connection &#123;</span><br><span class="line">        Connection &#123;</span><br><span class="line">            stream,</span><br><span class="line">            <span class="comment">// 4kb 大小的缓冲区</span></span><br><span class="line">            buffer: <span class="built_in">vec!</span>[<span class="number">0</span>; <span class="number">4096</span>],</span><br><span class="line">            cursor: <span class="number">0</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">use</span> mini_redis::&#123;Frame, <span class="type">Result</span>&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">pub</span> <span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">read_frame</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>)</span><br><span class="line">	    <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Option</span>&lt;Frame&gt;&gt;</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	通过游标( cursor )跟踪已经读取的数据，</span></span><br><span class="line"><span class="comment">	并将下次读取的数据写入到游标之后的缓冲区中，</span></span><br><span class="line"><span class="comment">	只有这样才不会让新读取的数据将之前读取的数据覆盖掉。</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	    <span class="keyword">loop</span> &#123;</span><br><span class="line">	        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(frame) = <span class="keyword">self</span>.<span class="title function_ invoke__">parse_frame</span>()? &#123;</span><br><span class="line">		        <span class="comment">//成功返回读取到的帧数据</span></span><br><span class="line">	            <span class="keyword">return</span> <span class="title function_ invoke__">Ok</span>(<span class="title function_ invoke__">Some</span>(frame));</span><br><span class="line">	        &#125;</span><br><span class="line">			<span class="comment">/*</span></span><br><span class="line"><span class="comment">			一旦缓冲区满了，还需要增加缓冲区的长度，这样才能继续写入数据。</span></span><br><span class="line"><span class="comment">			还有一点值得注意，在 parse_frame 方法的内部实现中，</span></span><br><span class="line"><span class="comment">			也需要通过游标来解析数据: self.buffer[..self.cursor]，</span></span><br><span class="line"><span class="comment">			通过这种方式，可以准确获取到目前已经读取的全部数据。</span></span><br><span class="line"><span class="comment">			*/</span></span><br><span class="line">	        <span class="comment">// 确保缓冲区长度足够</span></span><br><span class="line">	        <span class="keyword">if</span> <span class="keyword">self</span>.buffer.<span class="title function_ invoke__">len</span>() == <span class="keyword">self</span>.cursor &#123;</span><br><span class="line">	            <span class="comment">// 若不够，需要增加缓冲区长度</span></span><br><span class="line">	            <span class="keyword">self</span>.buffer.<span class="title function_ invoke__">resize</span>(<span class="keyword">self</span>.cursor * <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">	        &#125;</span><br><span class="line">	</span><br><span class="line">	        <span class="comment">// 从游标位置开始将数据读入缓冲区</span></span><br><span class="line">	        <span class="keyword">let</span> <span class="variable">n</span> = <span class="keyword">self</span>.stream.<span class="title function_ invoke__">read</span>(</span><br><span class="line">	            &amp;<span class="keyword">mut</span> <span class="keyword">self</span>.buffer[<span class="keyword">self</span>.cursor..]).<span class="keyword">await</span>?;</span><br><span class="line">	            </span><br><span class="line">			<span class="comment">//读取不到数据的情况</span></span><br><span class="line">	        <span class="keyword">if</span> <span class="number">0</span> == n &#123;</span><br><span class="line">	            <span class="keyword">if</span> <span class="keyword">self</span>.cursor == <span class="number">0</span> &#123;</span><br><span class="line">		            <span class="comment">//读取不到数据</span></span><br><span class="line">	                <span class="keyword">return</span> <span class="title function_ invoke__">Ok</span>(<span class="literal">None</span>);</span><br><span class="line">	            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			        <span class="comment">//发生错误</span></span><br><span class="line">	                <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(<span class="string">&quot;connection reset by peer&quot;</span>.<span class="title function_ invoke__">into</span>());</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	            <span class="comment">// 更新游标位置</span></span><br><span class="line">	            <span class="keyword">self</span>.cursor += n;</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre>
+<p>通过字节数组和游标的方式读取数据是非常普遍的，<br>因此<code> bytes包</code>提供了一个 Buf 特征，<br>如果一个类型可以被读取数据，那么该类型需要实现 Buf 特征。<br>与之对应，当一个类型可以被写入数据时，它需要实现 BufMut 。</p>
+<p>当 T: BufMut ( 特征约束，说明类型 T 实现了 BufMut 特征 ) 被传给 read_buf() 方法时，<br>缓冲区 T 的内部游标会自动进行更新。<br>正因为如此，在使用了 BufMut 版本的 read_frame 中，并不需要管理游标。</p>
+<p>除了游标之外，<code>Vec&lt;u8&gt;</code> 的使用也值得关注，该缓冲区在使用时必须要被初始化: <code>vec![0; 4096]</code>，<br>该初始化会创建一个 4096 字节长度的数组，然后将数组的每个元素都填充上 0 。<br>当缓冲区长度不足时，新创建的缓冲区数组依然会使用 0 被重新填充一遍。<br>事实上，这种初始化过程会存在一定的性能开销。</p>
+<p>与 <code>Vec&lt;u8&gt;</code> 相反， BytesMut 和 BufMut 就没有这个问题，它们无需被初始化，而且 BytesMut 还会阻止我们读取未初始化的内存。</p>
+<h2 id="帧解析"><a href="#帧解析" class="headerlink" title="帧解析"></a>帧解析</h2><ol>
+<li>确保有一个完整的帧已经被写入了缓冲区，找到该帧的最后一个字节所在的位置</li>
+<li>解析帧<pre class="highlight"><span class="line"><span class="keyword">use</span> mini_redis::&#123;Frame, <span class="type">Result</span>&#125;;</span><br><span class="line"><span class="keyword">use</span> mini_redis::frame::Error::Incomplete;</span><br><span class="line"><span class="keyword">use</span> bytes::Buf;</span><br><span class="line"><span class="keyword">use</span> std::io::Cursor;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">fn</span> <span class="title function_">parse_frame</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>)</span><br><span class="line">	    <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Option</span>&lt;Frame&gt;&gt;</span><br><span class="line">	&#123;</span><br><span class="line">	    <span class="comment">// 创建 `T: Buf` 类型</span></span><br><span class="line">	    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buf</span> = Cursor::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">self</span>.buffer[..]);</span><br><span class="line">	</span><br><span class="line">	    <span class="comment">// 检查是否读取了足够解析出一个帧的数据</span></span><br><span class="line">	    <span class="keyword">match</span> Frame::<span class="title function_ invoke__">check</span>(&amp;<span class="keyword">mut</span> buf) &#123;</span><br><span class="line">	        <span class="title function_ invoke__">Ok</span>(_) =&gt; &#123;</span><br><span class="line">	            <span class="comment">// 获取组成该帧的字节数</span></span><br><span class="line">	            <span class="keyword">let</span> <span class="variable">len</span> = buf.<span class="title function_ invoke__">position</span>() <span class="keyword">as</span> <span class="type">usize</span>;</span><br><span class="line">	</span><br><span class="line">	            <span class="comment">// 在解析开始之前，重置内部的游标位置</span></span><br><span class="line">	            buf.<span class="title function_ invoke__">set_position</span>(<span class="number">0</span>);</span><br><span class="line">	</span><br><span class="line">	            <span class="comment">// 解析帧</span></span><br><span class="line">	            <span class="keyword">let</span> <span class="variable">frame</span> = Frame::<span class="title function_ invoke__">parse</span>(&amp;<span class="keyword">mut</span> buf)?;</span><br><span class="line">	</span><br><span class="line">	            <span class="comment">// 解析完成，将缓冲区该帧的数据移除</span></span><br><span class="line">	            <span class="keyword">self</span>.buffer.<span class="title function_ invoke__">advance</span>(len);</span><br><span class="line">	</span><br><span class="line">	            <span class="comment">// 返回解析出的帧</span></span><br><span class="line">	            <span class="title function_ invoke__">Ok</span>(<span class="title function_ invoke__">Some</span>(frame))</span><br><span class="line">	        &#125;</span><br><span class="line">	        <span class="comment">// 缓冲区的数据不足以解析出一个完整的帧</span></span><br><span class="line">	        <span class="title function_ invoke__">Err</span>(Incomplete) =&gt; <span class="title function_ invoke__">Ok</span>(<span class="literal">None</span>),</span><br><span class="line">	        <span class="comment">// 遇到一个错误</span></span><br><span class="line">	        <span class="title function_ invoke__">Err</span>(e) =&gt; <span class="title function_ invoke__">Err</span>(e.<span class="title function_ invoke__">into</span>()),</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line"> <span class="comment">/// Checks if an entire message can be decoded from `src`</span></span><br><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment"> Frame::check 使用了 Buf 的字节迭代风格的 API。</span></span><br><span class="line"><span class="comment"> 例如，为了解析一个帧，首先需要检查它的第一个字节，</span></span><br><span class="line"><span class="comment"> 该字节用于说明帧的类型。</span></span><br><span class="line"><span class="comment"> 这种首字节检查是通过 Buf::get_u8 函数完成的，</span></span><br><span class="line"><span class="comment"> 该函数会获取游标所在位置的字节，</span></span><br><span class="line"><span class="comment"> 然后将游标位置向右移动一个字节</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">check</span>(src: &amp;<span class="keyword">mut</span> Cursor&lt;&amp;[<span class="type">u8</span>]&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), Error&gt; &#123;</span><br><span class="line">        <span class="keyword">match</span> <span class="title function_ invoke__">get_u8</span>(src)? &#123;</span><br><span class="line">            <span class="string">b&#x27;+&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="title function_ invoke__">get_line</span>(src)?;</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">b&#x27;-&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="title function_ invoke__">get_line</span>(src)?;</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">b&#x27;:&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">_</span> = <span class="title function_ invoke__">get_decimal</span>(src)?;</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">b&#x27;$&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="keyword">if</span> <span class="string">b&#x27;-&#x27;</span> == <span class="title function_ invoke__">peek_u8</span>(src)? &#123;</span><br><span class="line">                    <span class="comment">// Skip &#x27;-1\r\n&#x27;</span></span><br><span class="line">                    <span class="title function_ invoke__">skip</span>(src, <span class="number">4</span>)</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// Read the bulk string</span></span><br><span class="line">                    <span class="keyword">let</span> <span class="variable">len</span>: <span class="type">usize</span> = <span class="title function_ invoke__">get_decimal</span>(src)?.<span class="title function_ invoke__">try_into</span>()?;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// skip that number of bytes + 2 (\r\n).</span></span><br><span class="line">                    <span class="title function_ invoke__">skip</span>(src, len + <span class="number">2</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">b&#x27;*&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">len</span> = <span class="title function_ invoke__">get_decimal</span>(src)?;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..len &#123;</span><br><span class="line">                    Frame::<span class="title function_ invoke__">check</span>(src)?;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">            &#125;</span><br><span class="line">            actual =&gt;<span class="title function_ invoke__">Err</span>(<span class="built_in">format!</span>(</span><br><span class="line">	            <span class="string">&quot;protocol error; invalid frame type byte `&#123;&#125;`&quot;</span>, </span><br><span class="line">	            actual).<span class="title function_ invoke__">into</span>()),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></li>
+</ol>
+<h2 id="缓冲写入"><a href="#缓冲写入" class="headerlink" title="缓冲写入"></a>缓冲写入</h2><p>帧操作的另一个 API 是 write_frame(frame) 函数，<br>它会将一个完整的帧写入到 socket 中。<br>每一次写入，都会触发一次或数次系统调用，<br>当程序中有大量的连接和写入时，系统调用的开销将变得非常高昂</p>
+<p>为了降低系统调用的次数，我们需要使用一个写入缓冲区，当写入一个帧时，首先会写入该缓冲区，然后等缓冲区数据足够多时，再集中将其中的数据写入到 socket 中，这样就将多次系统调用优化减少到一次。</p>
+<p>还有，缓冲区也不总是能提升性能。<br>例如，考虑一个 bulk 帧(多个帧放在一起组成一个 bulk，通过批量发送提升效率)，<br>该帧的特点就是：由于由多个帧组合而成，因此帧体数据可能会很大。<br>所以我们不能将其帧体数据写入到缓冲区中，因为数据较大时，<br>先写入缓冲区再写入 socket 会有较大的性能开销(<br>实际上缓冲区就是为了批量写入，既然 bulk 已经是批量了，<br>因此不使用缓冲区也很正常)。</p>
+<p>为了实现缓冲写，我们将使用 BufWriter 结构体。<br>该结构体实现了 AsyncWrite 特征，<br>当 write 方法被调用时，不会直接写入到 socket 中，<br>而是先写入到缓冲区中。当缓冲区被填满时，<br>其中的内容会自动刷到(写入到)内部的 socket 中，然后再将缓冲区清空。<br>当然，其中还存在某些优化，通过这些优化可以绕过缓冲区直接访问 socket。</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> tokio::io::BufWriter;</span><br><span class="line"><span class="keyword">use</span> tokio::net::TcpStream;</span><br><span class="line"><span class="keyword">use</span> bytes::BytesMut;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Connection</span> &#123;</span><br><span class="line">    stream: BufWriter&lt;TcpStream&gt;,</span><br><span class="line">    buffer: BytesMut,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Connection</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(stream: TcpStream) <span class="punctuation">-&gt;</span> Connection &#123;</span><br><span class="line">        Connection &#123;</span><br><span class="line">            stream: BufWriter::<span class="title function_ invoke__">new</span>(stream),</span><br><span class="line">            buffer: BytesMut::<span class="title function_ invoke__">with_capacity</span>(<span class="number">4096</span>),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现write_frame 函数</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">write_frame</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, frame: &amp;Frame) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">        <span class="comment">// Arrays are encoded by encoding each entry. All other frame types are</span></span><br><span class="line">        <span class="comment">// considered literals. For now, mini-redis is not able to encode</span></span><br><span class="line">        <span class="comment">// recursive frame structures. See below for more details.</span></span><br><span class="line">        <span class="keyword">match</span> frame &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        write_u8 写入一个字节</span></span><br><span class="line"><span class="comment">		write_all 写入所有数据</span></span><br><span class="line"><span class="comment">		write_decimal由 mini-redis 提供</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">            Frame::<span class="title function_ invoke__">Array</span>(val) =&gt; &#123;</span><br><span class="line">                <span class="comment">// Encode the frame type prefix. For an array, it is `*`.</span></span><br><span class="line">                <span class="keyword">self</span>.stream.<span class="title function_ invoke__">write_u8</span>(<span class="string">b&#x27;*&#x27;</span>).<span class="keyword">await</span>?;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// Encode the length of the array.</span></span><br><span class="line">                <span class="keyword">self</span>.<span class="title function_ invoke__">write_decimal</span>(val.<span class="title function_ invoke__">len</span>() <span class="keyword">as</span> <span class="type">u64</span>).<span class="keyword">await</span>?;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// Iterate and encode each entry in the array.</span></span><br><span class="line">                <span class="keyword">for</span> <span class="variable">entry</span> <span class="keyword">in</span> &amp;**val &#123;</span><br><span class="line">                    <span class="keyword">self</span>.<span class="title function_ invoke__">write_value</span>(entry).<span class="keyword">await</span>?;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// The frame type is a literal. Encode the value directly.</span></span><br><span class="line">            _ =&gt; <span class="keyword">self</span>.<span class="title function_ invoke__">write_value</span>(frame).<span class="keyword">await</span>?,</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Ensure the encoded frame is written to the socket. The calls above</span></span><br><span class="line">        <span class="comment">// are to the buffered stream and writes. Calling `flush` writes the</span></span><br><span class="line">        <span class="comment">// remaining contents of the buffer to the socket.</span></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        当然，当帧比较小的时候，每写一次帧就 flush 一次的模式性能开销会比较大，</span></span><br><span class="line"><span class="comment">        此时我们可以选择在 Connection 中实现 flush 函数，</span></span><br><span class="line"><span class="comment">        然后将等帧积累多个后，再一次性在 Connection 中进行 flush。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">self</span>.stream.<span class="title function_ invoke__">flush</span>().<span class="keyword">await</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre>
+<p>这里使用的方法由 AsyncWriteExt 提供，<br>它们在 TcpStream 中也有对应的函数。<br>但是在没有缓冲区的情况下最好避免使用这种逐字节的写入方式！<br>不然，每写入几个字节就会触发一次系统调用，<br>写完整个数据帧可能需要几十次系统调用，<br>可以说是丧心病狂！</p>
+<p>在函数结束前，还额外的调用了一次 self.stream.flush().await，<br>原因是缓冲区可能还存在数据，因此需要手动刷一次数据：<br>flush 的调用会将缓冲区中剩余的数据立刻写入到 socket 中。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/27/tokio-3/">
+            https://sabakiro.github.io/2023/08/27/tokio-3/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/26/tokio-2/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">tokio_2 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A7-frame"><span class="toc-text">帧 frame</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E8%AF%BB%E5%8F%96"><span class="toc-text">缓冲读取</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0read-buf"><span class="toc-text">实现read_buf</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%A7%E8%A7%A3%E6%9E%90"><span class="toc-text">帧解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%86%99%E5%85%A5"><span class="toc-text">缓冲写入</span></a>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A7-frame"><span class="toc-text">帧 frame</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E8%AF%BB%E5%8F%96"><span class="toc-text">缓冲读取</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0read-buf"><span class="toc-text">实现read_buf</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%A7%E8%A7%A3%E6%9E%90"><span class="toc-text">帧解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%86%99%E5%85%A5"><span class="toc-text">缓冲写入</span></a>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-27</div>
+        <a href="/2023/08/27/tokio-3/"><div class="recent-posts-item-content">tokio_3 帧</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-26</div>
+        <a href="/2023/08/26/tokio-2/"><div class="recent-posts-item-content">tokio_2</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-26</div>
+        <a href="/2023/08/26/tokio-1/"><div class="recent-posts-item-content">tokio_1</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-24</div>
+        <a href="/2023/08/24/web%E6%9C%8D%E5%8A%A1%E5%99%A8/"><div class="recent-posts-item-content">web服务器</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
