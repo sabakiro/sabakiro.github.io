@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>tokio_4</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="tokio_4">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/28/tokio-4/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-28">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-28">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>33</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>4</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Future-trait"><span class="toc-text">Future trait</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E7%8E%B0Future-trait"><span class="toc-text">自定义结构体实现Future trait</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#async-fn-%E4%BD%9C%E4%B8%BAFuture"><span class="toc-text">async fn 作为Future</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-text">执行器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Waker"><span class="toc-text">Waker</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Future-poll"><span class="toc-text">Future::poll</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%91%E7%94%9Fwake%E9%80%9A%E7%9F%A5"><span class="toc-text">发生wake通知</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%A7%E8%A1%8Cwake%E9%80%9A%E7%9F%A5"><span class="toc-text">执行wake通知</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E4%B8%AD%E7%94%9F%E6%88%90%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1"><span class="toc-text">在异步函数中生成异步任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8notify%E7%AE%80%E5%8C%96%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6"><span class="toc-text">使用notify简化通知机制</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      tokio_4
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-28T01:19:56.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-28</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>3.8k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h3 id="Future-trait"><a href="#Future-trait" class="headerlink" title="Future trait"></a>Future trait</h3><pre class="highlight"><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Rust 中的 Future 不代表一个发生在后台的计算，</span></span><br><span class="line"><span class="comment">而是 Future 就代表了计算本身，</span></span><br><span class="line"><span class="comment">因此 Future 的所有者有责任去推进该计算过程的执行，</span></span><br><span class="line"><span class="comment">例如通过 Future::poll 函数</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Future</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context)</span><br><span class="line">        <span class="punctuation">-&gt;</span> Poll&lt;<span class="keyword">Self</span>::Output&gt;;</span><br><span class="line">&#125;</span><br></pre>
+
+<h4 id="自定义结构体实现Future-trait"><a href="#自定义结构体实现Future-trait" class="headerlink" title="自定义结构体实现Future trait"></a>自定义结构体实现Future trait</h4><pre class="highlight"><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll&#125;;</span><br><span class="line"><span class="keyword">use</span> std::time::&#123;Duration, Instant&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Delay</span> &#123;</span><br><span class="line">    when: Instant,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">如何自定义一个 Future，并指定它如何通过 poll 一步一步执行，</span></span><br><span class="line"><span class="comment">直到最终完成返回 &quot;done&quot; 字符串</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">// 为我们的 Delay 类型实现 Future 特征</span></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Future</span> <span class="keyword">for</span> <span class="title class_">Delay</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span> = &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;)</span><br><span class="line">        <span class="punctuation">-&gt;</span> Poll&lt;&amp;<span class="symbol">&#x27;static</span> <span class="type">str</span>&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> Instant::<span class="title function_ invoke__">now</span>() &gt;= <span class="keyword">self</span>.when &#123;</span><br><span class="line">            <span class="comment">// 时间到了，Future 可以结束</span></span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;Hello world&quot;</span>);</span><br><span class="line">            <span class="comment">// Future 执行结束并返回 &quot;done&quot; 字符串</span></span><br><span class="line">            Poll::<span class="title function_ invoke__">Ready</span>(<span class="string">&quot;done&quot;</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 目前先忽略下面这行代码</span></span><br><span class="line">            cx.<span class="title function_ invoke__">waker</span>().<span class="title function_ invoke__">wake_by_ref</span>();</span><br><span class="line">            Poll::Pending</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">when</span> = Instant::<span class="title function_ invoke__">now</span>() + Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">future</span> = Delay &#123; when &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 运行并等待 Future 的完成</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">out</span> = future.<span class="keyword">await</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断 Future 返回的字符串是否是 &quot;done&quot;</span></span><br><span class="line">    <span class="built_in">assert_eq!</span>(out, <span class="string">&quot;done&quot;</span>);</span><br><span class="line">&#125;</span><br></pre>
+<h3 id="async-fn-作为Future"><a href="#async-fn-作为Future" class="headerlink" title="async fn 作为Future"></a>async fn 作为Future</h3><p>在 main 函数中初始化一个 Future 并使用 .await 对其进行调用执行，<br>如果是在 fn main 中这么做，是会报错的。</p>
+<p>原因是 .await 只能用于 async fn 函数中，<br>因此将 main 函数声明成 async fn main 同时使用 <code>#[tokio::main] </code>进行了标注，<br>此时 async fn main 生成的代码类似下面：</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll&#125;;</span><br><span class="line"><span class="keyword">use</span> std::time::&#123;Duration, Instant&#125;;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">编译器会将 Future 变成状态机，</span></span><br><span class="line"><span class="comment">其中 MainFuture 包含了 Future 可能处于的状态：</span></span><br><span class="line"><span class="comment">从 State0 状态开始，当 poll 被调用时， </span></span><br><span class="line"><span class="comment">Future 会尝试去尽可能的推进内部的状态，</span></span><br><span class="line"><span class="comment">若它可以被完成时，就会返回 Poll::Ready，</span></span><br><span class="line"><span class="comment">其中还会包含最终的输出结果。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">若 Future 无法被完成，例如它所等待的资源还没有准备好，</span></span><br><span class="line"><span class="comment">此时就会返回 Poll::Pending，</span></span><br><span class="line"><span class="comment">该返回值会通知调用者： Future 会在稍后才能完成。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">同时可以看到：当一个 Future 由其它 Future 组成时，</span></span><br><span class="line"><span class="comment">调用外层 Future 的 poll 函数会同时调用一次内部 Future 的 poll 函数。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">MainFuture</span> &#123;</span><br><span class="line">    <span class="comment">// 初始化，但永远不会被 poll</span></span><br><span class="line">    State0,</span><br><span class="line">    <span class="comment">// 等待 `Delay` 运行，例如 `future.await` 代码行</span></span><br><span class="line">    <span class="title function_ invoke__">State1</span>(Delay),</span><br><span class="line">    <span class="comment">// Future 执行完成</span></span><br><span class="line">    Terminated,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Future</span> <span class="keyword">for</span> <span class="title class_">MainFuture</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span> = ();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(<span class="keyword">mut</span> <span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;)</span><br><span class="line">        <span class="punctuation">-&gt;</span> Poll&lt;()&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">use</span> MainFuture::*;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">loop</span> &#123;</span><br><span class="line">            <span class="keyword">match</span> *<span class="keyword">self</span> &#123;</span><br><span class="line">            <span class="comment">//状态初始化</span></span><br><span class="line">                State0 =&gt; &#123;</span><br><span class="line">                    <span class="keyword">let</span> <span class="variable">when</span> = Instant::<span class="title function_ invoke__">now</span>() +</span><br><span class="line">                        Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">10</span>);</span><br><span class="line">                    <span class="keyword">let</span> <span class="variable">future</span> = Delay &#123; when &#125;;</span><br><span class="line">                    *<span class="keyword">self</span> = <span class="title function_ invoke__">State1</span>(future);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="title function_ invoke__">State1</span>(<span class="keyword">ref</span> <span class="keyword">mut</span> my_future) =&gt; &#123;</span><br><span class="line">	                <span class="comment">//调用 poll</span></span><br><span class="line">                    <span class="keyword">match</span> Pin::<span class="title function_ invoke__">new</span>(my_future).<span class="title function_ invoke__">poll</span>(cx) &#123;</span><br><span class="line">	                    <span class="comment">//完成</span></span><br><span class="line">                        Poll::<span class="title function_ invoke__">Ready</span>(out) =&gt; &#123;</span><br><span class="line">                            <span class="built_in">assert_eq!</span>(out, <span class="string">&quot;done&quot;</span>);</span><br><span class="line">                            *<span class="keyword">self</span> = Terminated;</span><br><span class="line">                            <span class="keyword">return</span> Poll::<span class="title function_ invoke__">Ready</span>(());</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//未完成</span></span><br><span class="line">                        Poll::Pending =&gt; &#123;</span><br><span class="line">                            <span class="keyword">return</span> Poll::Pending;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//执行完成</span></span><br><span class="line">                Terminated =&gt; &#123;</span><br><span class="line">                    <span class="built_in">panic!</span>(<span class="string">&quot;future polled after completion&quot;</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h3 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h3><p>async fn 返回 Future ，而后者需要通过被不断的 poll 才能往前推进状态，<br>同时该 Future 还能包含其它 Future ，<br>那么问题来了谁来<code>负责调用最外层 Future 的 poll 函数</code>？</p>
+<p>为了运行一个异步函数，必须使用 <code>tokio::spawn</code> 或<br>通过<code> #[tokio::main]</code> 标注的 async fn main 函数。<br>它们有一个非常重要的作用：<br>将最外层 Future 提交给 Tokio 的执行器。<br>该执行器负责调用 poll 函数，<br>然后推动 Future 的执行，最终直至完成。</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::collections::VecDeque;</span><br><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll&#125;;</span><br><span class="line"><span class="keyword">use</span> std::time::&#123;Duration, Instant&#125;;</span><br><span class="line"><span class="keyword">use</span> futures::task;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">mini_tokio</span> = MiniTokio::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    mini_tokio.<span class="title function_ invoke__">spawn</span>(<span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="comment">//创建了一个 Delay 实例用于等待所需的时间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//但这个实现有一个 重大缺陷：执行器永远也不会休眠。执</span></span><br><span class="line">    <span class="comment">//行器会持续的循环遍历所有的 Future ，然后不停的 poll 它们，</span></span><br><span class="line">    <span class="comment">//但是事实上，大多数 poll 都是没有用的，</span></span><br><span class="line">    <span class="comment">//因为此时 Future 并没有准备好，因此会继续返回 Poll::Pending</span></span><br><span class="line">    <span class="comment">//执行器不断执行poll，消耗cpu</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">when</span> = Instant::<span class="title function_ invoke__">now</span>() + Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">future</span> = Delay &#123; when &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">out</span> = future.<span class="keyword">await</span>;</span><br><span class="line">        <span class="built_in">assert_eq!</span>(out, <span class="string">&quot;done&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	 mini-tokio 只应该在 Future 准备好可以进一步运行后，才去 poll 它，</span></span><br><span class="line"><span class="comment">	 例如该 Future 之前阻塞等待的资源已经准备好并可以被使用了，</span></span><br><span class="line"><span class="comment">	 就可以对其进行 poll。再比如，</span></span><br><span class="line"><span class="comment">	 如果一个 Future 任务在阻塞等待从 TCP socket 中读取数据，</span></span><br><span class="line"><span class="comment">	 只想在 socket 中有数据可以读取后才去 poll 它</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">mini-tokio 只应该当任务的延迟时间到了后，才去 poll 它。 </span></span><br><span class="line"><span class="comment">为了实现这个功能，我们需要 通知 -&gt; 运行 机制：</span></span><br><span class="line"><span class="comment">当任务可以进一步被推进运行时，它会主动通知执行器，然后执行器再来 poll。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    mini_tokio.<span class="title function_ invoke__">run</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MiniTokio</span> &#123;</span><br><span class="line">    tasks: VecDeque&lt;Task&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Task</span> = Pin&lt;<span class="type">Box</span>&lt;<span class="keyword">dyn</span> Future&lt;Output = ()&gt; + <span class="built_in">Send</span>&gt;&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">MiniTokio</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>() <span class="punctuation">-&gt;</span> MiniTokio &#123;</span><br><span class="line">        MiniTokio &#123;</span><br><span class="line">            tasks: VecDeque::<span class="title function_ invoke__">new</span>(),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 生成一个 Future并放入 mini-tokio 实例的任务队列中</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">spawn</span>&lt;F&gt;(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, future: F)</span><br><span class="line">    <span class="keyword">where</span></span><br><span class="line">        F: Future&lt;Output = ()&gt; + <span class="built_in">Send</span> + <span class="symbol">&#x27;static</span>,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">self</span>.tasks.<span class="title function_ invoke__">push_back</span>(<span class="type">Box</span>::<span class="title function_ invoke__">pin</span>(future));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">run</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">waker</span> = task::<span class="title function_ invoke__">noop_waker</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cx</span> = Context::<span class="title function_ invoke__">from_waker</span>(&amp;waker);</span><br><span class="line">		<span class="comment">//轮询</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(<span class="keyword">mut</span> task) = <span class="keyword">self</span>.tasks.<span class="title function_ invoke__">pop_front</span>() &#123;</span><br><span class="line">            <span class="keyword">if</span> task.<span class="title function_ invoke__">as_mut</span>().<span class="title function_ invoke__">poll</span>(&amp;<span class="keyword">mut</span> cx).<span class="title function_ invoke__">is_pending</span>() &#123;</span><br><span class="line">                <span class="keyword">self</span>.tasks.<span class="title function_ invoke__">push_back</span>(task);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h3 id="Waker"><a href="#Waker" class="headerlink" title="Waker"></a>Waker</h3><h5 id="Future-poll"><a href="#Future-poll" class="headerlink" title="Future::poll"></a>Future::poll</h5><pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Context 参数中包含有 waker()方法。</span></span><br><span class="line"><span class="comment">该方法返回一个绑定到当前任务上的 Waker，</span></span><br><span class="line"><span class="comment">然后 Waker 上定义了一个 wake() 方法，</span></span><br><span class="line"><span class="comment">用于通知执行器相关的任务可以继续执行。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">poll</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context)</span><br><span class="line">    <span class="punctuation">-&gt;</span> Poll&lt;<span class="keyword">Self</span>::Output&gt;;</span><br></pre>
+<p>当 Future 阻塞等待的资源已经准备好时(例如 socket 中有了可读取的数据)，<br>该资源可以调用 wake() 方法，<br>来通知执行器可以继续调用该 Future 的 poll 函数来推进任务的执行。</p>
+<h5 id="发生wake通知"><a href="#发生wake通知" class="headerlink" title="发生wake通知"></a>发生wake通知</h5><pre class="highlight"><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll&#125;;</span><br><span class="line"><span class="keyword">use</span> std::time::&#123;Duration, Instant&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Delay</span> &#123;</span><br><span class="line">    when: Instant,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Future</span> <span class="keyword">for</span> <span class="title class_">Delay</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span> = &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(<span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;)</span><br><span class="line">        <span class="punctuation">-&gt;</span> Poll&lt;&amp;<span class="symbol">&#x27;static</span> <span class="type">str</span>&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> Instant::<span class="title function_ invoke__">now</span>() &gt;= <span class="keyword">self</span>.when &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;Hello world&quot;</span>);</span><br><span class="line">            Poll::<span class="title function_ invoke__">Ready</span>(<span class="string">&quot;done&quot;</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	        <span class="comment">//为 Delay 添加下 Waker 支持</span></span><br><span class="line">	        </span><br><span class="line">            <span class="comment">// 为当前任务克隆一个 waker 的句柄</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">waker</span> = cx.<span class="title function_ invoke__">waker</span>().<span class="title function_ invoke__">clone</span>();</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">when</span> = <span class="keyword">self</span>.when;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 生成一个计时器线程</span></span><br><span class="line">            thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">now</span> = Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line">				</span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">				计时器用来模拟一个阻塞等待的资源，</span></span><br><span class="line"><span class="comment">				一旦计时结束(该资源已经准备好)，</span></span><br><span class="line"><span class="comment">				资源会通过 waker.wake() 调用通知执行器</span></span><br><span class="line"><span class="comment">				任务再次被调度执行了。</span></span><br><span class="line"><span class="comment">				*/</span></span><br><span class="line">                <span class="keyword">if</span> now &lt; when &#123;</span><br><span class="line">                    thread::<span class="title function_ invoke__">sleep</span>(when - now);</span><br><span class="line">                &#125;</span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">				当 Future 会返回 Poll::Pending 时，</span></span><br><span class="line"><span class="comment">				一定要确保 wake 能被正常调用，</span></span><br><span class="line"><span class="comment">				否则会导致任务永远被挂起，再也不会被执行器 poll。</span></span><br><span class="line"><span class="comment">				*/</span></span><br><span class="line">                waker.<span class="title function_ invoke__">wake</span>();</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">            Poll::Pending</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>最早版本的Delay</p>
+<pre class="highlight"><span class="line">......</span><br><span class="line">          <span class="comment">// 目前先忽略下面这行代码</span></span><br><span class="line">          cx.<span class="title function_ invoke__">waker</span>().<span class="title function_ invoke__">wake_by_ref</span>();</span><br><span class="line">          Poll::Pending</span><br><span class="line">......</span><br></pre>
+<p>在返回 Poll::Pending 之前，先调用了 cx.waker().wake_by_ref() ，<br>由于此时还没有模拟计时资源，因此这里直接调用了 wake 进行通知，<br>这样做会导致当前的 Future 被立即再次调度执行。</p>
+<h5 id="执行wake通知"><a href="#执行wake通知" class="headerlink" title="执行wake通知"></a>执行wake通知</h5><p>当 waker.wake() 被调用后，<br>相关联的任务会被放入执行器的队列中，<br>然后等待执行器的调用执行。</p>
+<p>为了实现这一点，将使用消息通道来排队存储这些被唤醒并等待调度的任务。<br>有一点需要注意，<br>从消息通道接收消息的线程(执行器所在的线程)和<br>发送消息的线程（唤醒任务时所在的线程）可能是<code>不同</code>的，<br>因此消息( Waker )必须要实现 <code>Send</code>和 <code>Sync</code>，才能跨线程使用。</p>
+<p>添加实现了<code>Sync trait</code>的消息通道 crossbeam</p>
+<pre class="highlight"><span class="line"><span class="attr">crossbeam</span> = <span class="string">&quot;0.8&quot;</span></span><br><span class="line"><span class="attr">futures</span> = <span class="string">&quot;0.3&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> crossbeam::channel;</span><br><span class="line"><span class="keyword">use</span> std::sync::Arc;</span><br><span class="line"><span class="keyword">use</span> futures::task::&#123;<span class="keyword">self</span>, ArcWake&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MiniTokio</span> &#123;</span><br><span class="line">    scheduled: channel::Receiver&lt;Arc&lt;Task&gt;&gt;,</span><br><span class="line">    sender: channel::Sender&lt;Arc&lt;Task&gt;&gt;,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">MiniTokio</span> &#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	实现了 MiniTokio::run() 函数，</span></span><br><span class="line"><span class="comment">	它会持续从消息通道中接收被唤醒的任务，</span></span><br><span class="line"><span class="comment">	然后通过 poll 来推动其继续执行。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    <span class="comment">// 从消息通道中接收任务，然后通过 poll 来执行</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">run</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Ok</span>(task) = <span class="keyword">self</span>.scheduled.<span class="title function_ invoke__">recv</span>() &#123;</span><br><span class="line">            task.<span class="title function_ invoke__">poll</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">其次，MiniTokio::new() 和 MiniTokio::spawn() 使用了消息通道</span></span><br><span class="line"><span class="comment">而不是一个 VecDeque 。当新任务生成后，</span></span><br><span class="line"><span class="comment">这些任务中会携带上消息通道的发送端，当任务中的资源准备就绪时，</span></span><br><span class="line"><span class="comment">会使用该发送端将该任务放入消息通道的队列中，等待执行器 poll</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    <span class="comment">/// 初始化一个新的 mini-tokio 实例</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>() <span class="punctuation">-&gt;</span> MiniTokio &#123;</span><br><span class="line">        <span class="keyword">let</span> (sender, scheduled) = channel::<span class="title function_ invoke__">unbounded</span>();</span><br><span class="line"></span><br><span class="line">        MiniTokio &#123; scheduled, sender &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 在下面函数中，通过参数传入的 future 被 `Task` 包裹起来，然后会被推入到调度队列中，当 `run` 被调用时，该 future 将被执行</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">spawn</span>&lt;F&gt;(&amp;<span class="keyword">self</span>, future: F)</span><br><span class="line">    <span class="keyword">where</span></span><br><span class="line">        F: Future&lt;Output = ()&gt; + <span class="built_in">Send</span> + <span class="symbol">&#x27;static</span>,</span><br><span class="line">    &#123;</span><br><span class="line">        Task::<span class="title function_ invoke__">spawn</span>(future, &amp;<span class="keyword">self</span>.sender);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Task</span> &#123;</span><br><span class="line">    <span class="comment">// `Mutex` 是为了让 `Task` 实现 `Sync` 特征，</span></span><br><span class="line">    <span class="comment">//它能保证同一时间只有一个线程可以访问 `Future`。</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 事实上 `Mutex` 并没有在 Tokio 中被使用，这里只是为了简化</span></span><br><span class="line">    future: Mutex&lt;Pin&lt;<span class="type">Box</span>&lt;<span class="keyword">dyn</span> Future&lt;Output = ()&gt; + <span class="built_in">Send</span>&gt;&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">	    Waker 实现了 Sync 特征，同时还可以被克隆，</span></span><br><span class="line"><span class="comment">	    当 wake 被调用时，任务就会被调度执行。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">		为了实现上述的目的，引入了消息通道，</span></span><br><span class="line"><span class="comment">		当 waker.wake() 函数被调用时，任务会被发送到该消息通道中</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    executor: channel::Sender&lt;Arc&lt;Task&gt;&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Task</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">schedule</span>(<span class="keyword">self</span>: &amp;Arc&lt;<span class="keyword">Self</span>&gt;) &#123;</span><br><span class="line">        <span class="keyword">self</span>.executor.<span class="title function_ invoke__">send</span>(<span class="keyword">self</span>.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    Task::poll() 函数使用 futures 包提供的 ArcWake 创建了一个 waker，</span></span><br><span class="line"><span class="comment">    后者可以用来创建 task::Context，</span></span><br><span class="line"><span class="comment">    最终该 Context 会被传给执行器调用的 poll 函数。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(<span class="keyword">self</span>: Arc&lt;<span class="keyword">Self</span>&gt;) &#123;</span><br><span class="line">		</span><br><span class="line">        <span class="comment">// 基于实现了 ArcWake 的 Task 实例创建一个 waker, </span></span><br><span class="line">        <span class="comment">//使用了之前的 `ArcWake`</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">waker</span> = task::<span class="title function_ invoke__">waker</span>(<span class="keyword">self</span>.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cx</span> = Context::<span class="title function_ invoke__">from_waker</span>(&amp;waker);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 没有其他线程在竞争锁时，我们将获取到目标 future</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">future</span> = <span class="keyword">self</span>.future.<span class="title function_ invoke__">try_lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 对 future 进行 poll</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">_</span> = future.<span class="title function_ invoke__">as_mut</span>().<span class="title function_ invoke__">poll</span>(&amp;<span class="keyword">mut</span> cx);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用给定的 future 来生成新的任务</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// 新的任务会被推到 `sender` 中，接着该消息通道的接收端就可以获取该任务，然后执行</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">spawn</span>&lt;F&gt;(future: F, sender: &amp;channel::Sender&lt;Arc&lt;Task&gt;&gt;)</span><br><span class="line">    <span class="keyword">where</span></span><br><span class="line">        F: Future&lt;Output = ()&gt; + <span class="built_in">Send</span> + <span class="symbol">&#x27;static</span>,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">task</span> = Arc::<span class="title function_ invoke__">new</span>(Task &#123;</span><br><span class="line">            future: Mutex::<span class="title function_ invoke__">new</span>(<span class="type">Box</span>::<span class="title function_ invoke__">pin</span>(future)),</span><br><span class="line">            executor: sender.<span class="title function_ invoke__">clone</span>(),</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">_</span> = sender.<span class="title function_ invoke__">send</span>(task);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">由 futures 包提供的 ArcWake 特征，只要简单实现该特征，</span></span><br><span class="line"><span class="comment">就可以将Task 转变成一个 waker</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">ArcWake</span> <span class="keyword">for</span> <span class="title class_">Task</span> &#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	当之前的计时器线程调用 waker.wake() 时，</span></span><br><span class="line"><span class="comment">	所在的任务会被推入到消息通道中。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">wake_by_ref</span>(arc_self: &amp;Arc&lt;<span class="keyword">Self</span>&gt;) &#123;</span><br><span class="line">        arc_self.<span class="title function_ invoke__">schedule</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="在异步函数中生成异步任务"><a href="#在异步函数中生成异步任务" class="headerlink" title="在异步函数中生成异步任务"></a>在异步函数中生成异步任务</h3><p>Rust 的异步模型允许一个 Future 在执行过程中可以跨任务迁移:</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> futures::future::poll_fn;</span><br><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">when</span> = Instant::<span class="title function_ invoke__">now</span>() + Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">delay</span> = <span class="title function_ invoke__">Some</span>(Delay &#123; when &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">poll_fn</span>(<span class="keyword">move</span> |cx| &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">delay</span> = delay.<span class="title function_ invoke__">take</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">res</span> = Pin::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> delay).<span class="title function_ invoke__">poll</span>(cx);</span><br><span class="line">        <span class="built_in">assert!</span>(res.<span class="title function_ invoke__">is_pending</span>());</span><br><span class="line">        tokio::<span class="title function_ invoke__">spawn</span>(<span class="keyword">async</span> <span class="keyword">move</span> &#123;</span><br><span class="line">            delay.<span class="keyword">await</span>;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        Poll::<span class="title function_ invoke__">Ready</span>(())</span><br><span class="line">    &#125;).<span class="keyword">await</span>;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>在每次 poll 调用时，<br>都会检查 Context 中提供的 waker 和<br>之前记录的 waker 是否匹配。<br>若匹配，就什么都不用做，<br>若不匹配，那之前存储的就必须进行更新。</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::future::Future;</span><br><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Mutex&#125;;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll, Waker&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::time::&#123;Duration, Instant&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Delay</span> &#123;</span><br><span class="line">    when: Instant,</span><br><span class="line">    <span class="comment">// 用于说明是否已经生成一个线程</span></span><br><span class="line">    <span class="comment">// Some 代表已经生成， None 代表还没有</span></span><br><span class="line">    waker: <span class="type">Option</span>&lt;Arc&lt;Mutex&lt;Waker&gt;&gt;&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Future</span> <span class="keyword">for</span> <span class="title class_">Delay</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Output</span> = ();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll</span>(<span class="keyword">mut</span> <span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;) <span class="punctuation">-&gt;</span> Poll&lt;()&gt; &#123;</span><br><span class="line">        <span class="comment">// 若这是 Future 第一次被调用，那么需要先生成一个计时器线程。</span></span><br><span class="line">        <span class="comment">// 若不是第一次调用(该线程已在运行)，</span></span><br><span class="line">        <span class="comment">//那要确保已存储的 `Waker` 跟当前任务的 `waker` 匹配</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(waker) = &amp;<span class="keyword">self</span>.waker &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">waker</span> = waker.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 检查之前存储的 `waker` 是否跟当前任务的 `waker` 相匹配.</span></span><br><span class="line">            <span class="comment">// 这是必要的，原因是 `Delay Future` 的实例</span></span><br><span class="line">            <span class="comment">//可能会在两次 `poll` 之间被转移到另一个任务中，然后</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 存储的 waker 被该任务进行了更新。</span></span><br><span class="line">            <span class="comment">// 这种情况一旦发生，`Context` 包含的</span></span><br><span class="line">            <span class="comment">// `waker` 将不同于存储的 `waker`。</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 因此必须对存储的 `waker` 进行更新</span></span><br><span class="line">            <span class="keyword">if</span> !waker.<span class="title function_ invoke__">will_wake</span>(cx.<span class="title function_ invoke__">waker</span>()) &#123;</span><br><span class="line">                *waker = cx.<span class="title function_ invoke__">waker</span>().<span class="title function_ invoke__">clone</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">when</span> = <span class="keyword">self</span>.when;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">waker</span> = Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(cx.<span class="title function_ invoke__">waker</span>().<span class="title function_ invoke__">clone</span>()));</span><br><span class="line">            <span class="keyword">self</span>.waker = <span class="title function_ invoke__">Some</span>(waker.<span class="title function_ invoke__">clone</span>());</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 第一次调用 `poll`，生成计时器线程</span></span><br><span class="line">            thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">now</span> = Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> now &lt; when &#123;</span><br><span class="line">                    thread::<span class="title function_ invoke__">sleep</span>(when - now);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 计时结束，通过调用 `waker` 来通知执行器</span></span><br><span class="line">                <span class="keyword">let</span> <span class="variable">waker</span> = waker.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">                waker.<span class="title function_ invoke__">wake_by_ref</span>();</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 一旦 waker 被存储且计时器线程已经开始，</span></span><br><span class="line">        <span class="comment">//就需要检查 `delay` 是否已经完成</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 若计时已完成，</span></span><br><span class="line">        <span class="comment">//则当前 Future 就可以完成并返回 `Poll::Ready`</span></span><br><span class="line">        <span class="keyword">if</span> Instant::<span class="title function_ invoke__">now</span>() &gt;= <span class="keyword">self</span>.when &#123;</span><br><span class="line">            Poll::<span class="title function_ invoke__">Ready</span>(())</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 计时尚未结束，Future 还未完成，</span></span><br><span class="line">            <span class="comment">//因此返回 `Poll::Pending`.</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// `Future` 特征要求当 `Pending` 被返回时，</span></span><br><span class="line">            <span class="comment">//那要确保当资源准备好时，</span></span><br><span class="line">            <span class="comment">//必须调用 `waker` 以通知执行器。 </span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">//在例子中，会通过生成的计时线程来保证</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 如果忘记调用 waker， </span></span><br><span class="line">            <span class="comment">//该任务将被永远的挂起，无法再执行</span></span><br><span class="line">            Poll::Pending</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<h4 id="使用notify简化通知机制"><a href="#使用notify简化通知机制" class="headerlink" title="使用notify简化通知机制"></a>使用notify简化通知机制</h4><p>之前证明了如何用手动编写的 waker 来实现 Delay Future。<br>Waker 是 Rust 异步编程的基石，<br>因此绝大多数时候，并不需要直接去使用它。<br>例如，在 Delay 的例子中， 可以使用 tokio::sync::Notify 去实现。</p>
+<p>该 Notify 提供了一个基础的任务通知机制，<br>它会处理这些 waker 的细节，包括确保两次 waker 的匹配:</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> tokio::sync::Notify;</span><br><span class="line"><span class="keyword">use</span> std::sync::Arc;</span><br><span class="line"><span class="keyword">use</span> std::time::&#123;Duration, Instant&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">delay</span>(dur: Duration) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">when</span> = Instant::<span class="title function_ invoke__">now</span>() + dur;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">notify</span> = Arc::<span class="title function_ invoke__">new</span>(Notify::<span class="title function_ invoke__">new</span>());</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">notify2</span> = notify.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//当使用 Notify 后，可以轻松的实现如上的 delay 函数。</span></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">now</span> = Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> now &lt; when &#123;</span><br><span class="line">            thread::<span class="title function_ invoke__">sleep</span>(when - now);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        notify2.<span class="title function_ invoke__">notify_one</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">    notify.<span class="title function_ invoke__">notified</span>().<span class="keyword">await</span>;</span><br><span class="line">&#125;</span><br></pre>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>在 Rust 中，async 是惰性的，直到执行器 poll 它们时，才会开始执行</li>
+<li>Waker 是 Future 被执行的关键，它可以链接起 Future 任务和执行器</li>
+<li>当资源没有准备时，会返回一个 Poll::Pending</li>
+<li>当资源准备好时，会通过 waker.wake 发出通知</li>
+<li>执行器会收到通知，然后调度该任务继续执行，<br> 此时由于资源已经准备好，因此任务可以顺利往前推进了</li>
+</ol>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/28/tokio-4/">
+            https://sabakiro.github.io/2023/08/28/tokio-4/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/27/tokio-3/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">tokio_3 帧 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Future-trait"><span class="toc-text">Future trait</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E7%8E%B0Future-trait"><span class="toc-text">自定义结构体实现Future trait</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#async-fn-%E4%BD%9C%E4%B8%BAFuture"><span class="toc-text">async fn 作为Future</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-text">执行器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Waker"><span class="toc-text">Waker</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Future-poll"><span class="toc-text">Future::poll</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%91%E7%94%9Fwake%E9%80%9A%E7%9F%A5"><span class="toc-text">发生wake通知</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%A7%E8%A1%8Cwake%E9%80%9A%E7%9F%A5"><span class="toc-text">执行wake通知</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E4%B8%AD%E7%94%9F%E6%88%90%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1"><span class="toc-text">在异步函数中生成异步任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8notify%E7%AE%80%E5%8C%96%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6"><span class="toc-text">使用notify简化通知机制</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Future-trait"><span class="toc-text">Future trait</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E7%8E%B0Future-trait"><span class="toc-text">自定义结构体实现Future trait</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#async-fn-%E4%BD%9C%E4%B8%BAFuture"><span class="toc-text">async fn 作为Future</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-text">执行器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Waker"><span class="toc-text">Waker</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Future-poll"><span class="toc-text">Future::poll</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%91%E7%94%9Fwake%E9%80%9A%E7%9F%A5"><span class="toc-text">发生wake通知</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%A7%E8%A1%8Cwake%E9%80%9A%E7%9F%A5"><span class="toc-text">执行wake通知</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E4%B8%AD%E7%94%9F%E6%88%90%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1"><span class="toc-text">在异步函数中生成异步任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8notify%E7%AE%80%E5%8C%96%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6"><span class="toc-text">使用notify简化通知机制</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-28</div>
+        <a href="/2023/08/28/tokio-4/"><div class="recent-posts-item-content">tokio_4</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-27</div>
+        <a href="/2023/08/27/tokio-3/"><div class="recent-posts-item-content">tokio_3 帧</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-26</div>
+        <a href="/2023/08/26/tokio-2/"><div class="recent-posts-item-content">tokio_2</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-26</div>
+        <a href="/2023/08/26/tokio-1/"><div class="recent-posts-item-content">tokio_1</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
