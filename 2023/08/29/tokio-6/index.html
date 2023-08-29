@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>tokio_6</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="tokio_6">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/08/29/tokio-6/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-08-29">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-08-29">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>35</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>4</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#stream"><span class="toc-text">stream</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3"><span class="toc-text">迭代</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">适配器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0stream-trait"><span class="toc-text">实现stream trait</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#async-stream"><span class="toc-text">async-stream</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%97%AD"><span class="toc-text">关闭</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ctrl-c%E5%85%B3%E9%97%AD"><span class="toc-text">ctrl+c关闭</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%9A%E7%9F%A5%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%AF%8F%E4%B8%80%E4%B8%AA%E9%83%A8%E5%88%86%E5%BC%80%E5%A7%8B%E5%85%B3%E9%97%AD"><span class="toc-text">通知程序的每一个部分开始关闭</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E5%90%84%E4%B8%AA%E9%83%A8%E5%88%86%E7%9A%84%E7%BB%93%E6%9D%9F"><span class="toc-text">等待各个部分的结束</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      tokio_6
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-08-29T11:59:22.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-08-29</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>2k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="stream"><a href="#stream" class="headerlink" title="stream"></a>stream</h2><h4 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h4><pre class="highlight"><span class="line"><span class="attr">tokio-stream</span> = <span class="string">&quot;0.1&quot;</span></span><br></pre>
+<h4 id="迭代"><a href="#迭代" class="headerlink" title="迭代"></a>迭代</h4><p>Rust 语言还不支持异步的 for 循环，<br>因此需要 while let 循环和 StreamExt::next() 一起使用来实现迭代</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> tokio_stream::StreamExt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">stream</span> = tokio_stream::<span class="title function_ invoke__">iter</span>(&amp;[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	和迭代器 Iterator 类似，</span></span><br><span class="line"><span class="comment">	next() 方法返回一个 Option&lt;T&gt;，</span></span><br><span class="line"><span class="comment">	其中 T 是从 stream 中获取的值的类型。</span></span><br><span class="line"><span class="comment">	若收到 None 则意味着 stream 迭代已经结束。</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(v) = stream.<span class="title function_ invoke__">next</span>().<span class="keyword">await</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;GOT = &#123;:?&#125;&quot;</span>, v);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre>
+
+<p>实现mini-redis客户端</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> tokio_stream::StreamExt;</span><br><span class="line"><span class="keyword">use</span> mini_redis::client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">publish</span>() <span class="punctuation">-&gt;</span> mini_redis::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">client</span> = client::<span class="title function_ invoke__">connect</span>(<span class="string">&quot;127.0.0.1:6379&quot;</span>).<span class="keyword">await</span>?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发布一些数据</span></span><br><span class="line">    client.<span class="title function_ invoke__">publish</span>(<span class="string">&quot;numbers&quot;</span>, <span class="string">&quot;1&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="keyword">await</span>?;</span><br><span class="line">    client.<span class="title function_ invoke__">publish</span>(<span class="string">&quot;numbers&quot;</span>, <span class="string">&quot;two&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="keyword">await</span>?;</span><br><span class="line">    client.<span class="title function_ invoke__">publish</span>(<span class="string">&quot;numbers&quot;</span>, <span class="string">&quot;3&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="keyword">await</span>?;</span><br><span class="line">    client.<span class="title function_ invoke__">publish</span>(<span class="string">&quot;numbers&quot;</span>, <span class="string">&quot;four&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="keyword">await</span>?;</span><br><span class="line">    client.<span class="title function_ invoke__">publish</span>(<span class="string">&quot;numbers&quot;</span>, <span class="string">&quot;five&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="keyword">await</span>?;</span><br><span class="line">    client.<span class="title function_ invoke__">publish</span>(<span class="string">&quot;numbers&quot;</span>, <span class="string">&quot;6&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="keyword">await</span>?;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">上面生成了一个异步任务专门用于</span></span><br><span class="line"><span class="comment">发布消息到 min-redis 服务器端的 numbers 消息通道中。</span></span><br><span class="line"><span class="comment">然后，在 main 中，我们订阅了 numbers 消息通道，</span></span><br><span class="line"><span class="comment">并且打印从中接收到的消息。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">into_stream 会将 Subscriber 变成一个 stream</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">在 stream 上调用 next 方法要求该 stream 被固定住(pinned)，</span></span><br><span class="line"><span class="comment">因此需要调用 tokio::pin!</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">subscribe</span>() <span class="punctuation">-&gt;</span> mini_redis::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">client</span> = client::<span class="title function_ invoke__">connect</span>(<span class="string">&quot;127.0.0.1:6379&quot;</span>).<span class="keyword">await</span>?;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">subscriber</span> = client.<span class="title function_ invoke__">subscribe</span>(<span class="built_in">vec!</span>[<span class="string">&quot;numbers&quot;</span>.<span class="title function_ invoke__">to_string</span>()]).<span class="keyword">await</span>?;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">messages</span> = subscriber</span><br><span class="line">        .<span class="title function_ invoke__">into_stream</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|msg| <span class="keyword">match</span> msg &#123;</span><br><span class="line">            <span class="title function_ invoke__">Ok</span>(msg) <span class="keyword">if</span> msg.content.<span class="title function_ invoke__">len</span>() == <span class="number">1</span> =&gt; <span class="literal">true</span>,</span><br><span class="line">            _ =&gt; <span class="literal">false</span>,</span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|msg| msg.<span class="title function_ invoke__">unwrap</span>().content)</span><br><span class="line">        .<span class="title function_ invoke__">take</span>(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    tokio::pin!(messages);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(msg) = messages.<span class="title function_ invoke__">next</span>().<span class="keyword">await</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;got = &#123;:?&#125;&quot;</span>, msg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() <span class="punctuation">-&gt;</span> mini_redis::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    tokio::<span class="title function_ invoke__">spawn</span>(<span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">publish</span>().<span class="keyword">await</span></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">subscribe</span>().<span class="keyword">await</span>?;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre>
+<h5 id="适配器"><a href="#适配器" class="headerlink" title="适配器"></a>适配器</h5><p>迭代器适配器，会将一个迭代器转变成另一个迭代器，<br>例如 map，filter 等</p>
+<p>消费者适配器，会消费掉一个迭代器，最终生成一个值，<br>例如 collect 可以将迭代器收集成一个集合</p>
+<p>与迭代器类似，stream 也有适配器，<br>例如一个 stream 适配器可以将<br>一个 stream 转变成另一个 stream ，例如 map、take 和 filter</p>
+<p>subscribe 订阅一直持续下去，直到程序被关闭。<br>让在收到三条消息后就停止迭代，最终结束。</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">messages</span> = subscriber</span><br><span class="line">    .<span class="title function_ invoke__">into_stream</span>()</span><br><span class="line">    .<span class="title function_ invoke__">take</span>(<span class="number">3</span>);</span><br></pre>
+
+<p>过滤 stream 中的消息，只保留数字类型的值</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">messages</span> = subscriber</span><br><span class="line">    .<span class="title function_ invoke__">into_stream</span>()</span><br><span class="line">    .<span class="title function_ invoke__">filter</span>(|msg| <span class="keyword">match</span> msg &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(msg) <span class="keyword">if</span> msg.content.<span class="title function_ invoke__">len</span>() == <span class="number">1</span> =&gt; <span class="literal">true</span>,</span><br><span class="line">        _ =&gt; <span class="literal">false</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_ invoke__">take</span>(<span class="number">3</span>);</span><br></pre>
+
+<p>map 适配器来简化</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">messages</span> = subscriber</span><br><span class="line">    .<span class="title function_ invoke__">into_stream</span>()</span><br><span class="line">    .<span class="title function_ invoke__">filter</span>(|msg| <span class="keyword">match</span> msg &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(msg) <span class="keyword">if</span> msg.content.<span class="title function_ invoke__">len</span>() == <span class="number">1</span> =&gt; <span class="literal">true</span>,</span><br><span class="line">        _ =&gt; <span class="literal">false</span>,</span><br><span class="line">    &#125;)<span class="comment">/*</span></span><br><span class="line"><span class="comment">	    msg.unwrap:由于 filter 的先执行， </span></span><br><span class="line"><span class="comment">	    map 中的 msg 只能是 Ok(...)，</span></span><br><span class="line"><span class="comment">	    因此 unwrap 非常安全</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    .<span class="title function_ invoke__">map</span>(|msg| msg.<span class="title function_ invoke__">unwrap</span>().content)</span><br><span class="line">    .<span class="title function_ invoke__">take</span>(<span class="number">3</span>);</span><br></pre>
+
+<p>当 filter 和 map 一起使用时，用一个统一的方法来实现: filter_map。</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">messages</span> = subscriber</span><br><span class="line">    .<span class="title function_ invoke__">into_stream</span>()</span><br><span class="line">    .<span class="title function_ invoke__">filter_map</span>(|msg| <span class="keyword">match</span> msg &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(msg) <span class="keyword">if</span> msg.content.<span class="title function_ invoke__">len</span>() == <span class="number">1</span> =&gt; <span class="title function_ invoke__">Some</span>(msg.content),</span><br><span class="line">        _ =&gt; <span class="literal">None</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_ invoke__">take</span>(<span class="number">3</span>);</span><br></pre>
+
+<h4 id="实现stream-trait"><a href="#实现stream-trait" class="headerlink" title="实现stream trait"></a>实现stream trait</h4><pre class="highlight"><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Stream</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	Stream::poll_next() 函数跟 Future::poll 很相似，</span></span><br><span class="line"><span class="comment">	区别就是前者为了从 stream 收到多个值需要重复的进行调用</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">	当一个 stream 没有做好返回一个值的准备时，</span></span><br><span class="line"><span class="comment">	它将返回一个 Poll::Pending ，</span></span><br><span class="line"><span class="comment">	同时将任务的 waker 进行注册。</span></span><br><span class="line"><span class="comment">	一旦 stream 准备好后， waker 将被调用</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll_next</span>(</span><br><span class="line">        <span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;,</span><br><span class="line">        cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;</span><br><span class="line">    ) <span class="punctuation">-&gt;</span> Poll&lt;<span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt;&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">size_hint</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> (<span class="type">usize</span>, <span class="type">Option</span>&lt;<span class="type">usize</span>&gt;) &#123;</span><br><span class="line">        (<span class="number">0</span>, <span class="literal">None</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>如果想要手动实现一个 Stream，<br>需要组合 Future 和其它 Stream<br>现在让我们来更进一步，<br>将它转换成一个 stream，每 10 毫秒生成一个值，总共生成 3 次:</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> tokio_stream::Stream;</span><br><span class="line"><span class="keyword">use</span> std::pin::Pin;</span><br><span class="line"><span class="keyword">use</span> std::task::&#123;Context, Poll&#125;;</span><br><span class="line"><span class="keyword">use</span> std::time::Duration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Interval</span> &#123;</span><br><span class="line">    rem: <span class="type">usize</span>,</span><br><span class="line">    delay: Delay,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Stream</span> <span class="keyword">for</span> <span class="title class_">Interval</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span> = ();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">poll_next</span>(<span class="keyword">mut</span> <span class="keyword">self</span>: Pin&lt;&amp;<span class="keyword">mut</span> <span class="keyword">Self</span>&gt;, cx: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;)</span><br><span class="line">        <span class="punctuation">-&gt;</span> Poll&lt;<span class="type">Option</span>&lt;()&gt;&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.rem == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="comment">// 去除计时器实现</span></span><br><span class="line">            <span class="keyword">return</span> Poll::<span class="title function_ invoke__">Ready</span>(<span class="literal">None</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">match</span> Pin::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.delay).<span class="title function_ invoke__">poll</span>(cx) &#123;</span><br><span class="line">            Poll::<span class="title function_ invoke__">Ready</span>(_) =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">when</span> = <span class="keyword">self</span>.delay.when + Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">10</span>);</span><br><span class="line">                <span class="keyword">self</span>.delay = Delay &#123; when &#125;;</span><br><span class="line">                <span class="keyword">self</span>.rem -= <span class="number">1</span>;</span><br><span class="line">                Poll::<span class="title function_ invoke__">Ready</span>(<span class="title function_ invoke__">Some</span>(()))</span><br><span class="line">            &#125;</span><br><span class="line">            Poll::Pending =&gt; Poll::Pending,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<h4 id="async-stream"><a href="#async-stream" class="headerlink" title="async-stream"></a>async-stream</h4><p>手动实现 Stream 特征实际上是相当麻烦的事，<br>不幸地是，Rust 语言的 async&#x2F;await 语法目前还不能用于定义 stream，<br>虽然相关的工作已经在进行中。</p>
+<p>作为替代方案，async-stream 包提供了一个 stream! 宏，<br>它可以将一个输入转换成 stream</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> async_stream::stream;</span><br><span class="line"><span class="keyword">use</span> std::time::&#123;Duration, Instant&#125;;</span><br><span class="line"></span><br><span class="line">stream! &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">when</span> = Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">3</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">delay</span> = Delay &#123; when &#125;;</span><br><span class="line">        delay.<span class="keyword">await</span>;</span><br><span class="line">        <span class="comment">//yield ，用来配合生成器使用的</span></span><br><span class="line">        <span class="title function_ invoke__">yield</span> ();</span><br><span class="line">        when += Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+
+<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><h5 id="ctrl-c关闭"><a href="#ctrl-c关闭" class="headerlink" title="ctrl+c关闭"></a>ctrl+c关闭</h5><p>为了检测来自操作系统的关闭信号，<br>Tokio 提供了一个 tokio::signal::ctrl_c 函数，<br>它将一直睡眠直到收到对应的信号</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> tokio::signal;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// ... spawn application as separate task ...</span></span><br><span class="line">    <span class="comment">// 在一个单独的任务中处理应用逻辑</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> signal::<span class="title function_ invoke__">ctrl_c</span>().<span class="keyword">await</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(()) =&gt; &#123;&#125;,</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(err) =&gt; &#123;</span><br><span class="line">            eprintln!(<span class="string">&quot;Unable to listen for shutdown signal: &#123;&#125;&quot;</span>, err);</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//  发送关闭信号给应用所在的任务，然后等待</span></span><br><span class="line">&#125;</span><br></pre>
+<h5 id="通知程序的每一个部分开始关闭"><a href="#通知程序的每一个部分开始关闭" class="headerlink" title="通知程序的每一个部分开始关闭"></a>通知程序的每一个部分开始关闭</h5><p>通知程序各个部分关闭的方式就是使用一个广播消息通道<br>应用中的每个任务都持有一个广播消息通道的接收端，<br>当消息被广播到该通道时，<br>每个任务都可以收到该消息，并关闭自己:</p>
+<pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">next_frame</span> = tokio::<span class="built_in">select!</span> &#123;</span><br><span class="line">    res = <span class="keyword">self</span>.connection.<span class="title function_ invoke__">read_frame</span>() =&gt; res?,</span><br><span class="line">    _ = <span class="keyword">self</span>.shutdown.<span class="title function_ invoke__">recv</span>() =&gt; &#123;</span><br><span class="line">        <span class="comment">// 当收到关闭信号后，直接从 `select!` 返回，此时 `select!` 中的另一个分支会自动释放，其中的任务也会结束</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">Ok</span>(());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre>
+<p>在 mini-redis 中，当收到关闭消息时，<br>任务会立即结束，但在实际项目中，<br>这种方式可能会过于理想，<br>例如当向文件或数据库写入数据时，<br>立刻终止任务可能会导致一些无法预料的错误，<br>因此，在结束前做一些收尾工作会是非常好的选择。</p>
+<p>除此之外，还有两点值得注意:</p>
+<p>将广播消息通道作为结构体的一个字段是相当不错的选择, </p>
+<p>还可以使用 watch channel 实现同样的效果，<br>    与之前的方式相比，这两种方法并没有太大的区别</p>
+<h4 id="等待各个部分的结束"><a href="#等待各个部分的结束" class="headerlink" title="等待各个部分的结束"></a>等待各个部分的结束</h4><p>mpsc 消息通道有一个重要特性：<br>当所有发送端都 drop 时，消息通道会自动关闭，<br>此时继续接收消息就会报错</p>
+<p>这个特性特别适合优雅关闭的场景：<br>主线程持有消息通道的接收端，<br>然后每个代码部分拿走一个发送端，当该部分结束时，<br>就 drop 掉发送端，<br>因此所有发送端被 drop 也就意味着所有的部分都已关闭，<br>此时主线程的接收端就会收到错误，进而结束。</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> tokio::sync::mpsc::&#123;channel, Sender&#125;;</span><br><span class="line"><span class="keyword">use</span> tokio::time::&#123;sleep, Duration&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> (send, <span class="keyword">mut</span> recv) = <span class="title function_ invoke__">channel</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">10</span> &#123;</span><br><span class="line">        tokio::<span class="title function_ invoke__">spawn</span>(<span class="title function_ invoke__">some_operation</span>(i, send.<span class="title function_ invoke__">clone</span>()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待各个任务的完成</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// 我们需要 drop 自己的发送端，因为等下的 `recv()` 调用会阻塞, 如果不 `drop` ，那发送端就无法被全部关闭</span></span><br><span class="line">    <span class="comment">// `recv` 也将永远无法结束，这将陷入一个类似死锁的困境</span></span><br><span class="line">    <span class="title function_ invoke__">drop</span>(send);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当所有发送端都超出作用域被 `drop` 时 (当前的发送端并不是因为超出作用域被 `drop` 而是手动 `drop` 的)</span></span><br><span class="line">    <span class="comment">// `recv` 调用会返回一个错误</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_</span> = recv.<span class="title function_ invoke__">recv</span>().<span class="keyword">await</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">some_operation</span>(i: <span class="type">u64</span>, _sender: Sender&lt;()&gt;) &#123;</span><br><span class="line">    <span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">100</span> * i)).<span class="keyword">await</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Task &#123;&#125; shutting down.&quot;</span>, i);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发送端超出作用域，然后被 `drop`</span></span><br><span class="line">&#125;</span><br></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/08/29/tokio-6/">
+            https://sabakiro.github.io/2023/08/29/tokio-6/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/28/tokio-5/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">tokio_5 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#stream"><span class="toc-text">stream</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3"><span class="toc-text">迭代</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">适配器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0stream-trait"><span class="toc-text">实现stream trait</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#async-stream"><span class="toc-text">async-stream</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%97%AD"><span class="toc-text">关闭</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ctrl-c%E5%85%B3%E9%97%AD"><span class="toc-text">ctrl+c关闭</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%9A%E7%9F%A5%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%AF%8F%E4%B8%80%E4%B8%AA%E9%83%A8%E5%88%86%E5%BC%80%E5%A7%8B%E5%85%B3%E9%97%AD"><span class="toc-text">通知程序的每一个部分开始关闭</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E5%90%84%E4%B8%AA%E9%83%A8%E5%88%86%E7%9A%84%E7%BB%93%E6%9D%9F"><span class="toc-text">等待各个部分的结束</span></a></li></ol></li></ol></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#stream"><span class="toc-text">stream</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3"><span class="toc-text">迭代</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">适配器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0stream-trait"><span class="toc-text">实现stream trait</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#async-stream"><span class="toc-text">async-stream</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%97%AD"><span class="toc-text">关闭</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ctrl-c%E5%85%B3%E9%97%AD"><span class="toc-text">ctrl+c关闭</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%9A%E7%9F%A5%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%AF%8F%E4%B8%80%E4%B8%AA%E9%83%A8%E5%88%86%E5%BC%80%E5%A7%8B%E5%85%B3%E9%97%AD"><span class="toc-text">通知程序的每一个部分开始关闭</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E5%90%84%E4%B8%AA%E9%83%A8%E5%88%86%E7%9A%84%E7%BB%93%E6%9D%9F"><span class="toc-text">等待各个部分的结束</span></a></li></ol></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-29</div>
+        <a href="/2023/08/29/tokio-6/"><div class="recent-posts-item-content">tokio_6</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-28</div>
+        <a href="/2023/08/28/tokio-5/"><div class="recent-posts-item-content">tokio_5</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-28</div>
+        <a href="/2023/08/28/tokio-4/"><div class="recent-posts-item-content">tokio_4</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-27</div>
+        <a href="/2023/08/27/tokio-3/"><div class="recent-posts-item-content">tokio_3 帧</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
