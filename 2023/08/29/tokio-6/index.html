@@ -45,7 +45,7 @@
         content="2023-08-29">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-29">
+        content="2023-08-30">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -286,7 +286,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>35</span>
+    <span>36</span>
     <span>Posts</span>
   </a>
   <a 
@@ -463,6 +463,7 @@
 <h4 id="等待各个部分的结束"><a href="#等待各个部分的结束" class="headerlink" title="等待各个部分的结束"></a>等待各个部分的结束</h4><p>mpsc 消息通道有一个重要特性：<br>当所有发送端都 drop 时，消息通道会自动关闭，<br>此时继续接收消息就会报错</p>
 <p>这个特性特别适合优雅关闭的场景：<br>主线程持有消息通道的接收端，<br>然后每个代码部分拿走一个发送端，当该部分结束时，<br>就 drop 掉发送端，<br>因此所有发送端被 drop 也就意味着所有的部分都已关闭，<br>此时主线程的接收端就会收到错误，进而结束。</p>
 <pre class="highlight"><span class="line"><span class="keyword">use</span> tokio::sync::mpsc::&#123;channel, Sender&#125;;</span><br><span class="line"><span class="keyword">use</span> tokio::time::&#123;sleep, Duration&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> (send, <span class="keyword">mut</span> recv) = <span class="title function_ invoke__">channel</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">10</span> &#123;</span><br><span class="line">        tokio::<span class="title function_ invoke__">spawn</span>(<span class="title function_ invoke__">some_operation</span>(i, send.<span class="title function_ invoke__">clone</span>()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待各个任务的完成</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// 我们需要 drop 自己的发送端，因为等下的 `recv()` 调用会阻塞, 如果不 `drop` ，那发送端就无法被全部关闭</span></span><br><span class="line">    <span class="comment">// `recv` 也将永远无法结束，这将陷入一个类似死锁的困境</span></span><br><span class="line">    <span class="title function_ invoke__">drop</span>(send);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当所有发送端都超出作用域被 `drop` 时 (当前的发送端并不是因为超出作用域被 `drop` 而是手动 `drop` 的)</span></span><br><span class="line">    <span class="comment">// `recv` 调用会返回一个错误</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_</span> = recv.<span class="title function_ invoke__">recv</span>().<span class="keyword">await</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">some_operation</span>(i: <span class="type">u64</span>, _sender: Sender&lt;()&gt;) &#123;</span><br><span class="line">    <span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">100</span> * i)).<span class="keyword">await</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Task &#123;&#125; shutting down.&quot;</span>, i);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发送端超出作用域，然后被 `drop`</span></span><br><span class="line">&#125;</span><br></pre>
+
   </div>
   <div>
     
@@ -491,6 +492,20 @@
   </div>
 </article>
 <div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/08/30/tokio-7/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">Prev</div>
+          
+            <div class="nav-title">tokio_7 </div>
+          
+        </div>
+      </a>
+    </div>
   
   
     <div class="nav-item-next">
@@ -547,6 +562,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-30</div>
+        <a href="/2023/08/30/tokio-7/"><div class="recent-posts-item-content">tokio_7</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-29</div>
         <a href="/2023/08/29/tokio-6/"><div class="recent-posts-item-content">tokio_6</div></a>
       </div>
@@ -559,11 +579,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-28</div>
         <a href="/2023/08/28/tokio-4/"><div class="recent-posts-item-content">tokio_4</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-08-27</div>
-        <a href="/2023/08/27/tokio-3/"><div class="recent-posts-item-content">tokio_3 帧</div></a>
       </div>
     
   </div>
