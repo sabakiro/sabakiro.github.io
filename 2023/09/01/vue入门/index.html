@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>vue入门</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="vue入门">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/09/01/vue%E5%85%A5%E9%97%A8/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-09-01">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-09-01">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="vue">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>37</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>5</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%A8%A1%E6%9D%BF%E4%B8%AD%E4%BD%BF%E7%94%A8"><span class="toc-text">在模板中使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attribute%E7%BB%91%E5%AE%9A"><span class="toc-text">Attribute绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC"><span class="toc-text">事件监听</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E5%8D%95%E7%BB%91%E5%AE%9A"><span class="toc-text">表单绑定</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#v-model-%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A"><span class="toc-text">v-model 双向绑定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8v-on%E5%92%8C-v-bind%E6%9D%A5%E5%AE%9E%E7%8E%B0v-model"><span class="toc-text">使用v-on和 v-bind来实现v-model</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#v-if"><span class="toc-text">v-if</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8%E6%B8%B2%E6%9F%93"><span class="toc-text">列表渲染</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#v-for"><span class="toc-text">v- for</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Computed"><span class="toc-text">Computed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">生命周期和模板引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%A6%E5%90%AC%E5%99%A8"><span class="toc-text">侦听器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Props"><span class="toc-text">Props</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emits"><span class="toc-text">Emits</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E6%A7%BD"><span class="toc-text">插槽</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+      <a 
+        href="/tags/vue/" 
+        title="vue">
+        <div class="tags-list-item">vue</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      vue入门
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-09-01T12:15:45.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-09-01</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>2.4k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/vue/" 
+            class="post-meta-link">
+            vue
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>SFC 是一种可复用的代码组织形式，<br>它将从属于同一个组件的 HTML、CSS 和 JavaScript<br>封装在使用 <code>.vue</code> 后缀的文件中。</p>
+<p>能在改变时触发更新的状态被称作是<strong>响应式</strong>的。<br>可以使用 Vue 的 <code>reactive()</code> API 来声明响应式状态。<br>由 <code>reactive()</code> 创建的对象都是 <code>JavaScript Proxy</code>，<br>其行为与普通对象一样</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; reactive &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span> </span><br><span class="line"><span class="keyword">const</span> counter = <span class="title function_">reactive</span>(&#123; <span class="attr">count</span>: <span class="number">0</span> &#125;) </span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(counter.<span class="property">count</span>) <span class="comment">// 0 </span></span><br><span class="line">counter.<span class="property">count</span>++</span><br></pre>
+
+<p><code>reactive()</code> 只适用于对象 (包括数组和内置类型，如 <code>Map</code> 和 <code>Set</code>)。<br>而另一个 API <code>ref()</code> 则可以接受任何值类型。<br><code>ref</code> 会返回一个包裹对象，<br>并在 <code>.value</code> 属性下暴露内部值。</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> message = <span class="title function_">ref</span>(<span class="string">&#x27;Hello World!&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(message.<span class="property">value</span>) <span class="comment">// &quot;Hello World!&quot;</span></span><br><span class="line">message.<span class="property">value</span> = <span class="string">&#x27;Changed&#x27;</span></span><br></pre>
+<h2 id="在模板中使用"><a href="#在模板中使用" class="headerlink" title="在模板中使用"></a>在模板中使用</h2><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; reactive &#125; from &#x27;vue&#x27;</span><br><span class="line">const counter = reactive(&#123;</span><br><span class="line">  count: 0,</span><br><span class="line">&#125;)</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line">const message = ref(&#x27;Hello World!&#x27;)</span><br><span class="line">message.value = &#x27;Changed&#x27;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;!--在组件的 `&lt;script setup&gt;` 块中声明的响应式状态，可以直接在模板中使用。</span><br><span class="line">下面展示了如何使用双花括号语法，</span><br><span class="line">根据 `counter` 对象和 `message` ref 的值渲染动态文本：--&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!--注意我们在模板中访问的 `message` ref 时不需要使用 `.value`：它会被自动解包，</span><br><span class="line">让使用更简单。--&gt;</span><br><span class="line">  &lt;h1&gt;&#123;&#123; message &#125;&#125;&lt;/h1&gt;</span><br><span class="line">  &lt;h1&gt;make me dynamic &#123;&#123; counter.count &#125;&#125;&lt;/h1&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>在双花括号中的内容并不只限于标识符或路径——可以使用任何有效的 JavaScript 表达式。</p>
+<h2 id="Attribute绑定"><a href="#Attribute绑定" class="headerlink" title="Attribute绑定"></a>Attribute绑定</h2><p>在 Vue 中，mustache 语法 (即双大括号) 只能用于文本插值。<br>为了给 attribute 绑定一个动态值，需要使用 <code>v-bind</code> 指令：</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line">const red = ref(&quot;red&quot;)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;!--冒号后面的部分 (`:class`) 是指令的“参数”。</span><br><span class="line">此处，元素的 `class` attribute 将与组件状态里的 `red` 属性保持同步。</span><br><span class="line">--&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!--&lt;div v-bind:class=&quot;red&quot;&gt;make me red&lt;/div&gt;--&gt;</span><br><span class="line">&lt;!--简写--&gt;</span><br><span class="line">  &lt;div :class=&quot;red&quot;&gt;make me red&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">.red &#123;</span><br><span class="line">  color: red;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre>
+<h2 id="事件监听"><a href="#事件监听" class="headerlink" title="事件监听"></a>事件监听</h2><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line">const red = ref(&quot;&quot;)</span><br><span class="line">function handle()&#123;</span><br><span class="line">  //更新组件资源</span><br><span class="line">  red.value=&quot;red&quot;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div :class=&quot;red&quot;&gt;make me red&lt;/div&gt;</span><br><span class="line">  &lt;!--可以使用 `v-on` 指令监听 DOM 事件--&gt;</span><br><span class="line">  &lt;!--&lt;button v-on:click=&quot;handle&quot;&gt;change color&lt;/button&gt;--&gt;</span><br><span class="line">  </span><br><span class="line">  &lt;!--简写--&gt;</span><br><span class="line">  &lt;button @click=&quot;handle&quot;&gt;change color&lt;/button&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">.red &#123;</span><br><span class="line">  color: red;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre>
+<h2 id="表单绑定"><a href="#表单绑定" class="headerlink" title="表单绑定"></a>表单绑定</h2><h4 id="v-model-双向绑定"><a href="#v-model-双向绑定" class="headerlink" title="v-model 双向绑定"></a>v-model 双向绑定</h4><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const text = ref(&#x27;&#x27;)</span><br><span class="line"></span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;input v-model=&quot;text&quot; &gt;</span><br><span class="line">  &lt;div&gt;&#123;&#123; text &#125;&#125;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+
+<h4 id="使用v-on和-v-bind来实现v-model"><a href="#使用v-on和-v-bind来实现v-model" class="headerlink" title="使用v-on和 v-bind来实现v-model"></a>使用v-on和 v-bind来实现v-model</h4><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const text = ref(&#x27;&#x27;)</span><br><span class="line">function onInput (e) &#123;</span><br><span class="line">  text.value = e.target.value</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;input :value=&quot;text&quot; @input=&quot;onInput&quot;&gt;</span><br><span class="line">  &lt;div&gt;&#123;&#123; text &#125;&#125;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<h2 id="v-if"><a href="#v-if" class="headerlink" title="v-if"></a>v-if</h2><p>条件渲染</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const flag = ref(true)</span><br><span class="line">function handle () &#123;</span><br><span class="line">  flag.value = !flag.value</span><br><span class="line">  console.log(flag.value)</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;h1 v-if=&quot;flag&quot;&gt;ciallo world&lt;/h1&gt;</span><br><span class="line">  &lt;h1 v-else&gt;hello world&lt;/h1&gt;</span><br><span class="line">  &lt;button @click=&quot;handle&quot;&gt;change flag&lt;/button&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<h2 id="列表渲染"><a href="#列表渲染" class="headerlink" title="列表渲染"></a>列表渲染</h2><h4 id="v-for"><a href="#v-for" class="headerlink" title="v- for"></a>v- for</h4><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; reactive &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const todos = ref([&#123;</span><br><span class="line">  id: 0,</span><br><span class="line">  text: &quot;ciallo world&quot;,</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">  id: 1,</span><br><span class="line">  text: &quot;hello world&quot;</span><br><span class="line">&#125;,]</span><br><span class="line">)</span><br><span class="line">//添加元素</span><br><span class="line">const new_value = ref(&#x27;&#x27;)</span><br><span class="line">function add () &#123;</span><br><span class="line">  const todo_value = new_value.value</span><br><span class="line">  const todo = &#123; id: 2, text: todo_value &#125;</span><br><span class="line">  todos.value.push(todo)</span><br><span class="line">  new_value.value = &quot;&quot;</span><br><span class="line">&#125;</span><br><span class="line">//移除元素</span><br><span class="line">function removeItem (todo) &#123;</span><br><span class="line">  todos.value = todos.value.filter((t) =&gt; t.id !== todo.id)</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;input v-model=&quot;new_value&quot;&gt;</span><br><span class="line">  &lt;button @click=&quot;add&quot;&gt;add todo&lt;/button&gt;</span><br><span class="line">  &lt;ul&gt;</span><br><span class="line">  &lt;!--</span><br><span class="line">  这里的 `todo` 是一个局部变量，表示当前正在迭代的数组元素。</span><br><span class="line">  它只能在 `v-for` 所绑定的元素上或是其内部访问，就像函数的作用域一样。</span><br><span class="line">  --&gt;</span><br><span class="line">    &lt;li v-for=&quot;todo in todos&quot; :key=&quot;todo.id&quot;&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">    我们还给每个 todo 对象设置了唯一的 `id`，</span><br><span class="line">    并且将它作为特殊的 `key` attribute绑定到每个 `&lt;li&gt;`。</span><br><span class="line">    `key` 使得 Vue 能够精确的移动每个 `&lt;li&gt;`，以匹配对应的对象在数组中的位置。</span><br><span class="line">    --&gt;</span><br><span class="line">      &#123;&#123; todo.id &#125;&#125;:&#123;&#123; todo.text &#125;&#125;</span><br><span class="line">      &lt;button @click=&quot;removeItem(todo)&quot;&gt; remove&lt;/button&gt;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">  &lt;/ul&gt;</span><br><span class="line">  </span><br><span class="line">&lt;/template&gt;</span><br></pre>
+
+<h2 id="Computed"><a href="#Computed" class="headerlink" title="Computed"></a>Computed</h2><p>计算属性<br>它可以让我们创建一个计算属性 ref，<br>这个 ref 会动态地根据其他响应式数据源来计算其 <code>.value</code><br>可以用来简化<code>循环时的条件渲染</code></p>
+<p>计算属性会自动跟踪其计算中所使用的到的其他响应式状态，<br>并将它们收集为自己的依赖。<br>计算结果会被缓存，并只有在其依赖发生改变时才会被自动更新。</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; computed, ref &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">let id = 0</span><br><span class="line"></span><br><span class="line">const newTodo = ref(&#x27;&#x27;)</span><br><span class="line">const hideCompleted = ref(false)</span><br><span class="line">const todos = ref([</span><br><span class="line">  &#123; id: id++, text: &#x27;Learn HTML&#x27;, done: true &#125;,</span><br><span class="line">  &#123; id: id++, text: &#x27;Learn JavaScript&#x27;, done: true &#125;,</span><br><span class="line">  &#123; id: id++, text: &#x27;Learn Vue&#x27;, done: false &#125;</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">//计算属性</span><br><span class="line">const filteredTodos = computed(() =&gt; &#123;</span><br><span class="line">  // 根据 `todos.value` &amp; `hideCompleted.value`</span><br><span class="line">  // 返回过滤后的 todo 项目</span><br><span class="line">  return hideCompleted.value</span><br><span class="line">    ? todos.value.filter((t) =&gt; !t.done)</span><br><span class="line">    : todos.value</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">function addTodo () &#123;</span><br><span class="line">  todos.value.push(&#123; id: id++, text: newTodo.value, done: false &#125;)</span><br><span class="line">  newTodo.value = &#x27;&#x27;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function removeTodo (todo) &#123;</span><br><span class="line">  todos.value = todos.value.filter((t) =&gt; t !== todo)</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;form @submit.prevent=&quot;addTodo&quot;&gt;</span><br><span class="line">    &lt;input v-model=&quot;newTodo&quot;&gt;</span><br><span class="line">    &lt;button&gt;Add Todo&lt;/button&gt;</span><br><span class="line">  &lt;/form&gt;</span><br><span class="line">  &lt;ul&gt;</span><br><span class="line">  </span><br><span class="line">    &lt;li v-for=&quot;todo in filteredTodos&quot; :key=&quot;todo.id&quot;&gt;</span><br><span class="line">      &lt;input type=&quot;checkbox&quot; v-model=&quot;todo.done&quot;&gt;</span><br><span class="line">      &lt;span :class=&quot;&#123; done: todo.done &#125;&quot;&gt;&#123;&#123; todo.text &#125;&#125;&lt;/span&gt;</span><br><span class="line">      &lt;button @click=&quot;removeTodo(todo)&quot;&gt;X&lt;/button&gt;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line"></span><br><span class="line">  &lt;/ul&gt;</span><br><span class="line">  &lt;button @click=&quot;hideCompleted = !hideCompleted&quot;&gt;</span><br><span class="line">    &#123;&#123; hideCompleted ? &#x27;Show all&#x27; : &#x27;Hide completed&#x27; &#125;&#125;</span><br><span class="line">  &lt;/button&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">.done &#123;</span><br><span class="line">  text-decoration: line-through;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre>
+
+<h2 id="生命周期和模板引用"><a href="#生命周期和模板引用" class="headerlink" title="生命周期和模板引用"></a>生命周期和模板引用</h2><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref, onMounted &#125; from &#x27;vue&#x27;</span><br><span class="line">//2. 要访问该引用，需要声明一个同名的 ref</span><br><span class="line">/* 注意这个 ref 使用 null 值来初始化。</span><br><span class="line">这是因为当 &lt;script setup&gt; 执行时，DOM 元素还不存在。</span><br><span class="line">模板引用 ref 只能在组件挂载后访问。*/</span><br><span class="line">const pElementRef = ref(null)</span><br><span class="line">//3. 要在挂载之后执行代码，可以使用 `onMounted()` 函数 生命周期函数</span><br><span class="line">onMounted(() =&gt; &#123;</span><br><span class="line">  // 此时组件已经挂载。</span><br><span class="line">  pElementRef.value.textContent = &quot;ciallo world&quot;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!-- 1. 模板引用——也就是指向模板中一个 DOM 元素的 ref。</span><br><span class="line">需要通过这个特殊的 `ref` attribute来实现模板引用：--&gt;</span><br><span class="line">  &lt;p ref=&quot;pElementRef&quot;&gt;hello&lt;/p&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<h2 id="侦听器"><a href="#侦听器" class="headerlink" title="侦听器"></a>侦听器</h2><p><code>watch()</code> 可以直接侦听一个 ref，并且只要 <code>count</code> 的值改变就会触发回调。<br><code>watch()</code> 也可以侦听其他类型的数据源</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref, watch &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const count = ref(&#x27;&#x27;)</span><br><span class="line">watch(count, (newCount) =&gt; &#123;</span><br><span class="line">  //副作用</span><br><span class="line">  alert(`new count is: $&#123;newCount&#125;`)</span><br><span class="line">&#125;)</span><br><span class="line">function handle (e) &#123;</span><br><span class="line">  count.value = e.target.value</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;input @change=&quot;handle&quot;&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<h2 id="Props"><a href="#Props" class="headerlink" title="Props"></a>Props</h2><p>子组件可以通过 <strong>props</strong> 从父组件接受动态数据。<br>首先，需要声明它所接受的 props：<br>ChildComp.vue</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">/*</span><br><span class="line">注意 `defineProps()` 是一个编译时宏，并不需要导入。</span><br><span class="line">一旦声明，`msg` prop 就可以在子组件的模板中使用。</span><br><span class="line">它也可以通过 `defineProps()` 所返回的对象在 JavaScript 中访问。</span><br><span class="line">*/</span><br><span class="line">const props = defineProps(&#123;</span><br><span class="line">  msg: String</span><br><span class="line">&#125;)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;&#123;&#123; msg || &#x27;No props passed yet&#x27; &#125;&#125;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>App.vue</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line">import ChildComp from &#x27;./components/ChildComp.vue&#x27;</span><br><span class="line"></span><br><span class="line">const greeting = ref(&#x27;Hello from parent&#x27;)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!--父组件可以像声明 HTML attributes 一样传递 props。</span><br><span class="line">若要传递动态值，也可以使用 `v-bind` 语法：--&gt;</span><br><span class="line">  &lt;ChildComp :msg=&quot;greeting&quot; /&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<h2 id="Emits"><a href="#Emits" class="headerlink" title="Emits"></a>Emits</h2><p>子组件还可以向父组件触发事件：<br>App.vue</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line">import ChildComp from &#x27;./components/ChildComp.vue&#x27;</span><br><span class="line"></span><br><span class="line">const childMsg = ref(&#x27;Hello from parent&#x27;)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;!-- 父组件可以使用 v-on 监听子组件触发的事件——</span><br><span class="line">    这里的处理函数接收了子组件触发事件时的额外参数</span><br><span class="line">    并将它赋值给了本地状态 --&gt;</span><br><span class="line">  &lt;ChildComp @response=&quot;(msg) =&gt; childMsg = msg&quot; /&gt;</span><br><span class="line">  &lt;h1&gt;&#123;&#123; childMsg &#125;&#125;&lt;/h1&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>ChildComp.vue</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">// 声明触发的事件</span><br><span class="line">const emit = defineEmits([&#x27;response&#x27;])</span><br><span class="line"></span><br><span class="line">// 带参数触发</span><br><span class="line">emit(&#x27;response&#x27;, &#x27;hello from child&#x27;)</span><br><span class="line">//emit() 的第一个参数是事件的名称。</span><br><span class="line">//其他所有参数都将传递给事件监听器。</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;h2&gt;Child component&lt;/h2&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<h2 id="插槽"><a href="#插槽" class="headerlink" title="插槽"></a>插槽</h2><p>父组件还可以通过<strong>插槽</strong> (slots) 将模板片段传递给子组件<br>app.vue</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line">import ChildComp from &#x27;./components/ChildComp.vue&#x27;</span><br><span class="line"></span><br><span class="line">const msg = ref(&#x27;from parent&#x27;)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;ChildComp&gt;&#123;&#123;msg&#125;&#125;&lt;/ChildComp&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+
+<p>childComp.vue</p>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!--</span><br><span class="line">在子组件中，可以使用 `&lt;slot&gt;` 元素作为</span><br><span class="line">插槽出口 (slot outlet) 渲染父组件中的插槽内容 (slot content)：</span><br><span class="line"></span><br><span class="line">`&lt;slot&gt;` 插口中的内容将被当作“默认”内容：</span><br><span class="line">它会在父组件没有传递任何插槽内容时显示：--&gt;</span><br><span class="line">  &lt;slot&gt;Fallback content&lt;/slot&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/09/01/vue%E5%85%A5%E9%97%A8/">
+            https://sabakiro.github.io/2023/09/01/vue%E5%85%A5%E9%97%A8/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/08/30/tokio-7/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">tokio_7 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%A8%A1%E6%9D%BF%E4%B8%AD%E4%BD%BF%E7%94%A8"><span class="toc-text">在模板中使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attribute%E7%BB%91%E5%AE%9A"><span class="toc-text">Attribute绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC"><span class="toc-text">事件监听</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E5%8D%95%E7%BB%91%E5%AE%9A"><span class="toc-text">表单绑定</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#v-model-%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A"><span class="toc-text">v-model 双向绑定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8v-on%E5%92%8C-v-bind%E6%9D%A5%E5%AE%9E%E7%8E%B0v-model"><span class="toc-text">使用v-on和 v-bind来实现v-model</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#v-if"><span class="toc-text">v-if</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8%E6%B8%B2%E6%9F%93"><span class="toc-text">列表渲染</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#v-for"><span class="toc-text">v- for</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Computed"><span class="toc-text">Computed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">生命周期和模板引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%A6%E5%90%AC%E5%99%A8"><span class="toc-text">侦听器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Props"><span class="toc-text">Props</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emits"><span class="toc-text">Emits</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E6%A7%BD"><span class="toc-text">插槽</span></a></li></ol>
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%A8%A1%E6%9D%BF%E4%B8%AD%E4%BD%BF%E7%94%A8"><span class="toc-text">在模板中使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attribute%E7%BB%91%E5%AE%9A"><span class="toc-text">Attribute绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC"><span class="toc-text">事件监听</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E5%8D%95%E7%BB%91%E5%AE%9A"><span class="toc-text">表单绑定</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#v-model-%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A"><span class="toc-text">v-model 双向绑定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8v-on%E5%92%8C-v-bind%E6%9D%A5%E5%AE%9E%E7%8E%B0v-model"><span class="toc-text">使用v-on和 v-bind来实现v-model</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#v-if"><span class="toc-text">v-if</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8%E6%B8%B2%E6%9F%93"><span class="toc-text">列表渲染</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#v-for"><span class="toc-text">v- for</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Computed"><span class="toc-text">Computed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">生命周期和模板引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%A6%E5%90%AC%E5%99%A8"><span class="toc-text">侦听器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Props"><span class="toc-text">Props</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emits"><span class="toc-text">Emits</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E6%A7%BD"><span class="toc-text">插槽</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-01</div>
+        <a href="/2023/09/01/vue%E5%85%A5%E9%97%A8/"><div class="recent-posts-item-content">vue入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-30</div>
+        <a href="/2023/08/30/tokio-7/"><div class="recent-posts-item-content">tokio_7</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-29</div>
+        <a href="/2023/08/29/tokio-6/"><div class="recent-posts-item-content">tokio_6</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-28</div>
+        <a href="/2023/08/28/tokio-5/"><div class="recent-posts-item-content">tokio_5</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
