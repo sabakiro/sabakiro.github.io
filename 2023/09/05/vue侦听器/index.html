@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>vscode连接远程服务器</title>
+  <title>vue生命周期</title>
   
     
       <meta 
         property="og:title" 
-        content="vscode连接远程服务器">
+        content="vue生命周期">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
+        content="https://sabakiro.github.io/2023/09/05/vue%E4%BE%A6%E5%90%AC%E5%99%A8/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-08-03">
+        content="2023-09-05">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-03">
+        content="2023-09-05">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -53,7 +53,7 @@
         
           <meta 
             property="og:article:tag" 
-            content="linux">
+            content="vue">
         
       
     
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%A6%E5%90%AC%E6%95%B0%E6%8D%AE%E6%BA%90%E7%B1%BB%E5%9E%8B"><span class="toc-text">侦听数据源类型</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%B1%E5%B1%82%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-text">深层监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9E%E8%B0%83%E7%9A%84%E8%A7%A6%E5%8F%91%E6%97%B6%E6%9C%BA"><span class="toc-text">回调的触发时机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%9C%E6%AD%A2%E4%BE%A6%E5%90%AC%E5%99%A8"><span class="toc-text">停止侦听器</span></a>
       </div>
     </article>
   
@@ -386,21 +386,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      vscode连接远程服务器
+      vue生命周期
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-08-03T08:28:41.000Z">
+    <time datetime="2023-09-05T03:11:47.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-08-03</span>
+      <span>2023-09-05</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>167 words</span>
+      <span>1.4k words</span>
     
   </div>
   
@@ -415,9 +415,9 @@
         
           
           <a 
-            href="/tags/linux/" 
+            href="/tags/vue/" 
             class="post-meta-link">
-            linux
+            vue
           </a>
         
       </div>
@@ -427,20 +427,35 @@
   <div 
     id="section" 
     class="post-content">
-    <h1 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h1><p>在本地输入</p>
-<pre class="highlight"><span class="line">ssh<span class="literal">-keygen</span> <span class="literal">-t</span> rsa <span class="literal">-b</span> <span class="number">4096</span> <span class="operator">-f</span> 路径/文件名</span><br><span class="line"><span class="comment"># -t 指定创建的类型</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -b 表示密钥的长度</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -f 指定用来保存密钥的文件名</span></span><br></pre>
+    <h5 id="侦听数据源类型"><a href="#侦听数据源类型" class="headerlink" title="侦听数据源类型"></a>侦听数据源类型</h5><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">	import &#123; ref, watch &#125; from &#x27;vue&#x27;</span><br><span class="line">	const x = ref(0)</span><br><span class="line">	const y = ref(0)</span><br><span class="line">	// 单个 ref</span><br><span class="line">	watch(x, (newX) =&gt; &#123;</span><br><span class="line">	  alert(`x is $&#123;newX&#125;`)</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">	//getter函数</span><br><span class="line">	watch(() =&gt; x.value + y.value,</span><br><span class="line">	  (sum) =&gt; &#123;</span><br><span class="line">	    alert(`sum of x + y is: $&#123;sum&#125;`)</span><br><span class="line">	  &#125;</span><br><span class="line">	)</span><br><span class="line">	</span><br><span class="line">	//多个来源组成的数组</span><br><span class="line">	watch([x, () =&gt; y.value], ([newX, newY]) =&gt; &#123;</span><br><span class="line">	  alert(`x is $&#123;newY&#125; and y is $&#123;newY&#125;`)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;input v-model.number=&quot;x&quot;&gt;</span><br><span class="line">  &lt;input v-model.number=&quot;y&quot;&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+
+<p>不能直接侦听响应式对象的属性值</p>
+<pre class="highlight"><span class="line">&lt;script&gt;</span><br><span class="line">	const obj = reactive(&#123; count: 0 &#125;)</span><br><span class="line">	</span><br><span class="line">	// 错误</span><br><span class="line">	//因为 watch() 得到的参数是一个 number</span><br><span class="line">	watch(obj.count, (count) =&gt; &#123;</span><br><span class="line">	  console.log(`count is: $&#123;count&#125;`)</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">	//正确</span><br><span class="line">	// 提供一个 getter 函数</span><br><span class="line">	watch(</span><br><span class="line">	  () =&gt; obj.count,</span><br><span class="line">	  (count) =&gt; &#123;</span><br><span class="line">	    console.log(`count is: $&#123;count&#125;`)</span><br><span class="line">	  &#125;</span><br><span class="line">	)</span><br><span class="line">&lt;/script&gt;</span><br></pre>
 
 
+<h2 id="深层监听器"><a href="#深层监听器" class="headerlink" title="深层监听器"></a>深层监听器</h2><p>直接给 watch() 传入一个响应式对象，<br>会隐式地创建一个深层侦听器——<br>该回调函数在所有嵌套的变更时都会被触发：</p>
+<pre class="highlight"><span class="line">&lt;script&gt;</span><br><span class="line">	const obj = reactive(&#123; count: 0 &#125;)</span><br><span class="line">	</span><br><span class="line">	watch(obj, (newValue, oldValue) =&gt; &#123;</span><br><span class="line">	  // 在嵌套的属性变更时触发</span><br><span class="line">	  // 注意：`newValue` 此处和 `oldValue` 是相等的</span><br><span class="line">	  // 因为它们是同一个对象！</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">	obj.count++</span><br><span class="line">&lt;/script&gt;</span><br></pre>
 
-<h1 id="上传公钥到服务器"><a href="#上传公钥到服务器" class="headerlink" title="上传公钥到服务器"></a>上传公钥到服务器</h1><pre class="highlight"><span class="line"><span class="built_in">cd</span> ~/.ssh &amp;&amp; touch authorized_keys</span><br><span class="line">sudo vi ~/.ssh/authorized_keys</span><br><span class="line">之后将生成的后缀名为.pub的密钥文件追加到authorized_keys中</span><br></pre>
+<p>相比之下，一个返回响应式对象的 getter 函数，<br>只有在返回不同的对象时，才会触发回调</p>
+<pre class="highlight"><span class="line">&lt;Script&gt;</span><br><span class="line">	watch(</span><br><span class="line">	  () =&gt; state.someObject,</span><br><span class="line">	  () =&gt; &#123;</span><br><span class="line">	    // 仅当 state.someObject 被替换时触发</span><br><span class="line">	  &#125;</span><br><span class="line">	)</span><br><span class="line">	//可以给上面这个例子显式地加上 deep 选项，</span><br><span class="line">	//强制转成深层侦听器</span><br><span class="line">	watch(</span><br><span class="line">	  () =&gt; state.someObject,</span><br><span class="line">	  (newValue, oldValue) =&gt; &#123;</span><br><span class="line">	    // 注意：`newValue` 此处和 `oldValue` 是相等的</span><br><span class="line">	    // *除非* state.someObject 被整个替换了</span><br><span class="line">	  &#125;,</span><br><span class="line">	  &#123; deep: true &#125;</span><br><span class="line">	)</span><br><span class="line">&lt;/script&gt;</span><br></pre>
 
-<h1 id="创建vscode的连接配置"><a href="#创建vscode的连接配置" class="headerlink" title="创建vscode的连接配置"></a>创建vscode的连接配置</h1><p>1.点击远程资源管理器</p>
-<p>2.点击齿轮（配置）</p>
-<p>3.在框中输入密钥文件的路径</p>
-<p>4.完成后配置路径文件</p>
-<p>​		文件格式：</p>
-<pre class="highlight"><span class="line">Host 自定义名称</span><br><span class="line">	User 远程服务器账户</span><br><span class="line">	Host Ipv4地址</span><br><span class="line">	Port <span class="number">22</span></span><br><span class="line">	IdentityFile 本地密钥所在位置</span><br></pre>
+<p>深度侦听需要遍历被侦听对象中的所有嵌套的属性，<br>当用于大型数据结构时，开销很大。<br>因此请只在必要时才使用它，并且要留意性能。</p>
+<p>即时回调的侦听器<br>watch 默认是懒执行的：仅当数据源变化时，才会执行回调。<br>但在某些场景中，我们希望在创建侦听器时，立即执行一遍回调<br>可以通过传入 immediate: true 选项来强制侦听器的回调立即执行</p>
+<pre class="highlight"><span class="line">&lt;script&gt;</span><br><span class="line">	watch(source, (newValue, oldValue) =&gt; &#123;</span><br><span class="line">	  // 立即执行，且当 `source` 改变时再次执行</span><br><span class="line">	&#125;, &#123; immediate: true &#125;)</span><br><span class="line">&lt;/script&gt;</span><br></pre>
 
+<p>watchEffect()</p>
+<pre class="highlight"><span class="line">&lt;Script&gt;</span><br><span class="line">	const todoId = ref(1)</span><br><span class="line">	const data = ref(null)</span><br><span class="line">	</span><br><span class="line">	watch(todoId, async () =&gt; &#123;</span><br><span class="line">	  const response = await fetch(</span><br><span class="line">	    `https://jsonplaceholder.typicode.com/todos/$&#123;todoId.value&#125;`</span><br><span class="line">	  )</span><br><span class="line">	  data.value = await response.json()</span><br><span class="line">	&#125;, &#123; immediate: true &#125;)</span><br><span class="line">	</span><br><span class="line">//使用watchEffect简化代码</span><br><span class="line">	watchEffect(async () =&gt; &#123;</span><br><span class="line">	  const response = await fetch(</span><br><span class="line">	    `https://jsonplaceholder.typicode.com/todos/$&#123;todoId.value&#125;`</span><br><span class="line">	  )</span><br><span class="line">	  data.value = await response.json()</span><br><span class="line">	&#125;)</span><br><span class="line">/*</span><br><span class="line">回调会立即执行，不需要指定 immediate: true。</span><br><span class="line">在执行期间，</span><br><span class="line">它会自动追踪 todoId.value 作为依赖（和计算属性类似）。</span><br><span class="line">每当 todoId.value 变化时，回调会再次执行。</span><br><span class="line">有了 watchEffect()，</span><br><span class="line">我们不再需要明确传递 todoId 作为源值。</span><br><span class="line"></span><br><span class="line">watchEffect 仅会在其同步执行期间，</span><br><span class="line">才追踪依赖。在使用异步回调时，</span><br><span class="line">只有在第一个 await 正常工作前访问到的属性才会被追踪</span><br><span class="line">*/</span><br><span class="line">&lt;/script&gt;</span><br></pre>
+<p>watch vs. watchEffect​<br>watch 和 watchEffect 都能响应式地执行有副作用的回调。<br>它们之间的主要区别是追踪响应式依赖的方式：</p>
+<p>watch 只追踪明确侦听的数据源。<br>它不会追踪任何在回调中访问到的东西。<br>另外，仅在数据源确实改变时才会触发回调。<br>watch 会避免在发生副作用时追踪依赖，<br>因此，我们能更加精确地控制回调函数的触发时机。</p>
+<p>watchEffect，则会在副作用发生期间追踪依赖。<br>它会在同步执行过程中，自动追踪所有能访问到的响应式属性。<br>这更方便，而且代码往往更简洁，<br>但有时其响应性依赖关系会不那么明确。</p>
+<h4 id="回调的触发时机"><a href="#回调的触发时机" class="headerlink" title="回调的触发时机"></a>回调的触发时机</h4><p>当你更改了响应式状态，<br>它可能会同时触发 Vue 组件更新和侦听器回调。</p>
+<p>默认情况下，用户创建的侦听器回调，<br>都会在 Vue 组件更新之前被调用。<br>这意味着你在侦听器回调中访问的 DOM<br>将是被 Vue 更新之前的状态。</p>
+<p>如果想在侦听器回调中能访问被 Vue 更新之后的 DOM，<br>你需要指明 flush: ‘post’ 选项：</p>
+<pre class="highlight"><span class="line">&lt;script&gt;</span><br><span class="line">watch(source, callback, &#123;</span><br><span class="line">  flush: &#x27;post&#x27;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">watchEffect(callback, &#123;</span><br><span class="line">  flush: &#x27;post&#x27;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">//后置刷新的 watchEffect() 有个更方便的别名</span><br><span class="line">//watchPostEffect()：</span><br><span class="line">import &#123; watchPostEffect &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">watchPostEffect(() =&gt; &#123;</span><br><span class="line">  /* 在 Vue 更新后执行 */</span><br><span class="line">&#125;)</span><br><span class="line">&lt;/script&gt;</span><br></pre>
+
+<h4 id="停止侦听器"><a href="#停止侦听器" class="headerlink" title="停止侦听器"></a>停止侦听器</h4><p>在 setup() 或 <code>&lt;script setup&gt;</code> 中用同步语句创建的侦听器，<br>会自动绑定到宿主组件实例上，<br>并且会在宿主组件卸载时自动停止。<br>因此，在大多数情况下，你无需关心怎么停止一个侦听器。</p>
+<p>一个关键点是，侦听器必须用同步语句创建：<br>如果用异步回调创建一个侦听器，<br>那么它不会绑定到当前组件上，<br>你必须手动停止它，以防内存泄漏。</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; watchEffect &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">// 它会自动停止</span><br><span class="line">watchEffect(() =&gt; &#123;&#125;)</span><br><span class="line"></span><br><span class="line">// ...这个则不会！</span><br><span class="line">setTimeout(() =&gt; &#123;</span><br><span class="line">  watchEffect(() =&gt; &#123;&#125;)</span><br><span class="line">&#125;, 100)</span><br><span class="line">//要手动停止一个侦听器，</span><br><span class="line">//请调用 watch 或 watchEffect 返回的函数：</span><br><span class="line">const unwatch = watchEffect(() =&gt; &#123;&#125;)</span><br><span class="line"></span><br><span class="line">// ...当该侦听器不再需要时</span><br><span class="line">unwatch()</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">注意，需要异步创建侦听器的情况很少，</span><br><span class="line">请尽可能选择同步创建。如果需要等待一些异步数据，</span><br><span class="line">你可以使用条件式的侦听逻辑：</span><br><span class="line">*/</span><br><span class="line">// 需要异步请求得到的数据</span><br><span class="line">const data = ref(null)</span><br><span class="line"></span><br><span class="line">watchEffect(() =&gt; &#123;</span><br><span class="line">  if (data.value) &#123;</span><br><span class="line">    // 数据加载后执行某些操作...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&lt;/script&gt;</span><br></pre>
 
   </div>
   <div>
@@ -460,8 +475,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-            https://sabakiro.github.io/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/
+            href="https://sabakiro.github.io/2023/09/05/vue%E4%BE%A6%E5%90%AC%E5%99%A8/">
+            https://sabakiro.github.io/2023/09/05/vue%E4%BE%A6%E5%90%AC%E5%99%A8/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -473,13 +488,13 @@
   
     <div class="nav-item-prev">
       <a 
-        href="/2023/08/04/rust%E5%8F%98%E9%87%8F%E4%B8%8E%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E7%AC%94%E8%AE%B0/" 
+        href="/2023/09/05/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" 
         class="nav-link">
         <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
           <div class="nav-label">Prev</div>
           
-            <div class="nav-title">rust变量与基本类型笔记 </div>
+            <div class="nav-title">vue生命周期 </div>
           
         </div>
       </a>
@@ -488,12 +503,12 @@
   
     <div class="nav-item-next">
       <a 
-        href="/2023/07/12/cSharp%E7%9A%84ref%E5%92%8Cout%E5%92%8Cparams%E5%85%B3%E9%94%AE%E5%AD%97/" 
+        href="/2023/09/05/vue%E8%A1%A8%E5%8D%95%E8%BE%93%E5%85%A5%E7%BB%91%E5%AE%9A/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">cSharp的ref和out和params关键字 </div>
+            <div class="nav-title">vue表单输入绑定 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -511,7 +526,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%A6%E5%90%AC%E6%95%B0%E6%8D%AE%E6%BA%90%E7%B1%BB%E5%9E%8B"><span class="toc-text">侦听数据源类型</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%B1%E5%B1%82%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-text">深层监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9E%E8%B0%83%E7%9A%84%E8%A7%A6%E5%8F%91%E6%97%B6%E6%9C%BA"><span class="toc-text">回调的触发时机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%9C%E6%AD%A2%E4%BE%A6%E5%90%AC%E5%99%A8"><span class="toc-text">停止侦听器</span></a>
 </div>
             </main>
             <aside class="right-column">
@@ -525,7 +540,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="toc-text">创建密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">上传公钥到服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAvscode%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">创建vscode的连接配置</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%A6%E5%90%AC%E6%95%B0%E6%8D%AE%E6%BA%90%E7%B1%BB%E5%9E%8B"><span class="toc-text">侦听数据源类型</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%B1%E5%B1%82%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-text">深层监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9E%E8%B0%83%E7%9A%84%E8%A7%A6%E5%8F%91%E6%97%B6%E6%9C%BA"><span class="toc-text">回调的触发时机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%9C%E6%AD%A2%E4%BE%A6%E5%90%AC%E5%99%A8"><span class="toc-text">停止侦听器</span></a>
     </article>
   
   
