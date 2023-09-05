@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>multipass</title>
+  <title>模板引用和组件基础</title>
   
     
       <meta 
         property="og:title" 
-        content="multipass">
+        content="模板引用和组件基础">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/08/15/multipass/index.html">
+        content="https://sabakiro.github.io/2023/09/05/vue%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8%E5%92%8C%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-08-15">
+        content="2023-09-05">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-15">
+        content="2023-09-05">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -53,7 +53,7 @@
         
           <meta 
             property="og:article:tag" 
-            content="linux">
+            content="vue">
         
       
     
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%89%88%E6%9C%AC"><span class="toc-text">查看版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E5%88%97%E8%A1%A8"><span class="toc-text">查看镜像列表</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B"><span class="toc-text">创建实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%9E%E4%BE%8B"><span class="toc-text">进入实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%9E%E4%BE%8B"><span class="toc-text">查看实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%BF%A1%E6%81%AF"><span class="toc-text">查看虚拟机信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95"><span class="toc-text">挂载目录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93%E6%96%87%E4%BB%B6"><span class="toc-text">传输文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B"><span class="toc-text">操作实例</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">模板引用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">访问模板引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80"><span class="toc-text">组件基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E7%BB%84%E4%BB%B6"><span class="toc-text">监听组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E6%8F%92%E6%A7%BD%E6%9D%A5%E5%88%86%E9%85%8D%E5%86%85%E5%AE%B9"><span class="toc-text">通过插槽来分配内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%BB%84%E4%BB%B6"><span class="toc-text">动态组件</span></a></li></ol>
       </div>
     </article>
   
@@ -386,21 +386,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      multipass
+      模板引用和组件基础
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-08-15T15:22:42.000Z">
+    <time datetime="2023-09-05T04:30:55.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-08-15</span>
+      <span>2023-09-05</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>207 words</span>
+      <span>727 words</span>
     
   </div>
   
@@ -415,9 +415,9 @@
         
           
           <a 
-            href="/tags/linux/" 
+            href="/tags/vue/" 
             class="post-meta-link">
-            linux
+            vue
           </a>
         
       </div>
@@ -427,27 +427,26 @@
   <div 
     id="section" 
     class="post-content">
-    <h1 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h1><pre class="highlight"><span class="line">multipass version</span><br></pre>
+    <h2 id="模板引用"><a href="#模板引用" class="headerlink" title="模板引用"></a>模板引用</h2><h4 id="访问模板引用"><a href="#访问模板引用" class="headerlink" title="访问模板引用"></a>访问模板引用</h4><pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; onMounted, ref,watchEffect&#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const input = ref(null)</span><br><span class="line">//页面渲染后将聚焦文本框</span><br><span class="line">onMounted(() =&gt; &#123;</span><br><span class="line">  input.value.focus()</span><br><span class="line">&#125;)</span><br><span class="line">//用watchEffect代替onMounted</span><br><span class="line">watchEffect(() =&gt; &#123;</span><br><span class="line">  if (input.value) &#123;</span><br><span class="line">    input.value.focus()</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // 此时还未挂载，或此元素已经被卸载（例如通过 v-if 控制）</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;input ref=&quot;input&quot;&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
 
-<h1 id="查看镜像列表"><a href="#查看镜像列表" class="headerlink" title="查看镜像列表"></a>查看镜像列表</h1><pre class="highlight"><span class="line">multipass find</span><br></pre>
-<h1 id="创建实例"><a href="#创建实例" class="headerlink" title="创建实例"></a>创建实例</h1><pre class="highlight"><span class="line">multipass launch -n name [image] [-c ..] [-m ..G] [-d ..G]</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">-n, –name: 名称</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">-c, –cpus: cpu核心数, 默认: 1</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">-m, –mem: 内存大小, 默认: 1G</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">-d, –disk: 硬盘大小, 默认: 5G</span></span><br><span class="line"></span><br></pre>
-<h1 id="进入实例"><a href="#进入实例" class="headerlink" title="进入实例"></a>进入实例</h1><pre class="highlight"><span class="line">multipass shell 实例名</span><br></pre>
-<h1 id="查看实例"><a href="#查看实例" class="headerlink" title="查看实例"></a>查看实例</h1><pre class="highlight"><span class="line">multipass list</span><br></pre>
-<h1 id="查看虚拟机信息"><a href="#查看虚拟机信息" class="headerlink" title="查看虚拟机信息"></a>查看虚拟机信息</h1><pre class="highlight"><span class="line">multipass info 实例名</span><br></pre>
-<h1 id="挂载目录"><a href="#挂载目录" class="headerlink" title="挂载目录"></a>挂载目录</h1><p>设置环境（windows）</p>
-<pre class="highlight"><span class="line">multipass set local.privileged-mounts=Yes</span><br></pre>
+<h2 id="组件基础"><a href="#组件基础" class="headerlink" title="组件基础"></a>组件基础</h2><p>defineProps 是一个仅 <code>&lt;script setup&gt;</code> 中可用的编译宏命令，<br>并不需要显式地导入。声明的 props 会自动暴露给模板。<br>defineProps 会返回一个对象，<br>其中包含了可以传递给组件的所有 props：</p>
+<pre class="highlight"><span class="line">&lt;script&gt;</span><br><span class="line">	const props = defineProps([&#x27;title&#x27;])</span><br><span class="line">	console.log(props.title)</span><br><span class="line">&lt;/script&gt;</span><br></pre>
 
-<p>挂载目录</p>
-<pre class="highlight"><span class="line">multipass mount 宿主机目录 实例名:实例目录</span><br></pre>
-
-<p>查看是否挂在成功</p>
-<pre class="highlight"><span class="line">multipass info 实例名</span><br></pre>
-
-<p>卸载挂载目录</p>
-<pre class="highlight"><span class="line">multipass umount 实例名</span><br></pre>
-<h1 id="传输文件"><a href="#传输文件" class="headerlink" title="传输文件"></a>传输文件</h1><pre class="highlight"><span class="line">multipass transfer 宿主机文件 实例名:实例目录</span><br></pre>
-<h1 id="操作实例"><a href="#操作实例" class="headerlink" title="操作实例"></a>操作实例</h1><pre class="highlight"><span class="line"><span class="meta prompt_">#</span><span class="language-bash">启动实例</span></span><br><span class="line">multipass start 实例名</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">停止实例</span></span><br><span class="line">multipass stop 实例名</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">将实例移入垃圾桶</span></span><br><span class="line">multipass delete 实例名</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">永久删除实例</span></span><br><span class="line">multipass purge 实例名</span><br></pre>
-
+<h2 id="监听组件"><a href="#监听组件" class="headerlink" title="监听组件"></a>监听组件</h2><p>在模板中用它来控制所有博客文章的字体大小<br>父组件</p>
+<pre class="highlight"><span class="line">&lt;script&gt;</span><br><span class="line">......</span><br><span class="line">const posts = ref([</span><br><span class="line">  /* ... */</span><br><span class="line">])</span><br><span class="line">//博客文章的原始字体大小</span><br><span class="line">const postFontSize = ref(1)</span><br><span class="line"></span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;div :style=&quot;&#123; fontSize: postFontSize + &#x27;em&#x27; &#125;&quot;&gt;</span><br><span class="line">	  &lt;BlogPost</span><br><span class="line">	    v-for=&quot;post in posts&quot;</span><br><span class="line">	    :key=&quot;post.id&quot;</span><br><span class="line">	    :title=&quot;post.title&quot;</span><br><span class="line">	    @enlarge-text=&quot;postFontSize += 0.1&quot;</span><br><span class="line">	   /&gt;</span><br><span class="line">	&lt;!--</span><br><span class="line">	因为有了 @enlarge-text=&quot;postFontSize += 0.1&quot; 的监听，</span><br><span class="line">	父组件会接收这一事件，从而更新 postFontSize 的值。--&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>子组件</p>
+<pre class="highlight"><span class="line">&lt;script&gt;</span><br><span class="line">	defineProps([&#x27;title&#x27;])</span><br><span class="line">	defineEmits([&#x27;enlarge-text&#x27;])</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class=&quot;blog-post&quot;&gt;</span><br><span class="line">    &lt;h4&gt;&#123;&#123; title &#125;&#125;&lt;/h4&gt;</span><br><span class="line">    &lt;!---</span><br><span class="line">    子组件可以通过调用内置的 $emit 方法，通过传入事件名称来抛出一个事件</span><br><span class="line">    --&gt;</span><br><span class="line">     &lt;button @click=&quot;$emit(&#x27;enlarge-text&#x27;)&quot;&gt;Enlarge text&lt;/button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>和 defineProps 类似，defineEmits 仅可用于 <code>&lt;script setup&gt;</code> 之中，并且不需要导入，<br>它返回一个等同于 $emit 方法的 emit 函数。<br>它可以被用于在组件的 <code>&lt;script setup&gt;</code> 中抛出事件，因为此处无法直接访问 $emit：</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">const emit = defineEmits([&#x27;enlarge-text&#x27;])</span><br><span class="line"></span><br><span class="line">emit(&#x27;enlarge-text&#x27;)</span><br><span class="line">&lt;/script&gt;</span><br></pre>
+<h2 id="通过插槽来分配内容"><a href="#通过插槽来分配内容" class="headerlink" title="通过插槽来分配内容"></a>通过插槽来分配内容</h2><p>父组件</p>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;AlertBox&gt;</span><br><span class="line">	  Something bad happened.</span><br><span class="line">	&lt;/AlertBox&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>子组件</p>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class=&quot;alert-box&quot;&gt;</span><br><span class="line">    &lt;strong&gt;This is an Error for Demo Purposes&lt;/strong&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;slot /&gt;</span><br><span class="line">  </span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>使用 <code>&lt;slot&gt;</code> 作为一个占位符，父组件传递进来的内容就会渲染在这里。</p>
+<h2 id="动态组件"><a href="#动态组件" class="headerlink" title="动态组件"></a>动态组件</h2><pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!-- currentTab 改变时组件也改变 --&gt;</span><br><span class="line">	&lt;component :is=&quot;tabs[currentTab]&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>被传给 :is 的值可以是以下几种：</p>
+<p>被注册的组件名<br>导入的组件对象<br>你也可以使用 is attribute 来创建一般的 HTML 元素。</p>
+<p>当使用 <code>&lt;component :is=&quot;...&quot;&gt;</code> 来在多个组件间作切换时，被切换掉的组件会被卸载。<br>我们可以通过 <code>&lt;KeepAlive&gt;</code> 组件强制被切换掉的组件仍然保持“存活”的状态。</p>
 
   </div>
   <div>
@@ -467,8 +466,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/08/15/multipass/">
-            https://sabakiro.github.io/2023/08/15/multipass/
+            href="https://sabakiro.github.io/2023/09/05/vue%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8%E5%92%8C%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80/">
+            https://sabakiro.github.io/2023/09/05/vue%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8%E5%92%8C%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -478,29 +477,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/16/%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">原子类型与内存顺序 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/08/15/%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/" 
+        href="/2023/09/05/vue%E4%BE%A6%E5%90%AC%E5%99%A8/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">共享内存 </div>
+            <div class="nav-title">vue生命周期 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -518,7 +503,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%89%88%E6%9C%AC"><span class="toc-text">查看版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E5%88%97%E8%A1%A8"><span class="toc-text">查看镜像列表</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B"><span class="toc-text">创建实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%9E%E4%BE%8B"><span class="toc-text">进入实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%9E%E4%BE%8B"><span class="toc-text">查看实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%BF%A1%E6%81%AF"><span class="toc-text">查看虚拟机信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95"><span class="toc-text">挂载目录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93%E6%96%87%E4%BB%B6"><span class="toc-text">传输文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B"><span class="toc-text">操作实例</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">模板引用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">访问模板引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80"><span class="toc-text">组件基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E7%BB%84%E4%BB%B6"><span class="toc-text">监听组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E6%8F%92%E6%A7%BD%E6%9D%A5%E5%88%86%E9%85%8D%E5%86%85%E5%AE%B9"><span class="toc-text">通过插槽来分配内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%BB%84%E4%BB%B6"><span class="toc-text">动态组件</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -532,7 +517,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%89%88%E6%9C%AC"><span class="toc-text">查看版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E5%88%97%E8%A1%A8"><span class="toc-text">查看镜像列表</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B"><span class="toc-text">创建实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%9E%E4%BE%8B"><span class="toc-text">进入实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%9E%E4%BE%8B"><span class="toc-text">查看实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%BF%A1%E6%81%AF"><span class="toc-text">查看虚拟机信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95"><span class="toc-text">挂载目录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93%E6%96%87%E4%BB%B6"><span class="toc-text">传输文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B"><span class="toc-text">操作实例</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">模板引用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8"><span class="toc-text">访问模板引用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80"><span class="toc-text">组件基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E7%BB%84%E4%BB%B6"><span class="toc-text">监听组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E6%8F%92%E6%A7%BD%E6%9D%A5%E5%88%86%E9%85%8D%E5%86%85%E5%AE%B9"><span class="toc-text">通过插槽来分配内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%BB%84%E4%BB%B6"><span class="toc-text">动态组件</span></a></li></ol>
     </article>
   
   
