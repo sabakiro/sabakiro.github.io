@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>rust变量与基本类型笔记</title>
+  <title>rust自定义类型转换</title>
   
     
       <meta 
         property="og:title" 
-        content="rust变量与基本类型笔记">
+        content="rust自定义类型转换">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/08/04/rust%E5%8F%98%E9%87%8F%E4%B8%8E%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E7%AC%94%E8%AE%B0/index.html">
+        content="https://sabakiro.github.io/2023/09/07/rust%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-08-04">
+        content="2023-09-07">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-05">
+        content="2023-09-07">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E8%A7%A3%E6%9E%84"><span class="toc-text">变量解构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#let%E9%87%8D%E7%BB%91%E5%AE%9A%E5%8F%98%E9%87%8F-%E5%8F%98%E9%87%8F%E9%81%AE%E8%94%BD"><span class="toc-text">let重绑定变量(变量遮蔽)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E5%88%97"><span class="toc-text">序列</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%95%E5%85%83%E7%B1%BB%E5%9E%8B"><span class="toc-text">单元类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%92%8C%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">语句和表达式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%91%E6%95%A3%E5%87%BD%E6%95%B0"><span class="toc-text">发散函数</span></a></li></ol>
+
       </div>
     </article>
   
@@ -398,21 +398,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      rust变量与基本类型笔记
+      rust自定义类型转换
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-08-04T09:43:48.000Z">
+    <time datetime="2023-09-07T13:19:45.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-08-04</span>
+      <span>2023-09-07</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>282 words</span>
+      <span>545 words</span>
     
   </div>
   
@@ -439,25 +439,7 @@
   <div 
     id="section" 
     class="post-content">
-    <h1 id="变量解构"><a href="#变量解构" class="headerlink" title="变量解构"></a>变量解构</h1><pre class="highlight"><span class="line"></span><br><span class="line"><span class="comment">//tuple</span></span><br><span class="line">    <span class="keyword">let</span> (a, <span class="keyword">mut</span> b) = (<span class="literal">true</span>, <span class="literal">false</span>);</span><br><span class="line"><span class="comment">//slice</span></span><br><span class="line">    <span class="keyword">let</span> [c, .., d, _] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]; <span class="comment">//c=1,d=4</span></span><br><span class="line"><span class="comment">//struct</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    age: <span class="type">i32</span>,</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span>=A&#123;name:<span class="string">&quot;ciallo&quot;</span>.<span class="title function_ invoke__">to_string</span>(),age:<span class="number">10</span>&#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">A</span> &#123;name: n,age: num&#125; = a;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(n,<span class="string">&quot;ciallo&quot;</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(num,<span class="number">10</span>);</span><br></pre>
-
-<h1 id="let重绑定变量-变量遮蔽"><a href="#let重绑定变量-变量遮蔽" class="headerlink" title="let重绑定变量(变量遮蔽)"></a>let重绑定变量(变量遮蔽)</h1><pre class="highlight"><span class="line"><span class="keyword">let</span> <span class="variable">num</span>=<span class="string">&quot;12&quot;</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">num</span>=<span class="number">20</span>;</span><br></pre>
-
-<h1 id="序列"><a href="#序列" class="headerlink" title="序列"></a>序列</h1><p>序列只允许用于数字或字符类型</p>
-<pre class="highlight"><span class="line"><span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">1</span>..=<span class="number">5</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="string">&#x27;a&#x27;</span>..=<span class="string">&#x27;z&#x27;</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre>
-
-
-
-<h1 id="单元类型"><a href="#单元类型" class="headerlink" title="单元类型"></a>单元类型</h1><p>（），作用与go语言的struct{}类型，完全不占用任何内存</p>
-<p>函数没有返回值，那么返回一个 ()</p>
-<p>在不用return返回有效值的情况下,通过 <code>;</code> 结尾的表达式返回一个 ()</p>
-<h1 id="语句和表达式"><a href="#语句和表达式" class="headerlink" title="语句和表达式"></a>语句和表达式</h1><p>表达式总需要返回值，而语句不需要</p>
-<pre class="highlight"><span class="line"><span class="comment">//表达式（花括号里返回x+1，是表达式）</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">3</span>;</span><br><span class="line">        x + <span class="number">1</span></span><br><span class="line">    &#125;;</span><br><span class="line"><span class="comment">//语句</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = <span class="number">8</span>;</span><br></pre>
-
-<h1 id="发散函数"><a href="#发散函数" class="headerlink" title="发散函数"></a>发散函数</h1><p>当用 <code>!</code> 作函数返回类型的时候，表示该函数永不返回</p>
-<pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">fuction1</span>()<span class="punctuation">-&gt;</span>！&#123;</span><br><span class="line">    <span class="built_in">panic!</span>(<span class="string">&quot;。。。。。。。&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">fuction2</span>()<span class="punctuation">-&gt;</span>！&#123;</span><br><span class="line">    <span class="keyword">loop</span>&#123;</span><br><span class="line">      <span class="comment">//在不遇到break和return的情况下永不停止循环  </span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre>
-
-
+    <pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Q7只是用于存储和传输数据的数字类型，</span></span><br><span class="line"><span class="comment">它最重要的一个功能就是能够与浮点数进行类型的相互换转</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#[derive(Debug, Clone, Copy, PartialEq, Eq)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Q7</span>(<span class="type">i8</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//从f64到Q7的转换</span></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">From</span>&lt;<span class="type">f64</span>&gt; <span class="keyword">for</span> <span class="title class_">Q7</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from</span>(value: <span class="type">f64</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="comment">//用于处理非预期的输入数据：程序将会崩溃</span></span><br><span class="line">        <span class="built_in">assert!</span>(value &gt;= -<span class="number">1.0</span>);</span><br><span class="line">        <span class="built_in">assert!</span>(value &lt;= <span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//把任何超出取值范围的输入</span></span><br><span class="line">        <span class="comment">//强制设定到取值范围内</span></span><br><span class="line">        <span class="keyword">if</span> value &gt;= <span class="number">1.0</span> &#123;</span><br><span class="line">            <span class="title function_ invoke__">Q7</span>(<span class="number">127</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> value &lt;= -<span class="number">1.0</span> &#123;</span><br><span class="line">            <span class="title function_ invoke__">Q7</span>(-<span class="number">128</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">            截断了超出范围的输入。依照程序的目标，</span></span><br><span class="line"><span class="comment">            我们知道是不会出现超出范围的输入的，</span></span><br><span class="line"><span class="comment">            所以也能够接受丢失信息的风险</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="title function_ invoke__">Q7</span>((value * <span class="number">128.0</span>) <span class="keyword">as</span> <span class="type">i8</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">From</span>&lt;Q7&gt; <span class="keyword">for</span> <span class="title class_">f64</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from</span>(value: Q7) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        (value.<span class="number">0</span> <span class="keyword">as</span> <span class="type">f64</span>) * <span class="number">2_f64</span>.<span class="title function_ invoke__">powf</span>(-<span class="number">7.0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//借助于f64执行从f32到Q7的转换</span></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">From</span>&lt;<span class="type">f32</span>&gt; <span class="keyword">for</span> <span class="title class_">Q7</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from</span>(value: <span class="type">f32</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        根据设计，从f32到f64的转换是安全的，</span></span><br><span class="line"><span class="comment">        如果一个数值能够被表示为32位的形式，</span></span><br><span class="line"><span class="comment">        那么它也能被表示为64位的形式</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        Q7::<span class="title function_ invoke__">from</span>(value <span class="keyword">as</span> <span class="type">f64</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">From</span>&lt;Q7&gt; <span class="keyword">for</span> <span class="title class_">f32</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from</span>(value: Q7) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        通常情况下，把f64转换为f32，会有丢失精度的风险。</span></span><br><span class="line"><span class="comment">        但是，在此应用程序中这种风险是不存在的，</span></span><br><span class="line"><span class="comment">        因为我们要会转换的值，其取值范围只在 -1 和 1 之间</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="type">f64</span>::<span class="title function_ invoke__">from</span>(value) <span class="keyword">as</span> <span class="type">f32</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#[cfg(test)]</span></span><br><span class="line"><span class="keyword">mod</span> tests &#123;</span><br><span class="line">    <span class="comment">//在此文件中定义了一个子模块</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">        把父模块中的元素导入此子模块的局部作用域中</span></span><br><span class="line"><span class="comment">        那些被标记为 pub 的语法项，在这里都是可以访问到的</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">use</span> super::*;</span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">out_of_bounds</span>() &#123;</span><br><span class="line">        <span class="built_in">assert_eq!</span>(Q7::<span class="title function_ invoke__">from</span>(<span class="number">10</span>.), Q7::<span class="title function_ invoke__">from</span>(<span class="number">1</span>.));</span><br><span class="line">        <span class="built_in">assert_eq!</span>(Q7::<span class="title function_ invoke__">from</span>(-<span class="number">10</span>.), Q7::<span class="title function_ invoke__">from</span>(-<span class="number">1</span>.));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">f32_to_q7</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">n1</span>: <span class="type">f32</span> = <span class="number">0.7</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">q1</span> = Q7::<span class="title function_ invoke__">from</span>(n1);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">n2</span> = -<span class="number">0.4</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">q2</span> = Q7::<span class="title function_ invoke__">from</span>(n2);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">n3</span> = <span class="number">123.0</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">q3</span> = Q7::<span class="title function_ invoke__">from</span>(n3);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">assert_eq!</span>(q1, <span class="title function_ invoke__">Q7</span>(<span class="number">89</span>));</span><br><span class="line">        <span class="built_in">assert_eq!</span>(q2, <span class="title function_ invoke__">Q7</span>(-<span class="number">51</span>));</span><br><span class="line">        <span class="built_in">assert_eq!</span>(q3, <span class="title function_ invoke__">Q7</span>(<span class="number">127</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">q7_to_f32</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">q1</span> = Q7::<span class="title function_ invoke__">from</span>(<span class="number">0.7</span>);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">n1</span> = <span class="type">f32</span>::<span class="title function_ invoke__">from</span>(q1);</span><br><span class="line">        <span class="built_in">assert_eq!</span>(n1, <span class="number">0.6953125</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">q2</span> = Q7::<span class="title function_ invoke__">from</span>(n1);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">n2</span> = <span class="type">f32</span>::<span class="title function_ invoke__">from</span>(q2);</span><br><span class="line">        <span class="built_in">assert_eq!</span>(n1, n2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
   </div>
   <div>
     
@@ -476,8 +458,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/08/04/rust%E5%8F%98%E9%87%8F%E4%B8%8E%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E7%AC%94%E8%AE%B0/">
-            https://sabakiro.github.io/2023/08/04/rust%E5%8F%98%E9%87%8F%E4%B8%8E%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E7%AC%94%E8%AE%B0/
+            href="https://sabakiro.github.io/2023/09/07/rust%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">
+            https://sabakiro.github.io/2023/09/07/rust%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -487,29 +469,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/04/%E6%89%80%E6%9C%89%E6%9D%83%E5%80%9F%E7%94%A8/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">所有权借用 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/08/03/vscode%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/" 
+        href="/2023/09/07/decode-encode-f32/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">vscode连接远程服务器 </div>
+            <div class="nav-title">decode_encode_f32 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -527,7 +495,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E8%A7%A3%E6%9E%84"><span class="toc-text">变量解构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#let%E9%87%8D%E7%BB%91%E5%AE%9A%E5%8F%98%E9%87%8F-%E5%8F%98%E9%87%8F%E9%81%AE%E8%94%BD"><span class="toc-text">let重绑定变量(变量遮蔽)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E5%88%97"><span class="toc-text">序列</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%95%E5%85%83%E7%B1%BB%E5%9E%8B"><span class="toc-text">单元类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%92%8C%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">语句和表达式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%91%E6%95%A3%E5%87%BD%E6%95%B0"><span class="toc-text">发散函数</span></a></li></ol>
+
 </div>
             </main>
             <aside class="right-column">
@@ -541,7 +509,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E8%A7%A3%E6%9E%84"><span class="toc-text">变量解构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#let%E9%87%8D%E7%BB%91%E5%AE%9A%E5%8F%98%E9%87%8F-%E5%8F%98%E9%87%8F%E9%81%AE%E8%94%BD"><span class="toc-text">let重绑定变量(变量遮蔽)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E5%88%97"><span class="toc-text">序列</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%95%E5%85%83%E7%B1%BB%E5%9E%8B"><span class="toc-text">单元类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%92%8C%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">语句和表达式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%91%E6%95%A3%E5%87%BD%E6%95%B0"><span class="toc-text">发散函数</span></a></li></ol>
+
     </article>
   
   
