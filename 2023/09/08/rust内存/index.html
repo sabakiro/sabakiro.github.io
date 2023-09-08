@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>rust内存</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="rust内存">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/09/08/rust%E5%86%85%E5%AD%98/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-09-08">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-09-08">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>51</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>7</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/vue/" 
+        title="vue">
+        <div class="tags-list-item">vue</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%AE%97%E6%B3%95/" 
+        title="算法">
+        <div class="tags-list-item">算法</div>
+      </a>
+    
+      <a 
+        href="/tags/flutter/" 
+        title="flutter">
+        <div class="tags-list-item">flutter</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      rust内存
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-09-08T08:15:38.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-09-08</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.9k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>使用引用来模仿指针</p>
+<pre class="highlight"><span class="line"><span class="keyword">static</span> B: [<span class="type">u8</span>; <span class="number">10</span>] = [<span class="number">99</span>, <span class="number">97</span>, <span class="number">114</span>, <span class="number">114</span>, <span class="number">121</span>, <span class="number">116</span>, <span class="number">111</span>, <span class="number">119</span>, <span class="number">101</span>, <span class="number">108</span>];</span><br><span class="line"><span class="keyword">static</span> C: [<span class="type">u8</span>; <span class="number">11</span>] = [<span class="number">116</span>, <span class="number">104</span>, <span class="number">97</span>, <span class="number">110</span>, <span class="number">107</span>, <span class="number">115</span>, <span class="number">102</span>, <span class="number">105</span>, <span class="number">115</span>, <span class="number">104</span>, <span class="number">0</span>];</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = <span class="number">42</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = &amp;B;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">c</span> = &amp;C;</span><br><span class="line">    <span class="comment">//&#123;:p&#125;这个语法告诉Rust，把变量当作指针来执行格式化，</span></span><br><span class="line">    <span class="comment">//也就说，要求输出该值所指向的内存地址</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a:&#123;&#125;,b:&#123;:p&#125;,c:&#123;:p&#125;&quot;</span>, a, b, c);</span><br><span class="line">    <span class="comment">//a:42,b:0x7ff69eefd370,c:0x7ff69eefd37a</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>通过指向几种不同的类型，来对比引用和<code>Box&lt;T&gt;</code></p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::mem::size_of;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> B: [<span class="type">u8</span>; <span class="number">10</span>] = [<span class="number">99</span>, <span class="number">97</span>, <span class="number">114</span>, <span class="number">114</span>, <span class="number">121</span>, <span class="number">116</span>, <span class="number">111</span>, <span class="number">119</span>, <span class="number">101</span>, <span class="number">108</span>];</span><br><span class="line"><span class="keyword">static</span> C: [<span class="type">u8</span>; <span class="number">11</span>] = [<span class="number">116</span>, <span class="number">104</span>, <span class="number">97</span>, <span class="number">110</span>, <span class="number">107</span>, <span class="number">115</span>, <span class="number">102</span>, <span class="number">105</span>, <span class="number">115</span>, <span class="number">104</span>, <span class="number">0</span>];</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    usize的实际大小就是内存地址的宽度，</span></span><br><span class="line"><span class="comment">    而内存地址的宽度取决于编译代码时使用的CPU</span></span><br><span class="line"><span class="comment">    所以此CPU又叫作编译目标</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = <span class="number">42</span>;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    &amp;[u8;10]读作“一个10字节的数组的引用”。</span></span><br><span class="line"><span class="comment">    此数组存放在内存的静态区域中</span></span><br><span class="line"><span class="comment">    而该引用本身（一个宽度为uszie字节的指针）是存放在栈上的</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = &amp;B;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    Box&lt;[u8]&gt;类型是一个装箱的字节切片。</span></span><br><span class="line"><span class="comment">    当程序员把某个值装入一个箱子(box)中后，</span></span><br><span class="line"><span class="comment">    该值的所有权就被转移给了箱子的所有者</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">c</span> = <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(C);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a (an unsigned interger):&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot; location: &#123;:p&#125;&quot;</span>, &amp;a);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot; size:     &#123;:?&#125; bytes&quot;</span>, size_of::&lt;<span class="type">usize</span>&gt;());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot; value:    &#123;:?&#125;&quot;</span>, a);</span><br><span class="line">    <span class="built_in">println!</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;b (a reference to B):&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  location:   &#123;:p&#125;&quot;</span>, &amp;b);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  size:       &#123;:?&#125; bytes&quot;</span>, size_of::&lt;&amp;[<span class="type">u8</span>; <span class="number">10</span>]&gt;());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  points to:  &#123;:p&#125;&quot;</span>, b);</span><br><span class="line">    <span class="built_in">println!</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;c (a &#x27;box&#x27; for C):&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  location:   &#123;:p&#125;&quot;</span>, &amp;c);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  size:       &#123;:?&#125; bytes&quot;</span>, size_of::&lt;&amp;[<span class="type">Box</span>&lt;[<span class="type">u8</span>]&gt;]&gt;());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  points to:  &#123;:p&#125;&quot;</span>, c);</span><br><span class="line">    <span class="built_in">println!</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;B (an array of 10 bytes):&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  location:   &#123;:p&#125;&quot;</span>, &amp;B);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  size:       &#123;:?&#125; bytes&quot;</span>, size_of::&lt;&amp;[<span class="type">u8</span>; <span class="number">10</span>]&gt;());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  points to:  &#123;:?&#125;&quot;</span>, B);</span><br><span class="line">    <span class="built_in">println!</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;C (an array of 11 bytes):&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  location:   &#123;:p&#125;&quot;</span>, &amp;C);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  size:       &#123;:?&#125; bytes&quot;</span>, size_of::&lt;&amp;[<span class="type">u8</span>; <span class="number">11</span>]&gt;());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;  points to:  &#123;:?&#125;&quot;</span>, C);</span><br><span class="line">    <span class="built_in">println!</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">a (an unsigned interger):</span></span><br><span class="line"><span class="comment"> location: 0x85f06fed6c</span></span><br><span class="line"><span class="comment"> size:     8 bytes</span></span><br><span class="line"><span class="comment"> value:    42</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">b (a reference to B):</span></span><br><span class="line"><span class="comment">  location:   0x85f06fed70</span></span><br><span class="line"><span class="comment">  size:       8 bytes</span></span><br><span class="line"><span class="comment">  points to:  0x7ff6edc1f390</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">c (a &#x27;box&#x27; for C):</span></span><br><span class="line"><span class="comment">  location:   0x85f06fed78</span></span><br><span class="line"><span class="comment">  size:       16 bytes</span></span><br><span class="line"><span class="comment">  points to:  0x285e35797c0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">B (an array of 10 bytes):</span></span><br><span class="line"><span class="comment">  location:   0x7ff6edc1f390</span></span><br><span class="line"><span class="comment">  size:       8 bytes</span></span><br><span class="line"><span class="comment">  points to:  [99, 97, 114, 114, 121, 116, 111, 119, 101, 108]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">C (an array of 11 bytes)::</span></span><br><span class="line"><span class="comment">  location:   0x7ff6edc1f39a</span></span><br><span class="line"><span class="comment">  size:       8 bytes</span></span><br><span class="line"><span class="comment">  points to:  [116, 104, 97, 110, 107, 115, 102, 105, 115, 104, 0]</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre>
+
+<p>输出来自外部来源的字符串</p>
+<pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">一种智能指针类型，</span></span><br><span class="line"><span class="comment">能够从其指针位置读取数据而无须先复制它</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">use</span> std::borrow::Cow;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">CStr是一个类似于C字符串的类型</span></span><br><span class="line"><span class="comment">它让Rust能够读取以0作为结束标志的字符串</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">use</span> std::ffi::CStr;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">c_char是Rust中i8类型的别名，</span></span><br><span class="line"><span class="comment">但对于特定的平台，</span></span><br><span class="line"><span class="comment">它可能会存在一些细微的差别</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">use</span> std::os::raw::c_char;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> B: [<span class="type">u8</span>; <span class="number">10</span>] = [<span class="number">99</span>, <span class="number">97</span>, <span class="number">114</span>, <span class="number">114</span>, <span class="number">121</span>, <span class="number">116</span>, <span class="number">111</span>, <span class="number">119</span>, <span class="number">101</span>, <span class="number">108</span>];</span><br><span class="line"><span class="keyword">static</span> C: [<span class="type">u8</span>; <span class="number">11</span>] = [<span class="number">116</span>, <span class="number">104</span>, <span class="number">97</span>, <span class="number">110</span>, <span class="number">107</span>, <span class="number">115</span>, <span class="number">102</span>, <span class="number">105</span>, <span class="number">115</span>, <span class="number">104</span>, <span class="number">0</span>];</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    在这里引入每个变量，在后面的println！中才能够访问到。</span></span><br><span class="line"><span class="comment">    假如把创建b和c的两行代码放到下面的unsafe块中，</span></span><br><span class="line"><span class="comment">    那么在后面超出作用域后，</span></span><br><span class="line"><span class="comment">    输出语句那里就访问不到了</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = <span class="number">42</span>;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    String是一种智能指针类型，</span></span><br><span class="line"><span class="comment">    它包含一种指向后端数组的指针和一个用于存储其大小的字段</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span>: <span class="type">String</span>;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    Cow就收一个类型参数，即它所指向的数据类型。</span></span><br><span class="line"><span class="comment">    str是CStr.to_string_lossy() 的返回类型，</span></span><br><span class="line"><span class="comment">    所以放在这里是合适的</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">c</span>: Cow&lt;<span class="type">str</span>&gt;;</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        引用不能直接转换为*mut T，</span></span><br><span class="line"><span class="comment">        而后者正是Stirng::from_raw_parts()所需要的类型。</span></span><br><span class="line"><span class="comment">        但是，*const T可以转换为*mut T，</span></span><br><span class="line"><span class="comment">        所以就有了这个二次类型转换的语法</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">b_ptr</span> = &amp;B <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span> <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span>;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        String::from_raw_parts()接受3个参数，</span></span><br><span class="line"><span class="comment">        一个参数是指向字节数组的指针(*mut T),</span></span><br><span class="line"><span class="comment">        另两个是大小和容量参数</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        b = <span class="type">String</span>::<span class="title function_ invoke__">from_raw_parts</span>(b_ptr, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        我们把一个*const u8转换为*const i8，</span></span><br><span class="line"><span class="comment">        后者就是c_char的别名。在这里，</span></span><br><span class="line"><span class="comment">        转换到i8之所以能够成功，是因为依据ASCII标准，</span></span><br><span class="line"><span class="comment">        数据一定都是小于128的</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">c_ptr</span> = &amp;C <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span> <span class="keyword">as</span> *<span class="keyword">const</span> c_char;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        从概念上讲，Cstr::from（）负责读取指针指向的数据，</span></span><br><span class="line"><span class="comment">        直到遇到0为止，</span></span><br><span class="line"><span class="comment">        然后利用读取到的结果数据生成一个Cow&lt;str&gt;</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        c = CStr::<span class="title function_ invoke__">from_ptr</span>(c_ptr).<span class="title function_ invoke__">to_string_lossy</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a:&#123;&#125;, b:&#123;&#125;, c:&#123;&#125; &quot;</span>, a, b, c);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//a:42, b:carrytowel, c:thanksfish</span></span><br></pre>
+
+<p>rust中的原始指针</p>
+<p>创建一个原始指针(<code>*const T</code>)</p>
+<pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span>:<span class="type">i64</span>=<span class="number">42</span>;</span><br><span class="line">    <span class="comment">//把a的引用（&amp;a）转换为指向i64的常量原始指针（*const i64）</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a_ptr</span>=&amp;a <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">i64</span>;</span><br><span class="line">    <span class="comment">//输出a的值（42）以及它在内存中的地址</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a :&#123;&#125; (&#123;:p&#125;)&quot;</span>,a,a_ptr);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//a :42 (0x35f918f5e8)</span></span><br></pre>
+
+<p>识别一个值的地址</p>
+<pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    展示了如何将一个引用转换为原始指针，</span></span><br><span class="line"><span class="comment">    然后使用std ::mem :: transmute()来识别这个值的地址</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span>: <span class="type">i64</span> = <span class="number">42</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a_ptr</span> = &amp;a <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">i64</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a_addr</span>: <span class="type">usize</span> = <span class="keyword">unsafe</span> &#123; std::mem::<span class="title function_ invoke__">transmute</span>(a_ptr) &#125;;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;a:&#123;&#125; (&#123;:p&#125;.....0x&#123;:x&#125;)&quot;</span>, a, a_ptr, a_addr + <span class="number">7</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//a:42 (0xee38b9f8b8.....0xee38b9f8bf)</span></span><br></pre>
+
+
+<p>使用windows api来查看内存<br>依赖项</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="comment">#定义了一些有用的类型别名。</span></span><br><span class="line"><span class="attr">winapi</span>=<span class="string">&quot;0.2&quot;</span></span><br><span class="line"><span class="comment">#提供了使用KERNEL.DLL来与Windows API进行交互的功能。</span></span><br><span class="line"><span class="attr">kernel32-sys</span>=<span class="string">&quot;0.2&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> kernel32;</span><br><span class="line"><span class="keyword">use</span> winapi;</span><br><span class="line"><span class="keyword">use</span> winapi::&#123;</span><br><span class="line">    <span class="comment">//在Rust里，这个类型叫作u32。</span></span><br><span class="line">    DWORD,</span><br><span class="line">    <span class="comment">/* ::os::raw::c_void定义了void指针。</span></span><br><span class="line"><span class="comment">    一个HANDLE（句柄）是在Windows中指向一些不透明资源的指针。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    HANDLE,</span><br><span class="line">    <span class="comment">// 指向一个SYSTEM_INFO结构体的指针。</span></span><br><span class="line">    LPSYSTEM_INFO,</span><br><span class="line">    LPVOID,</span><br><span class="line">    MEMORY_BASIC_INFORMATION <span class="keyword">as</span> MEMINFO,</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    在Windows里，数据类型的名称常常会用一个前缀代表类型的缩写。</span></span><br><span class="line"><span class="comment">    P代表指针，LP代表长指针（例如64位的指针）</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    PVOID,</span><br><span class="line">    SIZE_T,</span><br><span class="line">    <span class="comment">//在Windows内部定义的一些结构体。</span></span><br><span class="line">    SYSTEM_INFO,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/*这些变量的初始化代码会放在unsafe块中。</span></span><br><span class="line"><span class="comment">为了使其在外部作用域中能够被访问到，所以需要在这里定义。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">this_pid</span>: DWORD;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">this_proc</span>: HANDLE;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">min_addr</span>: LPVOID;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">max_addr</span>: LPVOID;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">base_addr</span>: PVOID;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">proc_info</span>: SYSTEM_INFO;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">mem_info</span>: MEMINFO;</span><br><span class="line">    <span class="keyword">const</span> MEMINFO_SIZE: <span class="type">usize</span> = std::mem::size_of::&lt;MEMINFO&gt;();</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        <span class="comment">//这个代码块保证了所有内存被初始化。</span></span><br><span class="line"></span><br><span class="line">        base_addr = std::mem::<span class="title function_ invoke__">zeroed</span>();</span><br><span class="line">        proc_info = std::mem::<span class="title function_ invoke__">zeroed</span>();</span><br><span class="line">        mem_info = std::mem::<span class="title function_ invoke__">zeroed</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        <span class="comment">//在这个代码块中，是发起系统调用的代码。</span></span><br><span class="line"></span><br><span class="line">        this_pid = kernel32::<span class="title function_ invoke__">GetCurrentProcessId</span>();</span><br><span class="line">        this_proc = kernel32::<span class="title function_ invoke__">GetCurrentProcess</span>();</span><br><span class="line">        kernel32::<span class="title function_ invoke__">GetSystemInfo</span>(</span><br><span class="line">            <span class="comment">/*此函数没有使用返回值，而是使用了C的惯用法，</span></span><br><span class="line"><span class="comment">            来把运行结果提供给调用方。我们提供一个指向某个预定义结构体的指针，</span></span><br><span class="line"><span class="comment">            然后在函数返回后读取该结构体的新值，以查看其结果。</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            &amp;<span class="keyword">mut</span> proc_info <span class="keyword">as</span> LPSYSTEM_INFO,</span><br><span class="line">        );</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    为了方便，此处重命名了这些变量。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    min_addr = proc_info.lpMinimumApplicationAddress;</span><br><span class="line">    max_addr = proc_info.lpMaximumApplicationAddress;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125; @ &#123;:p&#125;&quot;</span>, this_pid, this_proc);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, proc_info);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;min: &#123;:p&#125;, max: &#123;:p&#125;&quot;</span>, min_addr, max_addr);</span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="comment">//这个循环完成了扫描地址空间的工作。</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">rc</span>: SIZE_T = <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            kernel32::<span class="title function_ invoke__">VirtualQueryEx</span>(</span><br><span class="line">                <span class="comment">/*这个系统调用，</span></span><br><span class="line"><span class="comment">                提供了这个正在运行的程序的内存地址空间中一个指定段的信息，</span></span><br><span class="line"><span class="comment">                此指定段的起始位置的地址是base_addr。</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                this_proc,</span><br><span class="line">                base_addr,</span><br><span class="line">                &amp;<span class="keyword">mut</span> mem_info,</span><br><span class="line">                MEMINFO_SIZE <span class="keyword">as</span> SIZE_T,</span><br><span class="line">            )</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">if</span> rc == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:#?&#125;&quot;</span>, mem_info);</span><br><span class="line">        base_addr = ((base_addr <span class="keyword">as</span> <span class="type">u64</span>) + mem_info.RegionSize) <span class="keyword">as</span> PVOID;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">操作系统提供了用于读取和写入内存的工具，甚至在其他程序中也可以完成:</span></span><br><span class="line"><span class="comment">伪代码：</span></span><br><span class="line"><span class="comment">let pid = some_process_id;</span></span><br><span class="line"><span class="comment">OpenProcess(pid);</span></span><br><span class="line"><span class="comment">loop address space &#123;</span></span><br><span class="line"><span class="comment">    *call* VirtualQueryEx() to access the next memory segment</span></span><br><span class="line"><span class="comment">    *scan* the segment by calling ReadProcessMemory(),</span></span><br><span class="line"><span class="comment">    looking for a selected pattern</span></span><br><span class="line"><span class="comment">    *call* WriteProcessMemory() with the desired value</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/09/08/rust%E5%86%85%E5%AD%98/">
+            https://sabakiro.github.io/2023/09/08/rust%E5%86%85%E5%AD%98/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/09/08/rust%E6%A8%A1%E6%8B%9Fcpu/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">rust模拟cpu </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-08</div>
+        <a href="/2023/09/08/rust%E5%86%85%E5%AD%98/"><div class="recent-posts-item-content">rust内存</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-08</div>
+        <a href="/2023/09/08/rust%E6%A8%A1%E6%8B%9Fcpu/"><div class="recent-posts-item-content">rust模拟cpu</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-07</div>
+        <a href="/2023/09/07/rust%E4%BB%8E%E9%9A%8F%E6%9C%BA%E5%AD%97%E8%8A%82%E4%B8%AD%E7%94%9F%E6%88%90%E9%9A%8F%E6%9C%BA%E6%A6%82%E7%8E%87/"><div class="recent-posts-item-content">rust从随机字节中生成随机概率</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-07</div>
+        <a href="/2023/09/07/rust%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"><div class="recent-posts-item-content">rust自定义类型转换</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
