@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>flutter项目设置</title>
+  <title>rust模拟cpu</title>
   
     
       <meta 
         property="og:title" 
-        content="flutter项目设置">
+        content="rust模拟cpu">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/09/06/flutter%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE/index.html">
+        content="https://sabakiro.github.io/2023/09/08/rust%E6%A8%A1%E6%8B%9Fcpu/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-09-06">
+        content="2023-09-08">
       <meta 
         property="og:article:modified_time" 
-        content="2023-09-06">
+        content="2023-09-08">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -53,7 +53,7 @@
         
           <meta 
             property="og:article:tag" 
-            content="flutter">
+            content="rust">
         
       
     
@@ -398,21 +398,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      flutter项目设置
+      rust模拟cpu
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-09-06T11:11:33.000Z">
+    <time datetime="2023-09-08T00:44:06.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-09-06</span>
+      <span>2023-09-08</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>30 words</span>
+      <span>527 words</span>
     
   </div>
   
@@ -427,9 +427,9 @@
         
           
           <a 
-            href="/tags/flutter/" 
+            href="/tags/rust/" 
             class="post-meta-link">
-            flutter
+            rust
           </a>
         
       </div>
@@ -439,11 +439,11 @@
   <div 
     id="section" 
     class="post-content">
-    <p>设置环境变量<br>PUB_HOSTED_URL<br><code>https://pub.flutter-io.cn</code></p>
-<p>FLUTTER_STORAGE_BASE_URL<br><code>https://storage.flutter-io.cn</code></p>
-<p>导包<br>flutter packages get</p>
-<p>创建flutter项目<br>flutter create 项目名</p>
+    <p>从操作码中提出多个变量</p>
+<pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">function</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">opcode</span>: <span class="type">u16</span> = <span class="number">0x71E4</span>;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    先使用与（&amp;）操作进行过滤，把想要的那个半字节保留下来，</span></span><br><span class="line"><span class="comment">    然后把这个半字节的位数据右移位到最低有效位的位置上。</span></span><br><span class="line"><span class="comment">    使用十六进制表示只是出于方便，每个十六进制的数字位表示二进制的4个位。</span></span><br><span class="line"><span class="comment">    一个OxF的值就选中了单个半字节所有的位数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">c</span> = (opcode &amp; <span class="number">0xF000</span>) &gt;&gt; <span class="number">12</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = (opcode &amp; <span class="number">0x0F00</span>) &gt;&gt; <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = (opcode &amp; <span class="number">0x00F0</span>) &gt;&gt; <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">d</span> = (opcode &amp; <span class="number">0x000F</span>) &gt;&gt; <span class="number">8</span>;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    opcode中的这4个半字节，在处理以后会拆分出4个独立的变量</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="built_in">assert_eq!</span>(c, <span class="number">0x7</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(x, <span class="number">0x1</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(y, <span class="number">0xE</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(d, <span class="number">0x4</span>);</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    如果想要多个半字节，</span></span><br><span class="line"><span class="comment">    可以通过增加过滤器的宽度来一次性选中更多的半字节。</span></span><br><span class="line"><span class="comment">    为此，在这里向右移位就不是必需的了。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">nnn</span> = opcode &amp; <span class="number">0x0FFF</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">kk</span> = opcode &amp; <span class="number">0x00FF</span>;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(nnn, <span class="number">0x1E4</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(kk, <span class="number">0xE4</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
 
+<p>加法器的原型模拟器</p>
+<pre class="highlight"><span class="line"><span class="keyword">struct</span> <span class="title class_">CPU</span> &#123;</span><br><span class="line">    current_operation: <span class="type">u16</span>,</span><br><span class="line">    registers: [<span class="type">u8</span>; <span class="number">2</span>],</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">CPU</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">read_opcode</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">u16</span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.current_operation</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">run</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="comment">//loop&#123; 先不循环</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">opcode</span> = <span class="keyword">self</span>.<span class="title function_ invoke__">read_opcode</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">c</span> = ((opcode &amp; <span class="number">0xF000</span>) &gt;&gt; <span class="number">12</span>) <span class="keyword">as</span> <span class="type">u8</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">x</span> = ((opcode &amp; <span class="number">0x0F00</span>) &gt;&gt; <span class="number">8</span>) <span class="keyword">as</span> <span class="type">u8</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">y</span> = ((opcode &amp; <span class="number">0x00F0</span>) &gt;&gt; <span class="number">4</span>) <span class="keyword">as</span> <span class="type">u8</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">d</span> = ((opcode &amp; <span class="number">0x000F</span>) &gt;&gt; <span class="number">0</span>) <span class="keyword">as</span> <span class="type">u8</span>;</span><br><span class="line">        <span class="title function_ invoke__">match</span> (c, x, y, d) &#123;</span><br><span class="line">            <span class="comment">//把真正执行此操作的任务分配到负责执行该操作的“硬件电路”上</span></span><br><span class="line">            (<span class="number">0x8</span>, _, _, <span class="number">0x4</span>) =&gt; <span class="keyword">self</span>.<span class="title function_ invoke__">add_xy</span>(x, y),</span><br><span class="line">            </span><br><span class="line">            _ =&gt; todo!(<span class="string">&quot;opcode &#123;:04x&#125;&quot;</span>, opcode),</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//&#125; </span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">add_xy</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, x: <span class="type">u8</span>, y: <span class="type">u8</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.registers[x <span class="keyword">as</span> <span class="type">usize</span>] += <span class="keyword">self</span>.registers[y <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">//-------初始化cpu---------</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cpu</span> = CPU &#123;</span><br><span class="line">        current_operation: <span class="number">0</span>,</span><br><span class="line">        registers: [<span class="number">0</span>; <span class="number">2</span>],</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    常量0x8014是CPU将要解码的操作码:</span></span><br><span class="line"><span class="comment">    ● 8表示此操作需要使用两个寄存器。</span></span><br><span class="line"><span class="comment">    ● 0对应cpu.registers[0]，即寄存器0。</span></span><br><span class="line"><span class="comment">    ● 1对应cpu.registers[1]，即寄存器1。</span></span><br><span class="line"><span class="comment">    ● 4表示此操作是加法运算。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    cpu.current_operation = <span class="number">0x8014</span>;</span><br><span class="line">    cpu.registers[<span class="number">0</span>] = <span class="number">5</span>;</span><br><span class="line">    cpu.registers[<span class="number">1</span>] = <span class="number">10</span>;</span><br><span class="line">    <span class="comment">//-------初始化cpu---------</span></span><br><span class="line">    cpu.<span class="title function_ invoke__">run</span>();</span><br><span class="line">    <span class="built_in">assert_eq!</span>(cpu.registers[<span class="number">0</span>], <span class="number">15</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;5 + 10 = &#123;&#125;&quot;</span>, cpu.registers[<span class="number">0</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
   </div>
   <div>
     
@@ -462,8 +462,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/09/06/flutter%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE/">
-            https://sabakiro.github.io/2023/09/06/flutter%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE/
+            href="https://sabakiro.github.io/2023/09/08/rust%E6%A8%A1%E6%8B%9Fcpu/">
+            https://sabakiro.github.io/2023/09/08/rust%E6%A8%A1%E6%8B%9Fcpu/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -473,29 +473,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/09/07/kmp%E7%AE%97%E6%B3%95/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">kmp算法 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/09/05/vue%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8%E5%92%8C%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80/" 
+        href="/2023/09/07/rust%E4%BB%8E%E9%9A%8F%E6%9C%BA%E5%AD%97%E8%8A%82%E4%B8%AD%E7%94%9F%E6%88%90%E9%9A%8F%E6%9C%BA%E6%A6%82%E7%8E%87/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">模板引用和组件基础 </div>
+            <div class="nav-title">rust从随机字节中生成随机概率 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
