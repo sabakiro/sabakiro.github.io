@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>rust文件系统</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="rust文件系统">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/09/09/rust%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-09-09">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-09-10">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>52</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>7</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/vue/" 
+        title="vue">
+        <div class="tags-list-item">vue</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%AE%97%E6%B3%95/" 
+        title="算法">
+        <div class="tags-list-item">算法</div>
+      </a>
+    
+      <a 
+        href="/tags/flutter/" 
+        title="flutter">
+        <div class="tags-list-item">flutter</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      rust文件系统
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-09-09T15:11:58.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-09-09</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>6k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>依赖</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">bincode</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde_cbor</span>=<span class="string">&quot;0.11.2&quot;</span></span><br><span class="line"><span class="attr">serde_derive</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde_json</span>=<span class="string">&quot;1&quot;</span></span><br></pre>
+<p>把一个Rust结构体序列化为多种格式</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> bincode::serialize <span class="keyword">as</span> to_bincode;</span><br><span class="line"><span class="keyword">use</span> serde_cbor::to_vec <span class="keyword">as</span> to_cbor;</span><br><span class="line"><span class="keyword">use</span> serde_derive::Serialize;</span><br><span class="line"><span class="keyword">use</span> serde_json::to_string <span class="keyword">as</span> to_json;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这些让serde_derive软件包来自行编写必要的代码，</span></span><br><span class="line"><span class="comment">用来执行在内存中的City和磁盘中的City的转换</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#[derive(Serialize)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">City</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    population: <span class="type">usize</span>,</span><br><span class="line">    latitude: <span class="type">f64</span>,</span><br><span class="line">    longitude: <span class="type">f64</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">calabar</span> = City &#123;</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Calabar&quot;</span>),</span><br><span class="line">        population: <span class="number">470_000</span>,</span><br><span class="line">        latitude: <span class="number">4.95</span>,</span><br><span class="line">        longitude: <span class="number">8.33</span>,</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">as_json</span> = <span class="title function_ invoke__">to_json</span>(&amp;calabar).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">as_cbor</span> = <span class="title function_ invoke__">to_cbor</span>(&amp;calabar).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">as_bincode</span> = <span class="title function_ invoke__">to_bincode</span>(&amp;calabar).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;json:\n&#123;&#125;\n&quot;</span>, &amp;as_json);</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    json:</span></span><br><span class="line"><span class="comment">&#123;&quot;name&quot;:&quot;Calabar&quot;,&quot;population&quot;:470000,&quot;latitude&quot;:4.95,&quot;longitude&quot;:8.33&#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;cbor:\n&#123;:?&#125;\n&quot;</span>, &amp;as_cbor);</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    cbor:</span></span><br><span class="line"><span class="comment">[164, 100, 110, 97, 109, 101, 103, 67, 97, 108, 97, 98, 97, 114, 106, 112, 111, 112, 117, 108, 97, 116, 105, 111, 110, 26, 0, 7, 43, 240, 104, 108, 97, 116, 105, 116, 117, 100, 101, 251, 64, 19, 204, 204, 204, 204, 204, 205, 105, 108, 111, 110, 103, 105, 116, 117, 100, 101, 251, 64, 32, 168, 245, 194, 143, 92, 41]</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;bincode:\n&#123;:?&#125;\n&quot;</span>, &amp;as_bincode);</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	bincode:</span></span><br><span class="line"><span class="comment">[7, 0, 0, 0, 0, 0, 0, 0, 67, 97, 108, 97, 98, 97, 114, 240, 43, 7, 0, 0, 0, 0, 0, 205, 204, 204, 204, 204, 204, 19, 64, 41, 92, 143, 194, 245, 168, 32, 64]</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">println!</span>(</span><br><span class="line">        <span class="string">&quot;json (as UTF-8):\n&#123;&#125;\n&quot;</span>,</span><br><span class="line">        <span class="type">String</span>::<span class="title function_ invoke__">from_utf8_lossy</span>(as_json.<span class="title function_ invoke__">as_bytes</span>())</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    json (as UTF-8):</span></span><br><span class="line"><span class="comment">&#123;&quot;name&quot;:&quot;Calabar&quot;,&quot;population&quot;:470000,&quot;latitude&quot;:4.95,&quot;longitude&quot;:8.33&#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">println!</span>(</span><br><span class="line">        <span class="string">&quot;cbor (as UTF-8):\n&#123;:?&#125;\n&quot;</span>,</span><br><span class="line">        <span class="type">String</span>::<span class="title function_ invoke__">from_utf8_lossy</span>(&amp;as_cbor)</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    cbor (as UTF-8):</span></span><br><span class="line"><span class="comment">&quot;�dnamegCalabarjpopulation\u&#123;1a&#125;\0\u&#123;7&#125;+�hlatitude�@\u&#123;13&#125;������ilongitude�@ ��\u&#123;8f&#125;\\)&quot;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">println!</span>(</span><br><span class="line">        <span class="string">&quot;bincode (as UTF-8):\n&#123;:?&#125;\n&quot;</span>,</span><br><span class="line">        <span class="type">String</span>::<span class="title function_ invoke__">from_utf8_lossy</span>(&amp;as_bincode)</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    bincode (as UTF-8):</span></span><br><span class="line"><span class="comment">&quot;\u&#123;7&#125;\0\0\0\0\0\0\0Calabar�+\u&#123;7&#125;\0\0\0\0\0������\u&#123;13&#125;@)\\���� @&quot;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre>
+
+<p>一个hexdump的克隆，使用了硬编码的输入信息来模拟文件I&#x2F;O</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::io::prelude::*;</span><br><span class="line"><span class="keyword">const</span> BYTES_PER_LINE: <span class="type">usize</span> = <span class="number">16</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">当你使用原始字符串字面量(raw string literal)来构建多行的字符串字面量时，</span></span><br><span class="line"><span class="comment">双引号是不需要转义的（注意这里的r前缀和#分隔符）。</span></span><br><span class="line"><span class="comment">额外的那个b前缀表示，应该把这里的字面量数据视为字节数据(&amp;[u8])，</span></span><br><span class="line"><span class="comment">而不是UTF-8文本数据(&amp;str)。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">const</span> INPUT: &amp;<span class="symbol">&#x27;static</span> [<span class="type">u8</span>] = <span class="string">br#&quot;</span></span><br><span class="line"><span class="string">fn main()&#123;</span></span><br><span class="line"><span class="string">    println!(&quot;ciallo world&quot;);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&quot;#</span>;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() <span class="punctuation">-&gt;</span> std::io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">//创建出内部缓冲区的空间，供程序的输入来使用。</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buffer</span>: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt; = <span class="built_in">vec!</span>[];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//读取输入信息，并将其插入内部缓冲区。</span></span><br><span class="line">    INPUT.<span class="title function_ invoke__">read_to_end</span>(&amp;<span class="keyword">mut</span> buffer)?;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">position_in_input</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">line</span> <span class="keyword">in</span> buffer.<span class="title function_ invoke__">chunks</span>(BYTES_PER_LINE) &#123;</span><br><span class="line">        <span class="comment">//输出当前位置的信息，最多8位，不足8位则在左侧用零填充。</span></span><br><span class="line">        <span class="built_in">print!</span>(<span class="string">&quot;[0x&#123;:08x&#125;]&quot;</span>, position_in_input);</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> line &#123;</span><br><span class="line">            <span class="built_in">print!</span>(<span class="string">&quot;&#123;:02x&#125;&quot;</span>, byte);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//输出一个换行符到标准输出中，这是一种简便的方法。</span></span><br><span class="line">        <span class="built_in">println!</span>();</span><br><span class="line">        position_in_input += BYTES_PER_LINE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[0x00000000]0a666e206d61696e28297b0a20202020</span></span><br><span class="line"><span class="comment">[0x00000010]7072696e746c6e2128226369616c6c6f</span></span><br><span class="line"><span class="comment">[0x00000020]20776f726c6422293b0a7d0a</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre>
+
+<p>在Rust中打开一个文件并遍历此文件的内容</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::env;</span><br><span class="line"><span class="keyword">use</span> std::fs::File;</span><br><span class="line"><span class="keyword">use</span> std::io::prelude::*;</span><br><span class="line"><span class="comment">//修改这个常量的值，可以改变程序的输出信息。</span></span><br><span class="line"><span class="keyword">const</span> BYTES_PER_LINE: <span class="type">usize</span> = <span class="number">16</span>;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arg1</span> = env::<span class="title function_ invoke__">args</span>().<span class="title function_ invoke__">nth</span>(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">fname</span> = arg1.<span class="title function_ invoke__">expect</span>(<span class="string">&quot;usage:fvies FILE_NAME&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">f</span> = File::<span class="title function_ invoke__">open</span>(&amp;fname).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;Unable to open file&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">pos</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buffer</span> = [<span class="number">0</span>; BYTES_PER_LINE];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    f.read_exact()——由Read这个trait提供的方法，</span></span><br><span class="line"><span class="comment">    会从数据源中读取数据（在本例中就是f）然后填充数据到作为参数提供的缓冲区中。</span></span><br><span class="line"><span class="comment">    如果缓冲区满了，就会停止读取。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Ok</span>(_) = f.<span class="title function_ invoke__">read_exact</span>(&amp;<span class="keyword">mut</span> buffer) &#123;</span><br><span class="line">        <span class="built_in">print!</span>(<span class="string">&quot;[0x&#123;:08x&#125;]&quot;</span>, pos);</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> &amp;buffer &#123;</span><br><span class="line">            <span class="keyword">match</span> *byte &#123;</span><br><span class="line">                <span class="number">0x00</span> =&gt; <span class="built_in">print!</span>(<span class="string">&quot;. &quot;</span>),</span><br><span class="line">                <span class="number">0xff</span> =&gt; <span class="built_in">print!</span>(<span class="string">&quot;## &quot;</span>),</span><br><span class="line">                _ =&gt; <span class="built_in">print!</span>(<span class="string">&quot;&#123;:02x&#125;&quot;</span>, byte),</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">println!</span>();</span><br><span class="line">        pos += BYTES_PER_LINE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>使用std::fs:OpenOptions来创建一个可写的文件</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::fs::OpenOptions;</span><br><span class="line">    <span class="comment">//一个建造者模式的例子。每个方法都会返回一个OpenOptions结构体的新实例，并且附带相关选项的集合。</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">f</span> = OpenOptions::<span class="title function_ invoke__">new</span>()</span><br><span class="line">        .<span class="title function_ invoke__">read</span>(<span class="literal">true</span>)   <span class="comment">//为读取而打开文件。</span></span><br><span class="line">        .<span class="title function_ invoke__">write</span>(<span class="literal">true</span>)    <span class="comment">//开启写入。这行代码不是必需的，因为后面的append隐含了写入的选项。</span></span><br><span class="line">        .<span class="title function_ invoke__">create</span>(<span class="literal">true</span>)   <span class="comment">//  如果在path处的文件不存在，则创建一个文件出来。</span></span><br><span class="line">        .<span class="title function_ invoke__">append</span>(<span class="literal">true</span>)   <span class="comment">//  不会删除已经写入磁盘中的任何内容。</span></span><br><span class="line">        .<span class="title function_ invoke__">open</span>(<span class="string">&quot;./ciallo.txt&quot;</span>)?;   <span class="comment">//  打开在path处的文件，然后解包装中间产生的Result。</span></span><br><span class="line"></span><br></pre>
+
+<p>使用std::fs::Path以一种类型安全的方式与文件系统进行交互</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::path::PathBuf;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">hello</span> =PathBuf::<span class="title function_ invoke__">from</span>(<span class="string">&quot;./ciallo.txt&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,hello.<span class="title function_ invoke__">extension</span>().<span class="title function_ invoke__">unwrap</span>());</span><br><span class="line">    <span class="comment">//&quot;txt&quot;</span></span><br><span class="line">&#125;</span><br></pre>
+
+<p>使用基于日志结构、仅追加的存储架构，来实现一个键值存储<br>依赖</p>
+<pre class="highlight"><span class="line"></span><br></pre>
+
+<p>Actionkv v1：前端代码<br>actionkv的公共API由4种操作组成：<br>get（获取）、delete（删除）、insert（插入）和update（更新）</p>
+<pre class="highlight"><span class="line"><span class="keyword">match</span> action &#123;<span class="comment">//action是一个命令行参数，类型是 &amp;str</span></span><br><span class="line">        <span class="string">&quot;get&quot;</span> =&gt; <span class="keyword">match</span> store.<span class="title function_ invoke__">get</span>(key).<span class="title function_ invoke__">unwrap</span>() &#123;</span><br><span class="line">            <span class="literal">None</span> =&gt; eprintln!(<span class="string">&quot;&#123;:?&#125; not found&quot;</span>, key),</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">            println! 需要使用Debug（调试）语法(&#123; :? &#125;)，</span></span><br><span class="line"><span class="comment">            这是因为[u8]是任意的字节数据，并没有实现Display。</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">            <span class="title function_ invoke__">Some</span>(value) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, value),</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;delete&quot;</span> =&gt; store.<span class="title function_ invoke__">delete</span>(key).<span class="title function_ invoke__">unwrap</span>(),</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;insert&quot;</span> =&gt; &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        将来可能会修改此处的代码，使其与Rust中HashMap的API相兼容。</span></span><br><span class="line"><span class="comment">        如果存在旧的值，那么插入操作会返回这个旧的值。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = maybe_value.<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">            store.<span class="title function_ invoke__">insert</span>(key, value).<span class="title function_ invoke__">unwrap</span>()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;update&quot;</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = maybe_value.<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">            store.<span class="title function_ invoke__">update</span>(key, value).<span class="title function_ invoke__">unwrap</span>()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        _ =&gt; eprintln!(<span class="string">&quot;&#123;&#125;&quot;</span>, &amp;USAGE),</span><br><span class="line">    &#125;</span><br></pre>
+
+<p>在内存中的键值存储的命令行应用程序</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> libactionkv::ActionKV;</span><br><span class="line"><span class="comment">/*尽管src/lib.rs是存在于我们的项目中的，</span></span><br><span class="line"><span class="comment">但是在我们项目中的src/bin.rs文件，</span></span><br><span class="line"><span class="comment">会把它视为与任何其他的包一样，同等对待。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#[cfg(target_os = <span class="string">&quot;windows&quot;</span>)]</span> <span class="comment">/*此处的cfg属性注解，可以让Windows用户在此应用的帮助文档中看到正确的文件扩展名。这个属性注解将会在后文中进行讲解。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">使用条件编译来定制要编译的内容</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">const</span> USAGE: &amp;<span class="type">str</span> = <span class="string">&quot;</span></span><br><span class="line"><span class="string"> Usage:</span></span><br><span class="line"><span class="string">     akv_mem.exe FILE get KEY</span></span><br><span class="line"><span class="string">     akv_mem.exe FILE delete KEY</span></span><br><span class="line"><span class="string">     akv_mem.exe FILE insert KEY VALUE</span></span><br><span class="line"><span class="string">     akv_mem.exe FILE update KEY VALUE</span></span><br><span class="line"><span class="string"> &quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[cfg(not(target_os = <span class="string">&quot;windows&quot;</span>))]</span></span><br><span class="line"><span class="keyword">const</span> USAGE: &amp;<span class="type">str</span> = <span class="string">&quot;</span></span><br><span class="line"><span class="string"> Usage:</span></span><br><span class="line"><span class="string">    akv_mem FILE get KEY</span></span><br><span class="line"><span class="string">    akv_mem FILE delete KEY</span></span><br><span class="line"><span class="string">    akv_mem FILE insert KEY VALUE</span></span><br><span class="line"><span class="string">    akv_mem FILE update KEY VALUE</span></span><br><span class="line"><span class="string"> &quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span>: <span class="type">Vec</span>&lt;<span class="type">String</span>&gt; = std::env::<span class="title function_ invoke__">args</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">fname</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">1</span>).<span class="title function_ invoke__">expect</span>(&amp;USAGE);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">action</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">2</span>).<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">key</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">3</span>).<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">maybe_value</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">path</span> = std::path::Path::<span class="title function_ invoke__">new</span>(&amp;fname);</span><br><span class="line">    <span class="comment">//打开path处文件</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">store</span> = ActionKV::<span class="title function_ invoke__">open</span>(path).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;unable to open file&quot;</span>);</span><br><span class="line">    <span class="comment">//通过加载path中的数据，创建一个内存中的索引</span></span><br><span class="line">    store.<span class="title function_ invoke__">load</span>().<span class="title function_ invoke__">expect</span>(<span class="string">&quot;unable to load data&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> action &#123;</span><br><span class="line">        <span class="string">&quot;get&quot;</span> =&gt; <span class="keyword">match</span> store.<span class="title function_ invoke__">get</span>(key).<span class="title function_ invoke__">unwrap</span>() &#123;</span><br><span class="line">            <span class="literal">None</span> =&gt; eprintln!(<span class="string">&quot;&#123;:?&#125; not found&quot;</span>, key),</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(value) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, value),</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;delete&quot;</span> =&gt; store.<span class="title function_ invoke__">delete</span>(key).<span class="title function_ invoke__">unwrap</span>(),</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;insert&quot;</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = maybe_value.<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">            store.<span class="title function_ invoke__">insert</span>(key, value).<span class="title function_ invoke__">unwrap</span>()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;update&quot;</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = maybe_value.<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">            store.<span class="title function_ invoke__">update</span>(key, value).<span class="title function_ invoke__">unwrap</span>()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        _ =&gt; eprintln!(<span class="string">&quot;&#123;&#125;&quot;</span>, &amp;USAGE),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>ActionKV::open()的用法</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> byteorder::LittleEndian;</span><br><span class="line"><span class="keyword">use</span> byteorder::ReadBytesExt;</span><br><span class="line"><span class="keyword">use</span> crc::crc32;</span><br><span class="line"><span class="keyword">use</span> serde_derive::&#123;Deserialize, Serialize&#125;;</span><br><span class="line"><span class="keyword">use</span> std::io::Read;</span><br><span class="line"><span class="keyword">use</span> std::&#123;</span><br><span class="line">    collections::HashMap,</span><br><span class="line">    fs::&#123;File, OpenOptions&#125;,</span><br><span class="line">    io::&#123;<span class="keyword">self</span>, BufReader, Seek, SeekFrom&#125;,</span><br><span class="line">    path::Path,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/* 此代码中有很多地方都需要处理Vec&lt;u8&gt; 类型的数据。</span></span><br><span class="line"><span class="comment">又因为它们与String具有相同的使用方式，</span></span><br><span class="line"><span class="comment">所以别名ByteString还是很有用的。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ByteString</span> = <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;; </span><br><span class="line"></span><br><span class="line"><span class="comment">//  与前一个别名的情况类似，ByteStr的使用方式类似于 &amp;str的。</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ByteStr</span> = [<span class="type">u8</span>]; </span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">让编译器自动生成序列化的代码，</span></span><br><span class="line"><span class="comment">以便将KeyValuePair（键值对）的数据写入磁盘。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#[derive(Debug, Serialize, Deserialize)]</span> </span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">KeyValuePair</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> key: ByteString,</span><br><span class="line">    <span class="keyword">pub</span> value: ByteString,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">ActionKV</span> &#123;</span><br><span class="line">    f: File,</span><br><span class="line">    <span class="comment">//维护一个从键到文件位置的映射。</span></span><br><span class="line">    <span class="keyword">pub</span> index: HashMap&lt;ByteString, <span class="type">u64</span>&gt;, </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">ActionKV</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">open</span>(path: &amp;Path) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;<span class="keyword">Self</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">f</span> = OpenOptions::<span class="title function_ invoke__">new</span>()</span><br><span class="line">            .<span class="title function_ invoke__">read</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">write</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">create</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">append</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">open</span>(path)?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">index</span> = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(ActionKV &#123; f, index &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">load</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">        <span class="comment">// ActionKV::load() 会填充ActionKV结构体的索引，将键映射到文件位置。</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">f</span> = BufReader::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.f);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="comment">// File::seek() 返回距离文件开头位置的字节数，并将其作为该索引中的值。</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">position</span> = f.<span class="title function_ invoke__">seek</span>(SeekFrom::<span class="title function_ invoke__">Current</span>(<span class="number">0</span>))?; </span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">maybe_kv</span> = ActionKV::<span class="title function_ invoke__">process_record</span>(&amp;<span class="keyword">mut</span> f); <span class="comment">//ActionKV::process_record() 从文件的当前位置读取一条记录。</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">kv</span> = <span class="keyword">match</span> maybe_kv &#123;</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(kv) =&gt; kv,</span><br><span class="line">                <span class="title function_ invoke__">Err</span>(err) =&gt; &#123;</span><br><span class="line">                    <span class="keyword">match</span> err.<span class="title function_ invoke__">kind</span>() &#123;</span><br><span class="line">                        io::ErrorKind::UnexpectedEof =&gt; &#123;</span><br><span class="line">				         <span class="comment">/*</span></span><br><span class="line"><span class="comment">				         Unexpected（未预期的）是相对的。</span></span><br><span class="line"><span class="comment">				         此应用程序可能没有预料到会遇到文件末尾，</span></span><br><span class="line"><span class="comment">				         但是我们知道文件的内容是有限的，所以需要处理这种情况。</span></span><br><span class="line"><span class="comment">				         */</span></span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        _ =&gt; <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(err),</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">self</span>.index.<span class="title function_ invoke__">insert</span>(kv.key, position);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//主要关注的是ActionKV::process_record()方法</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">process_record</span>&lt;R: Read&gt;(</span><br><span class="line">    <span class="comment">/* f可以是实现了Read的任何类型，</span></span><br><span class="line"><span class="comment">    比如用于读取文件的一个类型，&amp;[u8]也是可以用在这里的类型。*/</span></span><br><span class="line">        f: &amp;<span class="keyword">mut</span> R, </span><br><span class="line">    ) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;KeyValuePair&gt; &#123;</span><br><span class="line">        <span class="comment">/*byteorder包允许以确定的方式来读取磁盘上的整数，更多内容将会在后文中讨论。*/</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">saved_checksum</span> =    </span><br><span class="line">          f.read_u32::&lt;LittleEndian&gt;()?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">key_len</span> = f.read_u32::&lt;LittleEndian&gt;()?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">val_len</span> = f.read_u32::&lt;LittleEndian&gt;()?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">data_len</span> = key_len + val_len;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">data</span> = ByteString::<span class="title function_ invoke__">with_capacity</span>(data_len <span class="keyword">as</span> <span class="type">usize</span>);</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="comment">/*在这里使用f.by_ref()，是因为take(n) 会创建一个新的Read值。</span></span><br><span class="line"><span class="comment">        在一个短生命期的代码块中使用一个引用，让我们可以绕过所有权的问题。*/</span></span><br><span class="line">            f.<span class="title function_ invoke__">by_ref</span>() </span><br><span class="line">                .<span class="title function_ invoke__">take</span>(data_len <span class="keyword">as</span> <span class="type">u64</span>)</span><br><span class="line">                .<span class="title function_ invoke__">read_to_end</span>(&amp;<span class="keyword">mut</span> data)?;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*debug_assert!这个测试在优化构建中是关闭的，</span></span><br><span class="line"><span class="comment">        启用调试构建(debug build)可以有更多的运行时检查。*/</span></span><br><span class="line">        <span class="built_in">debug_assert_eq!</span>(data.<span class="title function_ invoke__">len</span>(), data_len <span class="keyword">as</span> <span class="type">usize</span>); </span><br><span class="line">		<span class="comment">/*一个checksum就是一个数字，</span></span><br><span class="line"><span class="comment">		可以用来校验从磁盘中读取的字节数据与预期是否一致。</span></span><br><span class="line"><span class="comment">		这个校验的过程参见7.7.4节。*/</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">checksum</span> = crc32::<span class="title function_ invoke__">checksum_ieee</span>(&amp;data); </span><br><span class="line">        <span class="keyword">if</span> checksum != saved_checksum &#123;</span><br><span class="line">            <span class="built_in">panic!</span>(</span><br><span class="line">                <span class="string">&quot;data corruption encountered (&#123;:08x&#125; != &#123;:08x&#125;)&quot;</span>,</span><br><span class="line">                checksum, saved_checksum</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">		<span class="comment">/* split_off(n) 方法会把一个Vec&lt;T&gt; 在n处切分成两个。*/</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">value</span> = data.<span class="title function_ invoke__">split_off</span>(key_len <span class="keyword">as</span> <span class="type">usize</span>); </span><br><span class="line">        <span class="keyword">let</span> <span class="variable">key</span> = data;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(KeyValuePair &#123; key, value &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+<p>把整数写入磁盘<br>依赖</p>
+<pre class="highlight"><span class="line"><span class="attr">byteorder</span>=<span class="string">&quot;1.2&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="comment">//这个类型在此程序中调用多个read_*() 和write_*()方法时，作为这些方法的类型参数来使用。</span></span><br><span class="line"><span class="keyword">use</span> byteorder::LittleEndian; </span><br><span class="line"></span><br><span class="line"><span class="comment">/*因为文件支持seek()，即拥有向前或者向后移动到不同的位置上的能力，</span></span><br><span class="line"><span class="comment">要让Vec&lt;T&gt; 能够模拟文件，必须要额外做一些事情。</span></span><br><span class="line"><span class="comment">而io::Cursor就是做这个的，它使得位于内存中的Vec&lt;T&gt; 在行为上类似于文件。 </span></span><br><span class="line"><span class="comment">这两个trait提供了read_*() 和write_*()方法。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">use</span> byteorder::&#123;ReadBytesExt, WriteBytesExt&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::io::Cursor; </span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">write_numbers_to_file</span>() <span class="punctuation">-&gt;</span> (<span class="type">u32</span>, <span class="type">i8</span>, <span class="type">f64</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">w</span> = <span class="built_in">vec!</span>[]; <span class="comment">//这个变量名w是writer的缩写。</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">one</span>: <span class="type">u32</span> = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">two</span>: <span class="type">i8</span> = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">three</span>: <span class="type">f64</span> = <span class="number">3.0</span>;</span><br><span class="line">    <span class="comment">/*把值写入“磁盘”。这些方法会返回io::Result，</span></span><br><span class="line"><span class="comment">      在这里我们使用简单处理，直接把它给“吞掉了”，</span></span><br><span class="line"><span class="comment">      因为除非运行该程序的计算机出现严重问题，否则这些方法不会失败。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    w.write_u32::&lt;LittleEndian&gt;(one).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, &amp;w);</span><br><span class="line">    <span class="comment">//单字节的类型i8和u8，显然，因为它们是单字节类型，所以不会接收字节序的参数。</span></span><br><span class="line">    w.<span class="title function_ invoke__">write_i8</span>(two).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, &amp;w);</span><br><span class="line">    w.write_f64::&lt;LittleEndian&gt;(three).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, &amp;w);</span><br><span class="line"></span><br><span class="line">    (one, two, three)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">read_numbers_from_file</span>() <span class="punctuation">-&gt;</span> (<span class="type">u32</span>, <span class="type">i8</span>, <span class="type">f64</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">r</span> = Cursor::<span class="title function_ invoke__">new</span>(<span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">8</span>, <span class="number">64</span>]);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">one_</span> = r.read_u32::&lt;LittleEndian&gt;().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">two_</span> = r.<span class="title function_ invoke__">read_i8</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">three_</span> = r.read_f64::&lt;LittleEndian&gt;().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    (one_, two_, three_)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> (one, two, three) = <span class="title function_ invoke__">write_numbers_to_file</span>();</span><br><span class="line">    <span class="keyword">let</span> (one_, two_, three_) = <span class="title function_ invoke__">read_numbers_from_file</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(one, one_);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(two, two_);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(three, three_);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p> 实现奇偶校验位检查</p>
+<pre class="highlight"><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">获取一个字节切片作为参数bytes，并返回一个单字节作为输出。</span></span><br><span class="line"><span class="comment">此函数可以很容易地返回一个布尔值，但是在这里返回u8，</span></span><br><span class="line"><span class="comment">可以让这个返回结果在之后能够移位到某个期望的位置上。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">parity_bit</span>(bytes: &amp;[<span class="type">u8</span>]) <span class="punctuation">-&gt;</span> <span class="type">u8</span> &#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">n_ones</span>: <span class="type">u32</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> bytes &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">ones</span> = byte.<span class="title function_ invoke__">count_ones</span>(); <span class="comment">//Rust的所有整数类型，都配有count_ones() 方法和count_zeros() 方法。</span></span><br><span class="line">        n_ones += ones;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125; (0b&#123;:08b&#125;) has &#123;&#125; one bits&quot;</span>, byte, byte, ones);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    有多种方法可以用来优化这个函数。一种很简单的方法就是，</span></span><br><span class="line"><span class="comment">    可以硬编码一个类型为const [u8; 256]的数组，</span></span><br><span class="line"><span class="comment">    数组中的0和1与预期的结果相对应，然后用每个字节对此数组进行索引。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    (n_ones % <span class="number">2</span> == <span class="number">0</span>) <span class="keyword">as</span> <span class="type">u8</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">abc</span> = <span class="string">b&quot;abc&quot;</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;input: &#123;:?&#125;&quot;</span>, abc);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;output: &#123;:08x&#125;&quot;</span>, <span class="title function_ invoke__">parity_bit</span>(abc));</span><br><span class="line">    <span class="built_in">println!</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">abcd</span> = <span class="string">b&quot;abcd&quot;</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;input: &#123;:?&#125;&quot;</span>, abcd);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;result: &#123;:08x&#125;&quot;</span>, <span class="title function_ invoke__">parity_bit</span>(abcd))</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  input: [97, 98, 99]</span></span><br><span class="line"><span class="comment">97 (0b01100001) has 3 one bits</span></span><br><span class="line"><span class="comment">98 (0b01100010) has 3 one bits</span></span><br><span class="line"><span class="comment">99 (0b01100011) has 4 one bits</span></span><br><span class="line"><span class="comment">output: 00000001</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">input: [97, 98, 99, 100]</span></span><br><span class="line"><span class="comment">97 (0b01100001) has 3 one bits</span></span><br><span class="line"><span class="comment">98 (0b01100010) has 3 one bits</span></span><br><span class="line"><span class="comment">99 (0b01100011) has 4 one bits</span></span><br><span class="line"><span class="comment">100 (0b01100100) has 3 one bits</span></span><br><span class="line"><span class="comment">result: 00000000</span></span><br><span class="line"><span class="comment">   */</span></span><br></pre>
+
+<p>向已存在的数据库中插入一个新的键值对</p>
+<pre class="highlight"><span class="line"><span class="comment">////////////// insert ////////////////////////</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">insert</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, key: &amp;ByteStr, value: &amp;ByteStr) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">position</span> = <span class="keyword">self</span>.<span class="title function_ invoke__">insert_but_ignore_index</span>(key, value)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//key.to_vec()把 &amp;ByteStr类型转换为ByteString。</span></span><br><span class="line">    <span class="keyword">self</span>.index.<span class="title function_ invoke__">insert</span>(key.<span class="title function_ invoke__">to_vec</span>(), position);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">///////////// insert_but_ignore_index ///////////////////</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">insert_but_ignore_index</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, key: &amp;ByteStr, value: &amp;ByteStr) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;<span class="type">u64</span>&gt; &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    std::io::BufWriter是一个类型，它能够把多次的小数据量的write() 调用，</span></span><br><span class="line"><span class="comment">    批量地处理为更少次数的实际磁盘操作。使用它能够提高吞吐量，</span></span><br><span class="line"><span class="comment">    同时还可以让应用程序的代码保持整洁。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">f</span> = BufWriter::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.f);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">key_len</span> = key.<span class="title function_ invoke__">len</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">val_len</span> = value.<span class="title function_ invoke__">len</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">tmp</span> = ByteString::<span class="title function_ invoke__">with_capacity</span>(key_len + val_len);</span><br><span class="line">    <span class="comment">//通过迭代一个集合来产生另一个集合，这种方式显得有点笨拙，但是能完成我们的任务。</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> key &#123;</span><br><span class="line">        tmp.<span class="title function_ invoke__">push</span>(*byte);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> value &#123;</span><br><span class="line">        tmp.<span class="title function_ invoke__">push</span>(*byte);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">checksum</span> = crc32::<span class="title function_ invoke__">checksum_ieee</span>(&amp;tmp);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">next_byte</span> = SeekFrom::<span class="title function_ invoke__">End</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">current_position</span> = f.<span class="title function_ invoke__">seek</span>(SeekFrom::<span class="title function_ invoke__">Current</span>(<span class="number">0</span>))?;</span><br><span class="line">    f.<span class="title function_ invoke__">seek</span>(next_byte)?;</span><br><span class="line">    f.write_u32::&lt;LittleEndian&gt;(checksum)?;</span><br><span class="line">    f.write_u32::&lt;LittleEndian&gt;(key_len <span class="keyword">as</span> <span class="type">u32</span>)?;</span><br><span class="line">    f.write_u32::&lt;LittleEndian&gt;(val_len <span class="keyword">as</span> <span class="type">u32</span>)?;</span><br><span class="line">    f.<span class="title function_ invoke__">write_all</span>(&amp;<span class="keyword">mut</span> tmp)?;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(current_position)</span><br><span class="line">&#125;</span><br></pre>
+
+<p>依赖</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="comment">#使用额外的trait扩展了许多Rust类型，</span></span><br><span class="line"><span class="comment">#让它们能够以可重复的、易于使用的方式被写入磁盘和读回到程序中。</span></span><br><span class="line"><span class="attr">byteorder</span>=<span class="string">&quot;1.2&quot;</span></span><br><span class="line"><span class="comment">#提供了我们想要使用的校验和功能。</span></span><br><span class="line"><span class="attr">crc</span>=<span class="string">&quot;1.7.0&quot;</span></span><br><span class="line"><span class="attr">bincode</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde_cbor</span>=<span class="string">&quot;0.11.2&quot;</span></span><br><span class="line"><span class="attr">serde_derive</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde_json</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">hash</span>=<span class="string">&quot;0.3.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[lib]</span></span><br><span class="line"><span class="comment">#Cargo.toml中的这个分段，为你将要构建出的库给出一个名字。</span></span><br><span class="line"><span class="comment">#注意，一个crate中只可以有一个库。</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;libactionkv&quot;</span></span><br><span class="line"><span class="attr">path</span> = <span class="string">&quot;src/lib.rs&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#[[bin]]分段，可以有多个，定义了将从此包中构建出的可执行文件。</span></span><br><span class="line"><span class="comment">#双方括号语法是必需的，</span></span><br><span class="line"><span class="comment">#因为它明确地将这个bin描述为一个或多个bin元素的一部分。</span></span><br><span class="line"><span class="section">[[bin]]</span></span><br><span class="line"><span class="attr">name</span>=<span class="string">&quot;akv_mem&quot;</span></span><br><span class="line"><span class="attr">path</span>=<span class="string">&quot;src/akv_mem.rs&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[bin]]</span></span><br><span class="line"><span class="attr">name</span>=<span class="string">&quot;write_num&quot;</span></span><br><span class="line"><span class="attr">path</span>=<span class="string">&quot;src/write_num.rs&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[bin]]</span></span><br><span class="line"><span class="attr">name</span>=<span class="string">&quot;check&quot;</span></span><br><span class="line"><span class="attr">path</span>=<span class="string">&quot;src/check.rs&quot;</span></span><br></pre>
+<p>akv_mem 全部代码</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> byteorder::LittleEndian;</span><br><span class="line"><span class="keyword">use</span> byteorder::ReadBytesExt;</span><br><span class="line"><span class="keyword">use</span> byteorder::WriteBytesExt;</span><br><span class="line"><span class="keyword">use</span> crc::crc32;</span><br><span class="line"><span class="keyword">use</span> serde_derive::&#123;Deserialize, Serialize&#125;;</span><br><span class="line"><span class="keyword">use</span> std::io::BufWriter;</span><br><span class="line"><span class="keyword">use</span> std::io::Read;</span><br><span class="line"><span class="keyword">use</span> std::io::Write;</span><br><span class="line"><span class="keyword">use</span> std::&#123;</span><br><span class="line">    collections::HashMap,</span><br><span class="line">    fs::&#123;File, OpenOptions&#125;,</span><br><span class="line">    io::&#123;<span class="keyword">self</span>, BufReader, Seek, SeekFrom&#125;,</span><br><span class="line">    path::Path,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">此代码中有很多地方都需要处理Vec&lt;u8&gt; 类型的数据。</span></span><br><span class="line"><span class="comment">又因为它们与String具有相同的使用方式，所以别名ByteString还是很有用的。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ByteString</span> = <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;;</span><br><span class="line"><span class="comment">//  与前一个别名的情况类似，ByteStr的使用方式类似于 &amp;str的。</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ByteStr</span> = [<span class="type">u8</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 让编译器自动生成序列化的代码，以便将KeyValuePair（键值对）的数据写入磁盘。</span></span><br><span class="line"><span class="meta">#[derive(Debug, Serialize, Deserialize)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">KeyValuePair</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> key: ByteString,</span><br><span class="line">    <span class="keyword">pub</span> value: ByteString,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">ActionKV</span> &#123;</span><br><span class="line">    f: File,</span><br><span class="line"></span><br><span class="line">    <span class="comment">//维护一个从键到文件位置的映射。</span></span><br><span class="line">    <span class="keyword">pub</span> index: HashMap&lt;ByteString, <span class="type">u64</span>&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">ActionKV</span> &#123;</span><br><span class="line">    <span class="comment">/////////// open //////////////////</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">open</span>(path: &amp;Path) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;<span class="keyword">Self</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">f</span> = OpenOptions::<span class="title function_ invoke__">new</span>()</span><br><span class="line">            .<span class="title function_ invoke__">read</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">write</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">create</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">append</span>(<span class="literal">true</span>)</span><br><span class="line">            .<span class="title function_ invoke__">open</span>(path)?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">index</span> = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(ActionKV &#123; f, index &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/////////////// load //////////////////</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">load</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">        <span class="comment">// ActionKV::load() 会填充ActionKV结构体的索引，将键映射到文件位置。</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">f</span> = BufReader::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.f);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">loop</span> &#123;</span><br><span class="line">            <span class="comment">// File::seek() 返回距离文件开头位置的字节数，并将其作为该索引中的值。</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">position</span> = f.<span class="title function_ invoke__">seek</span>(SeekFrom::<span class="title function_ invoke__">Current</span>(<span class="number">0</span>))?;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//ActionKV::process_record() 从文件的当前位置读取一条记录。</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">maybe_kv</span> = ActionKV::<span class="title function_ invoke__">process_record</span>(&amp;<span class="keyword">mut</span> f);</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">kv</span> = <span class="keyword">match</span> maybe_kv &#123;</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(kv) =&gt; kv,</span><br><span class="line">                <span class="title function_ invoke__">Err</span>(err) =&gt; &#123;</span><br><span class="line">                    <span class="keyword">match</span> err.<span class="title function_ invoke__">kind</span>() &#123;</span><br><span class="line">                        io::ErrorKind::UnexpectedEof =&gt; &#123;</span><br><span class="line">                            <span class="comment">/*</span></span><br><span class="line"><span class="comment">                            Unexpected（未预期的）是相对的。此应用程序可能没有预料到会遇到文件末尾，</span></span><br><span class="line"><span class="comment">                            但是我们知道文件的内容是有限的，所以需要处理这种情况。</span></span><br><span class="line"><span class="comment">                            */</span></span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        _ =&gt; <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(err),</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">self</span>.index.<span class="title function_ invoke__">insert</span>(kv.key, position);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//////////////// process_record //////////////////////</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">process_record</span>&lt;R: Read&gt;(</span><br><span class="line">        <span class="comment">//f可以是实现了Read的任何类型，比如用于读取文件的一个类型，&amp;[u8]也是可以用在这里的类型。</span></span><br><span class="line">        f: &amp;<span class="keyword">mut</span> R,</span><br><span class="line">    ) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;KeyValuePair&gt; &#123;</span><br><span class="line">        <span class="comment">//byteorder包允许以确定的方式来读取磁盘上的整数，更多内容将会在后文中讨论。</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">saved_checksum</span> = f.read_u32::&lt;LittleEndian&gt;()?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">key_len</span> = f.read_u32::&lt;LittleEndian&gt;()?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">val_len</span> = f.read_u32::&lt;LittleEndian&gt;()?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">data_len</span> = key_len + val_len;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">data</span> = ByteString::<span class="title function_ invoke__">with_capacity</span>(data_len <span class="keyword">as</span> <span class="type">usize</span>);</span><br><span class="line"></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">            在这里使用f.by_ref()，是因为take(n) 会创建一个新的Read值。</span></span><br><span class="line"><span class="comment">            在一个短生命期的代码块中使用一个引用，让我们可以绕过所有权的问题。</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            f.<span class="title function_ invoke__">by_ref</span>().<span class="title function_ invoke__">take</span>(data_len <span class="keyword">as</span> <span class="type">u64</span>).<span class="title function_ invoke__">read_to_end</span>(&amp;<span class="keyword">mut</span> data)?;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//debug_assert!这个测试在优化构建中是关闭的，启用调试构建(debug build)可以有更多的运行时检查。</span></span><br><span class="line">        <span class="built_in">debug_assert_eq!</span>(data.<span class="title function_ invoke__">len</span>(), data_len <span class="keyword">as</span> <span class="type">usize</span>);</span><br><span class="line">        <span class="comment">//一个checksum就是一个数字，可以用来校验从磁盘中读取的字节数据与预期是否一致。</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">checksum</span> = crc32::<span class="title function_ invoke__">checksum_ieee</span>(&amp;data);</span><br><span class="line">        <span class="keyword">if</span> checksum != saved_checksum &#123;</span><br><span class="line">            <span class="built_in">panic!</span>(</span><br><span class="line">                <span class="string">&quot;data corruption encountered (&#123;:08x&#125; != &#123;:08x&#125;)&quot;</span>,</span><br><span class="line">                checksum, saved_checksum</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//split_off(n) 方法会把一个Vec&lt;T&gt; 在n处切分成两个。</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">value</span> = data.<span class="title function_ invoke__">split_off</span>(key_len <span class="keyword">as</span> <span class="type">usize</span>);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">key</span> = data;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(KeyValuePair &#123; key, value &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">////////////// insert ////////////////////////</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">insert</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, key: &amp;ByteStr, value: &amp;ByteStr) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">position</span> = <span class="keyword">self</span>.<span class="title function_ invoke__">insert_but_ignore_index</span>(key, value)?;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//key.to_vec()把 &amp;ByteStr类型转换为ByteString。</span></span><br><span class="line">        <span class="keyword">self</span>.index.<span class="title function_ invoke__">insert</span>(key.<span class="title function_ invoke__">to_vec</span>(), position);</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">///////////// insert_but_ignore_index ///////////////////</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">insert_but_ignore_index</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, key: &amp;ByteStr, value: &amp;ByteStr) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;<span class="type">u64</span>&gt; &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        std::io::BufWriter是一个类型，它能够把多次的小数据量的write() 调用，</span></span><br><span class="line"><span class="comment">        批量地处理为更少次数的实际磁盘操作。使用它能够提高吞吐量，</span></span><br><span class="line"><span class="comment">        同时还可以让应用程序的代码保持整洁。</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">f</span> = BufWriter::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.f);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">key_len</span> = key.<span class="title function_ invoke__">len</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">val_len</span> = value.<span class="title function_ invoke__">len</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">tmp</span> = ByteString::<span class="title function_ invoke__">with_capacity</span>(key_len + val_len);</span><br><span class="line">        <span class="comment">//通过迭代一个集合来产生另一个集合，这种方式显得有点笨拙，但是能完成我们的任务。</span></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> key &#123;</span><br><span class="line">            tmp.<span class="title function_ invoke__">push</span>(*byte);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> value &#123;</span><br><span class="line">            tmp.<span class="title function_ invoke__">push</span>(*byte);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">checksum</span> = crc32::<span class="title function_ invoke__">checksum_ieee</span>(&amp;tmp);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">next_byte</span> = SeekFrom::<span class="title function_ invoke__">End</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">current_position</span> = f.<span class="title function_ invoke__">seek</span>(SeekFrom::<span class="title function_ invoke__">Current</span>(<span class="number">0</span>))?;</span><br><span class="line">        f.<span class="title function_ invoke__">seek</span>(next_byte)?;</span><br><span class="line">        f.write_u32::&lt;LittleEndian&gt;(checksum)?;</span><br><span class="line">        f.write_u32::&lt;LittleEndian&gt;(key_len <span class="keyword">as</span> <span class="type">u32</span>)?;</span><br><span class="line">        f.write_u32::&lt;LittleEndian&gt;(val_len <span class="keyword">as</span> <span class="type">u32</span>)?;</span><br><span class="line">        f.<span class="title function_ invoke__">write_all</span>(&amp;<span class="keyword">mut</span> tmp)?;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(current_position)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//////////// delete ////////////////////////</span></span><br><span class="line">    <span class="meta">#[inline]</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">delete</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, key: &amp;ByteStr) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="title function_ invoke__">insert</span>(key, <span class="string">b&quot;&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">////////// update //////////////////////////</span></span><br><span class="line">    <span class="meta">#[inline]</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">update</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, key: &amp;ByteStr, value: &amp;ByteStr) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="title function_ invoke__">insert</span>(key, value)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">///////////// find ///////////////////////</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">find</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, target: &amp;ByteStr) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;<span class="type">Option</span>&lt;(<span class="type">u64</span>, ByteString)&gt;&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">f</span> = BufReader::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.f);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">found</span>: <span class="type">Option</span>&lt;(<span class="type">u64</span>, ByteString)&gt; = <span class="literal">None</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">loop</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">position</span> = f.<span class="title function_ invoke__">seek</span>(SeekFrom::<span class="title function_ invoke__">Current</span>(<span class="number">0</span>))?;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">maybe_kv</span> = ActionKV::<span class="title function_ invoke__">process_record</span>(&amp;<span class="keyword">mut</span> f);</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">kv</span> = <span class="keyword">match</span> maybe_kv &#123;</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(kv) =&gt; kv,</span><br><span class="line">                <span class="title function_ invoke__">Err</span>(err) =&gt; &#123;</span><br><span class="line">                    <span class="keyword">match</span> err.<span class="title function_ invoke__">kind</span>() &#123;</span><br><span class="line">                        io::ErrorKind::UnexpectedEof =&gt; &#123;</span><br><span class="line">                            <span class="comment">/*</span></span><br><span class="line"><span class="comment">                            Unexpected”是相对的。应用程序可能并没有预料会遇到文件结尾，</span></span><br><span class="line"><span class="comment">                            但是我们会预料到文件中的内容数据是有限的。</span></span><br><span class="line"><span class="comment">                             */</span></span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        _ =&gt; <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(err),</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> kv.key == target &#123;</span><br><span class="line">                found = <span class="title function_ invoke__">Some</span>((position, kv.value));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 重要的是，要保持循环，直到文件的末尾，以防键被覆盖</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(found)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">////////// get ///////////</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">get</span>(</span><br><span class="line">        &amp;<span class="keyword">mut</span> <span class="keyword">self</span>,</span><br><span class="line">        key: &amp;ByteStr, <span class="comment">//把Option包装在Result中，这样既可以允许出现I/O错误的情况，还可以允许出现缺失值的情况。</span></span><br><span class="line">    ) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;<span class="type">Option</span>&lt;ByteString&gt;&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">position</span> = <span class="keyword">match</span> <span class="keyword">self</span>.index.<span class="title function_ invoke__">get</span>(key) &#123;</span><br><span class="line">            <span class="literal">None</span> =&gt; <span class="keyword">return</span> <span class="title function_ invoke__">Ok</span>(<span class="literal">None</span>),</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(position) =&gt; *position,</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">kv</span> = <span class="keyword">self</span>.<span class="title function_ invoke__">get_at</span>(position)?;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(<span class="title function_ invoke__">Some</span>(kv.value))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/////////// get_at ////////////////</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">get_at</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, position: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> io::<span class="type">Result</span>&lt;KeyValuePair&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">f</span> = BufReader::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.f);</span><br><span class="line">        f.<span class="title function_ invoke__">seek</span>(SeekFrom::<span class="title function_ invoke__">Start</span>(position))?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">kv</span> = ActionKV::<span class="title function_ invoke__">process_record</span>(&amp;<span class="keyword">mut</span> f)?;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(kv)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>基础的hash函数</p>
+<pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">basic_hash</span>(key: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">first</span> = key</span><br><span class="line">        <span class="comment">//.chars() 迭代器，把字符串转换为一系列的char值，每个char值长度为4字节。</span></span><br><span class="line">        .<span class="title function_ invoke__">chars</span>()</span><br><span class="line">        <span class="comment">//返回一个Option，它可能是Some(char)，如果key是空字符串，那么它的返回值就是None。</span></span><br><span class="line">        .<span class="title function_ invoke__">next</span>()</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        //如果是空字符串，提供NULL作为默认值。unwrap_or()的行为和unwrap()的差不多，</span></span><br><span class="line"><span class="comment">        只是当遇到None的时候，unwrap_or()会给出一个值，而不是引发恐慌而崩溃</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        .<span class="title function_ invoke__">unwrap_or</span>(<span class="string">&#x27;\0&#x27;</span>);</span><br><span class="line">    <span class="comment">//把first的内存数据解释为一个u32，虽然它的类型是char。</span></span><br><span class="line">    <span class="type">u32</span>::<span class="title function_ invoke__">from</span>(first)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>使用serde-json来包含JSON字面量</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">serde</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde_cbor</span>=<span class="string">&quot;0.11.2&quot;</span></span><br><span class="line"><span class="attr">serde_derive</span>=<span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">serde_json</span>=<span class="string">&quot;1&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="meta">#[macro_use]</span> <span class="comment">//把serde_json包合并到此包中，并使用它的宏。这个语法会把json! 宏导入作用域中1。</span></span><br><span class="line"> <span class="keyword">extern</span> <span class="keyword">crate</span> serde_json;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line"> <span class="comment">/*json! 会接收一个JSON字面量（这个JSON字面量是由字符串组成的Rust表达式），</span></span><br><span class="line"><span class="comment"> 这个宏会把JSON字面量转换成类型为serde_json::Value的Rust值，</span></span><br><span class="line"><span class="comment"> 这个类型是枚举体，能够表示JSON规范中所描述的所有类型。*/</span></span><br><span class="line"> <span class="keyword">let</span> <span class="variable">capitals</span> = json!(&#123;</span><br><span class="line">     <span class="string">&quot;Cook Islands&quot;</span>: <span class="string">&quot;Avarua&quot;</span>,</span><br><span class="line">     <span class="string">&quot;Fiji&quot;</span>: <span class="string">&quot;Suva&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Kiribati&quot;</span>: <span class="string">&quot;South Tarawa&quot;</span>,</span><br><span class="line">     <span class="string">&quot;Niue&quot;</span>: <span class="string">&quot;Alofi&quot;</span>,</span><br><span class="line">     <span class="string">&quot;Tonga&quot;</span>: <span class="string">&quot;Nuku&#x27;alofa&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Tuvalu&quot;</span>: <span class="string">&quot;Funafuti&quot;</span></span><br><span class="line">   &#125;);</span><br><span class="line"></span><br><span class="line"> <span class="built_in">println!</span>(<span class="string">&quot;Capital of Tonga is: &#123;&#125;&quot;</span>, capitals[<span class="string">&quot;Tonga&quot;</span>])</span><br><span class="line"> <span class="comment">//Capital of Tonga is: &quot;Nuku&#x27;alofa&quot;</span></span><br><span class="line">&#125;</span><br></pre>
+
+<p>ack_disk</p>
+<pre class="highlight"><span class="line"><span class="keyword">match</span> action &#123;</span><br><span class="line"> <span class="string">&quot;get&quot;</span> =&gt; &#123;</span><br><span class="line"><span class="comment">//INDEX_KEY是此数据库中索引的内部隐藏的名字。</span></span><br><span class="line">   <span class="keyword">let</span> <span class="variable">index_as_bytes</span> = a.<span class="title function_ invoke__">get</span>(&amp;INDEX_KEY)</span><br><span class="line">   <span class="comment">/*</span></span><br><span class="line"><span class="comment">   这里需要调用两次unwrap()，因为a.index是HashMap，</span></span><br><span class="line"><span class="comment">   会返回一个Option，而值本身也保存在一个Option里，为了方便将来进行删除。</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">   .<span class="title function_ invoke__">unwrap</span>()</span><br><span class="line">   .<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">index_decoded</span> = bincode::<span class="title function_ invoke__">deserialize</span>(&amp;index_as_bytes);</span><br><span class="line"></span><br><span class="line">   <span class="keyword">let</span> <span class="variable">index</span>: HashMap&lt;ByteString, <span class="type">u64</span>&gt; = index_decoded.<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="comment">//检索一个值现在需要先获取索引，然后确定其在磁盘上的正确位置。</span></span><br><span class="line">  <span class="keyword">match</span> index.<span class="title function_ invoke__">get</span>(key) &#123;</span><br><span class="line">      <span class="literal">None</span> =&gt; eprintln!(<span class="string">&quot;&#123;:?&#125; not found&quot;</span>, key),</span><br><span class="line">      <span class="title function_ invoke__">Some</span>(&amp;i) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">kv</span> = a.<span class="title function_ invoke__">get_at</span>(i).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">       <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, kv.value)</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre>
+<p>完整版:在各次运行之间持久化索引数据</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> libactionkv::ActionKV;</span><br><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[cfg(target_os = <span class="string">&quot;windows&quot;</span>)]</span></span><br><span class="line"><span class="keyword">const</span> USAGE: &amp;<span class="type">str</span> = <span class="string">&quot;</span></span><br><span class="line"><span class="string">Usage:</span></span><br><span class="line"><span class="string">    akv_disk.exe FILE get KEY</span></span><br><span class="line"><span class="string">   akv_disk.exe FILE delete KEY</span></span><br><span class="line"><span class="string">   akv_disk.exe FILE insert KEY VALUE</span></span><br><span class="line"><span class="string">    akv_disk.exe FILE update KEY VALUE</span></span><br><span class="line"><span class="string">&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[cfg(not(target_os = <span class="string">&quot;windows&quot;</span>))]</span></span><br><span class="line"><span class="keyword">const</span> USAGE: &amp;<span class="type">str</span> = <span class="string">&quot;</span></span><br><span class="line"><span class="string">Usage:</span></span><br><span class="line"><span class="string">    akv_disk FILE get KEY</span></span><br><span class="line"><span class="string">    akv_disk FILE delete KEY</span></span><br><span class="line"><span class="string">    akv_disk FILE insert KEY VALUE</span></span><br><span class="line"><span class="string">    akv_disk FILE update KEY VALUE</span></span><br><span class="line"><span class="string"> &quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ByteStr</span> = [<span class="type">u8</span>];</span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ByteString</span> = <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">store_index_on_disk</span>(a: &amp;<span class="keyword">mut</span> ActionKV, index_key: &amp;ByteStr) &#123;</span><br><span class="line">    a.index.<span class="title function_ invoke__">remove</span>(index_key);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">index_as_bytes</span> = bincode::<span class="title function_ invoke__">serialize</span>(&amp;a.index).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    a.index = std::collections::HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    a.<span class="title function_ invoke__">insert</span>(index_key, &amp;index_as_bytes).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">const</span> INDEX_KEY: &amp;ByteStr = <span class="string">b&quot;+index&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span>: <span class="type">Vec</span>&lt;<span class="type">String</span>&gt; = std::env::<span class="title function_ invoke__">args</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">fname</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">1</span>).<span class="title function_ invoke__">expect</span>(&amp;USAGE);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">action</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">2</span>).<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">key</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">3</span>).<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">maybe_value</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">path</span> = std::path::Path::<span class="title function_ invoke__">new</span>(&amp;fname);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">a</span> = ActionKV::<span class="title function_ invoke__">open</span>(path).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;unable to open file&quot;</span>);</span><br><span class="line"></span><br><span class="line">    a.<span class="title function_ invoke__">load</span>().<span class="title function_ invoke__">expect</span>(<span class="string">&quot;unable to load data&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> action &#123;</span><br><span class="line">        <span class="string">&quot;get&quot;</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">index_as_bytes</span> = a.<span class="title function_ invoke__">get</span>(&amp;INDEX_KEY).<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">index_decoded</span> = bincode::<span class="title function_ invoke__">deserialize</span>(&amp;index_as_bytes);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">index</span>: HashMap&lt;ByteString, <span class="type">u64</span>&gt; = index_decoded.<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">match</span> index.<span class="title function_ invoke__">get</span>(key) &#123;</span><br><span class="line">                <span class="literal">None</span> =&gt; eprintln!(<span class="string">&quot;&#123;:?&#125; not found&quot;</span>, key),</span><br><span class="line">                <span class="title function_ invoke__">Some</span>(&amp;i) =&gt; &#123;</span><br><span class="line">                    <span class="keyword">let</span> <span class="variable">kv</span> = a.<span class="title function_ invoke__">get_at</span>(i).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">                    <span class="comment">//要输出值，我们需要使用Debug语法，因为一个[u8]的值可能包含任意字节数据。</span></span><br><span class="line">                    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, kv.value) </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;delete&quot;</span> =&gt; a.<span class="title function_ invoke__">delete</span>(key).<span class="title function_ invoke__">unwrap</span>(),</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;insert&quot;</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = maybe_value.<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">            a.<span class="title function_ invoke__">insert</span>(key, value).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">             <span class="comment">//每当数据发生变化时，此索引也必须更新。</span></span><br><span class="line">            <span class="title function_ invoke__">store_index_on_disk</span>(&amp;<span class="keyword">mut</span> a, INDEX_KEY);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;update&quot;</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = maybe_value.<span class="title function_ invoke__">expect</span>(&amp;USAGE).<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">            a.<span class="title function_ invoke__">update</span>(key, value).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">            <span class="title function_ invoke__">store_index_on_disk</span>(&amp;<span class="keyword">mut</span> a, INDEX_KEY);</span><br><span class="line">        &#125;</span><br><span class="line">        _ =&gt; eprintln!(<span class="string">&quot;&#123;&#125;&quot;</span>, &amp;USAGE),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/09/09/rust%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+            https://sabakiro.github.io/2023/09/09/rust%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/09/08/rust%E5%86%85%E5%AD%98/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">rust内存 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-09</div>
+        <a href="/2023/09/09/rust%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><div class="recent-posts-item-content">rust文件系统</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-08</div>
+        <a href="/2023/09/08/rust%E5%86%85%E5%AD%98/"><div class="recent-posts-item-content">rust内存</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-08</div>
+        <a href="/2023/09/08/rust%E6%A8%A1%E6%8B%9Fcpu/"><div class="recent-posts-item-content">rust模拟cpu</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-07</div>
+        <a href="/2023/09/07/rust%E4%BB%8E%E9%9A%8F%E6%9C%BA%E5%AD%97%E8%8A%82%E4%B8%AD%E7%94%9F%E6%88%90%E9%9A%8F%E6%9C%BA%E6%A6%82%E7%8E%87/"><div class="recent-posts-item-content">rust从随机字节中生成随机概率</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
