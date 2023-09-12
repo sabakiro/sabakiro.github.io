@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>rust进程线程容器</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="rust进程线程容器">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/09/12/rust%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%AE%B9%E5%99%A8/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-09-12">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-09-12">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>55</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>7</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/vue/" 
+        title="vue">
+        <div class="tags-list-item">vue</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%AE%97%E6%B3%95/" 
+        title="算法">
+        <div class="tags-list-item">算法</div>
+      </a>
+    
+      <a 
+        href="/tags/flutter/" 
+        title="flutter">
+        <div class="tags-list-item">flutter</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      rust进程线程容器
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-09-12T12:10:27.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-09-12</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>2.4k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>使用一个自旋循环策略来暂停20ms</p>
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::&#123;thread, time&#125;;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">n</span> <span class="keyword">in</span> <span class="number">1</span>..<span class="number">1001</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">handlers</span>: <span class="type">Vec</span>&lt;thread::JoinHandle&lt;()&gt;&gt; = <span class="type">Vec</span>::<span class="title function_ invoke__">with_capacity</span>(n);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">start</span> = time::Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">pause</span> = time::Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">20</span>);</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">_m</span> <span class="keyword">in</span> <span class="number">0</span>..n &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">start</span> = time::Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line">                <span class="keyword">while</span> start.<span class="title function_ invoke__">elapsed</span>() &lt; pause &#123;</span><br><span class="line">                    <span class="comment">//使用thread::yield_now()来控制出让</span></span><br><span class="line">                    thread::<span class="title function_ invoke__">yield_now</span>();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            handlers.<span class="title function_ invoke__">push</span>(handle);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(handle) = handlers.<span class="title function_ invoke__">pop</span>() &#123;</span><br><span class="line">            handle.<span class="title function_ invoke__">join</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">finish</span> = time::Instant::<span class="title function_ invoke__">now</span>();</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;\t&#123;:02?&#125;&quot;</span>, n, finish.<span class="title function_ invoke__">duration_since</span>(start));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>单线程版本render-hex</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">svg</span>=<span class="string">&quot;0.6&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::env;</span><br><span class="line"><span class="keyword">use</span> svg::node::element::path::&#123;Command, Data, Position&#125;;</span><br><span class="line"><span class="keyword">use</span> svg::node::element::&#123;Path, Rectangle&#125;;</span><br><span class="line"><span class="keyword">use</span> svg::Document;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*枚举体类型Operation和Orientation是在后面的代码中定义的。</span></span><br><span class="line"><span class="comment">在这里使用use关键字把它们都导入进来，可以去除源代码中的大量干扰。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">use</span> crate::Operation::&#123;Forward, Home, Noop, TurnLeft, TurnRight&#125;;</span><br><span class="line"><span class="keyword">use</span> crate::Orientation::&#123;East, North, South, West&#125;;</span><br><span class="line"><span class="comment">//HEIGHT和WIDTH提供了绘图的边界。</span></span><br><span class="line"><span class="keyword">const</span> WIDTH: <span class="type">isize</span> = <span class="number">400</span>;</span><br><span class="line"><span class="keyword">const</span> HEIGHT: <span class="type">isize</span> = WIDTH;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*常量HOME_Y和HOME_X让我们可以轻松地重置绘制的位置。</span></span><br><span class="line"><span class="comment">这里的Y是纵坐标，X是横坐标。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">const</span> HOME_Y: <span class="type">isize</span> = HEIGHT / <span class="number">2</span>;</span><br><span class="line"><span class="keyword">const</span> HOME_X: <span class="type">isize</span> = WIDTH / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//STROKE_WIDTH用于输出SVG的一个参数，定义绘制出的线条的粗细。</span></span><br><span class="line"><span class="keyword">const</span> STROKE_WIDTH: <span class="type">usize</span> = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug, Clone, Copy)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Orientation</span> &#123;</span><br><span class="line">    <span class="comment">//在这里使用的是描述而不是数值，这样就避免了数学运算。</span></span><br><span class="line">    North,</span><br><span class="line">    East,</span><br><span class="line">    West,</span><br><span class="line">    South,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug, Clone, Copy)]</span></span><br><span class="line"><span class="comment">// 要想生成更丰富的输出，可以为你的程序再扩展一些可用的操作。</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Operation</span> &#123;</span><br><span class="line">    <span class="comment">/*使用isize，让我们可以扩展这个示例代码，</span></span><br><span class="line"><span class="comment">    实现一个反方向的移动操作，而且不需要为此枚举体添加新的变体。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="title function_ invoke__">Forward</span>(<span class="type">isize</span>),</span><br><span class="line">    TurnLeft,</span><br><span class="line">    TurnRight,</span><br><span class="line">    Home,</span><br><span class="line">    <span class="comment">/*如果我们遇到非法输入，就使用Noop。为了写入错误消息，</span></span><br><span class="line"><span class="comment">    这里我们保留了那个非法的字节。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="title function_ invoke__">Noop</span>(<span class="type">u8</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="comment">// Artist结构体维护着当前的状态。</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Artist</span> &#123;</span><br><span class="line">    x: <span class="type">isize</span>,</span><br><span class="line">    y: <span class="type">isize</span>,</span><br><span class="line">    heading: Orientation,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Artist</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>() <span class="punctuation">-&gt;</span> Artist &#123;</span><br><span class="line">        Artist &#123;</span><br><span class="line">            heading: North,</span><br><span class="line">            x: HOME_X,</span><br><span class="line">            y: HOME_Y,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">home</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.x = HOME_X;</span><br><span class="line">        <span class="keyword">self</span>.y = HOME_Y;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*forward()在match表达式的里面修改了self。</span></span><br><span class="line"><span class="comment">    与之形成对照的是，</span></span><br><span class="line"><span class="comment">    turn_left() 和turn_right()在match表达式的外面修改了self。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">forward</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, distance: <span class="type">isize</span>) &#123;</span><br><span class="line">        <span class="keyword">match</span> <span class="keyword">self</span>.heading &#123;</span><br><span class="line">            North =&gt; <span class="keyword">self</span>.y += distance,</span><br><span class="line">            South =&gt; <span class="keyword">self</span>.y -= distance,</span><br><span class="line">            West =&gt; <span class="keyword">self</span>.x += distance,</span><br><span class="line">            East =&gt; <span class="keyword">self</span>.x -= distance,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">turn_right</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.heading = <span class="keyword">match</span> <span class="keyword">self</span>.heading &#123;</span><br><span class="line">            North =&gt; East,</span><br><span class="line">            South =&gt; West,</span><br><span class="line">            West =&gt; North,</span><br><span class="line">            East =&gt; South,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*forward()在match表达式的里面修改了self。与之形成对照的是，</span></span><br><span class="line"><span class="comment">    turn_left() 和turn_right()在match表达式的外面修改了self。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">turn_left</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.heading = <span class="keyword">match</span> <span class="keyword">self</span>.heading &#123;</span><br><span class="line">            North =&gt; West,</span><br><span class="line">            South =&gt; East,</span><br><span class="line">            West =&gt; South,</span><br><span class="line">            East =&gt; North,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//wrap() 确保了图形的绘制是保持在边界之内的。</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">wrap</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.x &lt; <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.x = HOME_X;</span><br><span class="line">            <span class="keyword">self</span>.heading = West;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">self</span>.x &gt; WIDTH &#123;</span><br><span class="line">            <span class="keyword">self</span>.x = HOME_X;</span><br><span class="line">            <span class="keyword">self</span>.heading = East;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.y &lt; <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.y = HOME_Y;</span><br><span class="line">            <span class="keyword">self</span>.heading = North;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">self</span>.y &gt; HEIGHT &#123;</span><br><span class="line">            <span class="keyword">self</span>.y = HOME_Y;</span><br><span class="line">            <span class="keyword">self</span>.heading = South;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">parse</span>(input: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;Operation&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">steps</span> = <span class="type">Vec</span>::&lt;Operation&gt;::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> input.<span class="title function_ invoke__">bytes</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">step</span> = <span class="keyword">match</span> byte &#123;</span><br><span class="line">            <span class="string">b&#x27;0&#x27;</span> =&gt; Home,</span><br><span class="line">            <span class="string">b&#x27;1&#x27;</span>..=<span class="string">b&#x27;9&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                在ASCII字符的编码中，数字的部分是从0x30（十进制的48）开始的。</span></span><br><span class="line"><span class="comment">                所以此代码(byte–0x30)会把b&#x27;2&#x27; 转换成2。</span></span><br><span class="line"><span class="comment">                要在整个u8的范围内来执行这样的操作有可能会引发恐慌，</span></span><br><span class="line"><span class="comment">                但是这行代码是安全的，这要归功于模式匹配所提供的保证。</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">let</span> <span class="variable">distance</span> = (byte - <span class="number">0x30</span>) <span class="keyword">as</span> <span class="type">isize</span>;</span><br><span class="line">                <span class="title function_ invoke__">Forward</span>(distance * (HEIGHT / <span class="number">10</span>))</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">            这里还留有很多的机会，可以添加更多的指令，</span></span><br><span class="line"><span class="comment">            能够生成更多为精细的图形，</span></span><br><span class="line"><span class="comment">            同时还不会解析过程的复杂性</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">            <span class="string">b&#x27;a&#x27;</span> | <span class="string">b&#x27;b&#x27;</span> | <span class="string">b&#x27;c&#x27;</span> =&gt; TurnLeft,</span><br><span class="line">            <span class="string">b&#x27;d&#x27;</span> | <span class="string">b&#x27;e&#x27;</span> | <span class="string">b&#x27;f&#x27;</span> =&gt; TurnRight,</span><br><span class="line">            </span><br><span class="line">            <span class="comment">/*虽然我们不期望任何非法的字符，但在输入流中可能会有非法字符。</span></span><br><span class="line"><span class="comment">            在这里使用了Noop操作，让我们可以把解析的过程和产生输出的过程分离开来。</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">            _ =&gt; <span class="title function_ invoke__">Noop</span>(byte),</span><br><span class="line">        &#125;;</span><br><span class="line">        steps.<span class="title function_ invoke__">push</span>(step);</span><br><span class="line">    &#125;</span><br><span class="line">    steps</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">把从parse()中得到的Vec&lt;Operation&gt;转换成Vec&lt;Command&gt;。</span></span><br><span class="line"><span class="comment">该函数的输出结果稍后会被用来生成一张SVG的图。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">convert</span>(operations: &amp;<span class="type">Vec</span>&lt;Operation&gt;) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;Command&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">turtle</span> = Artist::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">path_data</span> = <span class="type">Vec</span>::&lt;Command&gt;::<span class="title function_ invoke__">with_capacity</span>(operations.<span class="title function_ invoke__">len</span>());</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    开始，先把海龟置于绘图区的中心位置</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">start_at_home</span> = Command::<span class="title function_ invoke__">Move</span>(Position::Absolute, (HOME_X, HOME_Y).<span class="title function_ invoke__">into</span>());</span><br><span class="line">    path_data.<span class="title function_ invoke__">push</span>(start_at_home);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">op</span> <span class="keyword">in</span> operations &#123;</span><br><span class="line">        <span class="keyword">match</span> *op &#123;</span><br><span class="line">	        <span class="comment">//不是马上就生成相应的命令，而是先修改海龟的内部状态</span></span><br><span class="line">            <span class="title function_ invoke__">Forward</span>(distance) =&gt; turtle.<span class="title function_ invoke__">forward</span>(distance),</span><br><span class="line">            TurnLeft =&gt; turtle.<span class="title function_ invoke__">turn_left</span>(),</span><br><span class="line">            TurnRight =&gt; turtle.<span class="title function_ invoke__">turn_right</span>(),</span><br><span class="line">            Home =&gt; turtle.<span class="title function_ invoke__">home</span>(),</span><br><span class="line">            <span class="title function_ invoke__">Noop</span>(byte) =&gt; &#123;</span><br><span class="line">                eprintln!(<span class="string">&quot;warning: illegal byte encountered: &#123;:?&#125;&quot;</span>, byte);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">		<span class="comment">/*创建一个Command::Line</span></span><br><span class="line"><span class="comment">		（与海龟当前的坐标位置相连接的一条直线）</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">path_segment</span> = Command::<span class="title function_ invoke__">Line</span>(Position::Absolute, (turtle.x, turtle.y).<span class="title function_ invoke__">into</span>());</span><br><span class="line">        path_data.<span class="title function_ invoke__">push</span>(path_segment);</span><br><span class="line"></span><br><span class="line">		<span class="comment">//如果海龟出界了，就把它送回到中心位置</span></span><br><span class="line">        turtle.<span class="title function_ invoke__">wrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    path_data</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">generate_svg</span>(path_data: <span class="type">Vec</span>&lt;Command&gt;) <span class="punctuation">-&gt;</span> Document &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">background</span> = Rectangle::<span class="title function_ invoke__">new</span>()</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;x&quot;</span>, <span class="number">0</span>)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;y&quot;</span>, <span class="number">0</span>)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;width&quot;</span>, WIDTH)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;height&quot;</span>, HEIGHT)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;#ffffff&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">border</span> = background</span><br><span class="line">        .<span class="title function_ invoke__">clone</span>()</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;fill-opacity&quot;</span>, <span class="string">&quot;0.0&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;stroke&quot;</span>, <span class="string">&quot;#cccccc&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;stroke-width&quot;</span>, <span class="number">3</span> * STROKE_WIDTH);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">sketch</span> = Path::<span class="title function_ invoke__">new</span>()</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;none&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;stroke&quot;</span>, <span class="string">&quot;#2f2f2f&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;stroke-width&quot;</span>, STROKE_WIDTH)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;stroke-opacity&quot;</span>, <span class="string">&quot;0.9&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;d&quot;</span>, Data::<span class="title function_ invoke__">from</span>(path_data));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">document</span> = Document::<span class="title function_ invoke__">new</span>()</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;viewBox&quot;</span>, (<span class="number">0</span>, <span class="number">0</span>, HEIGHT, WIDTH))</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;height&quot;</span>, HEIGHT)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;width&quot;</span>, WIDTH)</span><br><span class="line">        .<span class="title function_ invoke__">set</span>(<span class="string">&quot;style&quot;</span>, <span class="string">&quot;style=\&quot;outline: 5px solid #800000;\&quot;&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">add</span>(background)</span><br><span class="line">        .<span class="title function_ invoke__">add</span>(sketch)</span><br><span class="line">        .<span class="title function_ invoke__">add</span>(border);</span><br><span class="line"></span><br><span class="line">    document</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span> = env::<span class="title function_ invoke__">args</span>().collect::&lt;<span class="type">Vec</span>&lt;<span class="type">String</span>&gt;&gt;();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">input</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">1</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">default_filename</span> = <span class="built_in">format!</span>(<span class="string">&quot;&#123;&#125;.svg&quot;</span>, input);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">save_to</span> = args.<span class="title function_ invoke__">get</span>(<span class="number">2</span>).<span class="title function_ invoke__">unwrap_or</span>(&amp;default_filename);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">operations</span> = <span class="title function_ invoke__">parse</span>(input);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">path_data</span> = <span class="title function_ invoke__">convert</span>(&amp;operations);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">document</span> = <span class="title function_ invoke__">generate_svg</span>(path_data);</span><br><span class="line">    svg::<span class="title function_ invoke__">save</span>(save_to, &amp;document).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>命令式编程</p>
+<pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">parse</span>(input: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;Operation&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">steps</span> = <span class="type">Vec</span>::&lt;Operation&gt;::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">byte</span> <span class="keyword">in</span> input.<span class="title function_ invoke__">bytes</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">step</span> = <span class="keyword">match</span> byte &#123;</span><br><span class="line">            <span class="string">b&#x27;0&#x27;</span> =&gt; Home,</span><br><span class="line">            <span class="string">b&#x27;1&#x27;</span>..=<span class="string">b&#x27;9&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">distance</span> = (byte - <span class="number">0x30</span>) <span class="keyword">as</span> <span class="type">isize</span>;</span><br><span class="line">                <span class="title function_ invoke__">Forward</span>(distance * (HEIGHT / <span class="number">10</span>))</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">b&#x27;a&#x27;</span> | <span class="string">b&#x27;b&#x27;</span> | <span class="string">b&#x27;c&#x27;</span> =&gt; TurnLeft,</span><br><span class="line">            <span class="string">b&#x27;d&#x27;</span> | <span class="string">b&#x27;e&#x27;</span> | <span class="string">b&#x27;f&#x27;</span> =&gt; TurnRight,</span><br><span class="line">            _ =&gt; <span class="title function_ invoke__">Noop</span>(byte),</span><br><span class="line">        &#125;;</span><br><span class="line">        steps.<span class="title function_ invoke__">push</span>(step);</span><br><span class="line">    &#125;</span><br><span class="line">    steps</span><br><span class="line">&#125;</span><br></pre>
+
+<p>函数式编程</p>
+<pre class="highlight"><span class="line"><span class="keyword">fn</span> <span class="title function_">parse</span>(input: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;Operation&gt; &#123;</span><br><span class="line">    input.<span class="title function_ invoke__">bytes</span>().<span class="title function_ invoke__">map</span>(|byte| </span><br><span class="line">	    <span class="keyword">match</span> byte &#123;</span><br><span class="line">            <span class="string">b&#x27;0&#x27;</span> =&gt; Home,</span><br><span class="line">            <span class="string">b&#x27;1&#x27;</span>..=<span class="string">b&#x27;9&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">distance</span> = (byte - <span class="number">0x30</span>) <span class="keyword">as</span> <span class="type">isize</span>;</span><br><span class="line">                <span class="title function_ invoke__">Forward</span>(distance * (HEIGHT / <span class="number">10</span>))</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">b&#x27;a&#x27;</span> | <span class="string">b&#x27;b&#x27;</span> | <span class="string">b&#x27;c&#x27;</span> =&gt; TurnLeft,</span><br><span class="line">            <span class="string">b&#x27;d&#x27;</span> | <span class="string">b&#x27;e&#x27;</span> | <span class="string">b&#x27;f&#x27;</span> =&gt; TurnRight,</span><br><span class="line">            _ =&gt; <span class="title function_ invoke__">Noop</span>(byte),</span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br></pre>
+<p>在render-hex项目中使用rayon</p>
+<pre class="highlight"><span class="line"><span class="attr">rayon</span>=<span class="string">&quot;1&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> rayon::prelude::*;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">parse</span>(input: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;Operation&gt; &#123;</span><br><span class="line">    input</span><br><span class="line">    <span class="comment">//把字符串切片input转换成字节切片。</span></span><br><span class="line">        .<span class="title function_ invoke__">as_bytes</span>() </span><br><span class="line">    <span class="comment">//把这个字节切片转换成一个并行迭代器。</span></span><br><span class="line">        .<span class="title function_ invoke__">par_iter</span>() </span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|byte| <span class="keyword">match</span> byte &#123;</span><br><span class="line">            <span class="string">b&#x27;0&#x27;</span> =&gt; Home,</span><br><span class="line">            <span class="string">b&#x27;1&#x27;</span>..=<span class="string">b&#x27;9&#x27;</span> =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">distance</span> = (byte - <span class="number">0x30</span>) <span class="keyword">as</span> <span class="type">isize</span>;</span><br><span class="line">                <span class="title function_ invoke__">Forward</span>(distance * (HEIGHT / <span class="number">10</span>))</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">b&#x27;a&#x27;</span> | <span class="string">b&#x27;b&#x27;</span> | <span class="string">b&#x27;c&#x27;</span> =&gt; TurnLeft,</span><br><span class="line">            <span class="string">b&#x27;d&#x27;</span> | <span class="string">b&#x27;e&#x27;</span> | <span class="string">b&#x27;f&#x27;</span> =&gt; TurnRight,</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">            变量byte的类型是&amp;u8，</span></span><br><span class="line"><span class="comment">            因而枚举体变体Operation::Noop(u8) 需要的是变量byte解引用后的值。</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            _ =&gt; <span class="title function_ invoke__">Noop</span>(*byte),</span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br></pre>
+
+<p>新的render-hex：此版本使用了基于通道来实现的任务队列</p>
+<pre class="highlight"><span class="line"><span class="attr">svg</span>=<span class="string">&quot;0.6&quot;</span></span><br><span class="line"><span class="attr">crossbeam</span>=<span class="string">&quot;0.7&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> crossbeam::channel::unbounded;</span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Work</span> &#123;</span><br><span class="line">    <span class="comment">//创建一个消息的类型，我们会使用通道来发送这种类型的消息。</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 //这个元组中的usize字段标明了已处理完的字节的顺序位置。</span></span><br><span class="line"><span class="comment">	 需要这样一个字段，是因为返回的任务结果很有可能是无序的。</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">    <span class="title function_ invoke__">Task</span>((<span class="type">usize</span>, <span class="type">u8</span>)),</span><br><span class="line">    </span><br><span class="line">     <span class="comment">//给worker线程一个标志性的消息，指示该线程是时候该关闭了。</span></span><br><span class="line">    Finished,         </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">parse_byte</span>(byte: <span class="type">u8</span>) <span class="punctuation">-&gt;</span> Operation &#123;</span><br><span class="line">    <span class="comment">//把worker需要执行的功能抽出来，以便简化程序逻辑。</span></span><br><span class="line">    <span class="keyword">match</span> byte &#123;</span><br><span class="line">        <span class="string">b&#x27;0&#x27;</span> =&gt; Home,</span><br><span class="line">        <span class="string">b&#x27;1&#x27;</span>..=<span class="string">b&#x27;9&#x27;</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">distance</span> = (byte - <span class="number">0x30</span>) <span class="keyword">as</span> <span class="type">isize</span>;</span><br><span class="line">            <span class="title function_ invoke__">Forward</span>(distance * (HEIGHT / <span class="number">10</span>))</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="string">b&#x27;a&#x27;</span> | <span class="string">b&#x27;b&#x27;</span> | <span class="string">b&#x27;c&#x27;</span> =&gt; TurnLeft,</span><br><span class="line">        <span class="string">b&#x27;d&#x27;</span> | <span class="string">b&#x27;e&#x27;</span> | <span class="string">b&#x27;f&#x27;</span> =&gt; TurnRight,</span><br><span class="line">        _ =&gt; <span class="title function_ invoke__">Noop</span>(byte),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">parse</span>(input: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;Operation&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">n_threads</span> = <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// 给待完成的任务创建一个通道。</span></span><br><span class="line">    <span class="keyword">let</span> (todo_tx, todo_rx) = <span class="title function_ invoke__">unbounded</span>();</span><br><span class="line">     </span><br><span class="line">     <span class="comment">// 为将要返回的解码后的指令创建一个通道。</span></span><br><span class="line">    <span class="keyword">let</span> (results_tx, results_rx) = <span class="title function_ invoke__">unbounded</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">n_bytes</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="title function_ invoke__">for</span> (i, byte) <span class="keyword">in</span> input.<span class="title function_ invoke__">bytes</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">    <span class="comment">//把待完成的工作填充到此任务队列中。</span></span><br><span class="line">        todo_tx.<span class="title function_ invoke__">send</span>(Work::<span class="title function_ invoke__">Task</span>((i, byte))).<span class="title function_ invoke__">unwrap</span>(); </span><br><span class="line">        <span class="comment">//这句代码用来跟踪待完成的任务数量。</span></span><br><span class="line">        n_bytes += <span class="number">1</span>; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..n_threads &#123;</span><br><span class="line">        <span class="comment">//给所有worker线程都发送一个信号，通知这些线程是时候关闭了。</span></span><br><span class="line">        todo_tx.<span class="title function_ invoke__">send</span>(Work::Finished).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..n_threads &#123;</span><br><span class="line">    <span class="comment">//通过使用克隆，让通道可以跨线程共享。</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">todo</span> = todo_rx.<span class="title function_ invoke__">clone</span>(); </span><br><span class="line">        <span class="keyword">let</span> <span class="variable">results</span> = results_tx.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">        thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || <span class="keyword">loop</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">task</span> = todo.<span class="title function_ invoke__">recv</span>();</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">result</span> = <span class="keyword">match</span> task &#123;</span><br><span class="line">                <span class="title function_ invoke__">Err</span>(_) =&gt; <span class="keyword">break</span>,</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(Work::Finished) =&gt; <span class="keyword">break</span>,</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(Work::<span class="title function_ invoke__">Task</span>((i, byte))) =&gt; (i, <span class="title function_ invoke__">parse_byte</span>(byte)),</span><br><span class="line">            &#125;;</span><br><span class="line">            results.<span class="title function_ invoke__">send</span>(result).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    由于返回的任务结果可以是任意的顺序，</span></span><br><span class="line"><span class="comment">    因此我们先初始化一个对应完整任务数量的Vec&lt;command&gt;，</span></span><br><span class="line"><span class="comment">    稍后将会用传进来的任务结果覆盖它。</span></span><br><span class="line"><span class="comment">    我们使用了Vec而没有使用数组，</span></span><br><span class="line"><span class="comment">    是因为此函数的类型签名已经是这样的了，</span></span><br><span class="line"><span class="comment">    我们并不想再重构整个程序来适应新的修改。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">ops</span> = <span class="built_in">vec!</span>[<span class="title function_ invoke__">Noop</span>(<span class="number">0</span>); n_bytes];</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..n_bytes &#123;</span><br><span class="line">        <span class="keyword">let</span> (i, op) = results_rx.<span class="title function_ invoke__">recv</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        ops[i] = op;</span><br><span class="line">    &#125;</span><br><span class="line">    ops</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/09/12/rust%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%AE%B9%E5%99%A8/">
+            https://sabakiro.github.io/2023/09/12/rust%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%AE%B9%E5%99%A8/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/09/12/rust%E6%97%B6%E9%92%9F/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">rust时钟 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-12</div>
+        <a href="/2023/09/12/rust%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%AE%B9%E5%99%A8/"><div class="recent-posts-item-content">rust进程线程容器</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-12</div>
+        <a href="/2023/09/12/rust%E6%97%B6%E9%92%9F/"><div class="recent-posts-item-content">rust时钟</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-10</div>
+        <a href="/2023/09/10/rust%E7%BD%91%E7%BB%9C/"><div class="recent-posts-item-content">rust网络</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-09</div>
+        <a href="/2023/09/09/rust%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><div class="recent-posts-item-content">rust文件系统</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
