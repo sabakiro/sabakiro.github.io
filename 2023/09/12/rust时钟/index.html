@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>rust时钟</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="rust时钟">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://sabakiro.github.io/2023/09/12/rust%E6%97%B6%E9%92%9F/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-09-12">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-09-12">
+      <meta 
+        property="og:article:author" 
+        content="sabakiro">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="rust">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">kaze</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          Home
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          Archive
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          Tags
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          Categories
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          About
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          Friends
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://s1.ax1x.com/2023/07/26/pCvilc9.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">sabakiro</p>
+<p class="author-description">none</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>54</span>
+    <span>Posts</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>Categories</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>7</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>Categories
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>hot tags
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
+      </a>
+    
+      <a 
+        href="/tags/vue/" 
+        title="vue">
+        <div class="tags-list-item">vue</div>
+      </a>
+    
+      <a 
+        href="/tags/c/" 
+        title="c#">
+        <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/linux/" 
+        title="linux">
+        <div class="tags-list-item">linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%AE%97%E6%B3%95/" 
+        title="算法">
+        <div class="tags-list-item">算法</div>
+      </a>
+    
+      <a 
+        href="/tags/flutter/" 
+        title="flutter">
+        <div class="tags-list-item">flutter</div>
+      </a>
+    
+      <a 
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      rust时钟
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-09-12T06:31:38.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-09-12</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>3k words</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/rust/" 
+            class="post-meta-link">
+            rust
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>读取系统时间并输出到屏幕上</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">chrono</span>=<span class="string">&quot;0.4&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> chrono::Local;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">//向系统询问本地时区的时间</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">now</span> = Local::<span class="title function_ invoke__">now</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>clock v0.1.1</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">chrono</span>=<span class="string">&quot;0.4&quot;</span></span><br><span class="line"><span class="attr">clap</span>=<span class="string">&quot;2&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> chrono::DateTime;</span><br><span class="line"><span class="keyword">use</span> chrono::Local;</span><br><span class="line"><span class="keyword">use</span> clap::&#123;App, Arg&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Clock</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Clock</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">get</span>() <span class="punctuation">-&gt;</span> DateTime&lt;Local&gt; &#123;</span><br><span class="line">        Local::<span class="title function_ invoke__">now</span>()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">set</span>() <span class="punctuation">-&gt;</span> ! &#123;</span><br><span class="line">        <span class="built_in">unimplemented!</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">//////////////// 使用clap来解析命令行参数 /////////////////</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">app</span> = App::<span class="title function_ invoke__">new</span>(<span class="string">&quot;clock&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">version</span>(<span class="string">&quot;0.1&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">about</span>(<span class="string">&quot;Gets and (aspirationally) sets the time.&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(</span><br><span class="line">            Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;action&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">takes_value</span>(<span class="literal">true</span>)</span><br><span class="line">                .<span class="title function_ invoke__">possible_values</span>(&amp;[<span class="string">&quot;get&quot;</span>, <span class="string">&quot;set&quot;</span>])</span><br><span class="line">                .<span class="title function_ invoke__">default_value</span>(<span class="string">&quot;get&quot;</span>),</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(</span><br><span class="line">            Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;std&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">short</span>(<span class="string">&quot;s&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">long</span>(<span class="string">&quot;use-standard&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">takes_value</span>(<span class="literal">true</span>)</span><br><span class="line">                .<span class="title function_ invoke__">possible_values</span>(&amp;[<span class="string">&quot;rfc2822&quot;</span>, <span class="string">&quot;rfc3339&quot;</span>, <span class="string">&quot;timestamp&quot;</span>])</span><br><span class="line">                .<span class="title function_ invoke__">default_value</span>(<span class="string">&quot;rfc3339&quot;</span>),</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;datetime&quot;</span>).<span class="title function_ invoke__">help</span>(</span><br><span class="line">            <span class="string">&quot;When &lt;action&gt; is &#x27;set&#x27;, apply &lt;datetime&gt;. \</span></span><br><span class="line"><span class="string">      Otherwise, ignore.&quot;</span>,</span><br><span class="line">        ));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span> = app.<span class="title function_ invoke__">get_matches</span>();</span><br><span class="line">    <span class="comment">//////////////// 使用clap来解析命令行参数 /////////////////</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    在前面，通过使用default_value(&quot;get&quot;) 和</span></span><br><span class="line"><span class="comment">    default_value(&quot;rfc3339&quot;)给每个参数都提供了一个默认值，</span></span><br><span class="line"><span class="comment">    所以在这两行中直接调用unwrap() 是安全的。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">action</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;action&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">std</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;std&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> action == <span class="string">&quot;set&quot;</span> &#123;</span><br><span class="line">        <span class="comment">// 因为我们还没有实现设置时间的功能，所以程序在这里会提前终止。</span></span><br><span class="line">        <span class="built_in">unimplemented!</span>()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">now</span> = Clock::<span class="title function_ invoke__">get</span>();</span><br><span class="line">    <span class="keyword">match</span> std &#123;</span><br><span class="line">        <span class="string">&quot;timestamp&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">timestamp</span>()),</span><br><span class="line">        <span class="string">&quot;rfc2822&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">to_rfc2822</span>()),</span><br><span class="line">        <span class="string">&quot;rfc3339&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">to_rfc3339</span>()),</span><br><span class="line">        _ =&gt; <span class="built_in">unreachable!</span>(),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">C:\works\rust\clock\src&gt;cargo run -- --help</span></span><br><span class="line"><span class="comment">clock 0.1</span></span><br><span class="line"><span class="comment">Gets and (aspirationally) sets the time.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">USAGE:</span></span><br><span class="line"><span class="comment">    clock.exe [OPTIONS] [ARGS]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">FLAGS:</span></span><br><span class="line"><span class="comment">    -h, --help       Prints help information</span></span><br><span class="line"><span class="comment">    -V, --version    Prints version information</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">OPTIONS:</span></span><br><span class="line"><span class="comment">    -s, --use-standard &lt;std&gt;     [default: rfc3339]  [possible values: rfc2822, rfc3339, timestamp]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">ARGS:</span></span><br><span class="line"><span class="comment">    &lt;action&gt;       [default: get]  [possible values: get, set]</span></span><br><span class="line"><span class="comment">    &lt;datetime&gt;    When &lt;action&gt; is &#x27;set&#x27;, apply &lt;datetime&gt;. Otherwise, ignore.</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre>
+
+<p>clock v0.1.2<br>以跨平台的方式设置系统时间</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">chrono</span>=<span class="string">&quot;0.4.0&quot;</span></span><br><span class="line"><span class="attr">clap</span>=<span class="string">&quot;2&quot;</span></span><br><span class="line"><span class="section">[target. &#x27;cfg(windows)&#x27;.dependencies]</span></span><br><span class="line"><span class="attr">winapi</span>=<span class="string">&quot;0.2&quot;</span></span><br><span class="line"><span class="attr">kernel32-sys</span>=<span class="string">&quot;0.2&quot;</span></span><br><span class="line"><span class="section">[target. &#x27;cfg(not (windows))&#x27;.dependencies]</span></span><br><span class="line"><span class="attr">libc</span>=<span class="string">&quot;0.2&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="meta">#[cfg(windows)]</span></span><br><span class="line"><span class="keyword">use</span> kernel32;</span><br><span class="line"><span class="meta">#[cfg(not(windows))]</span></span><br><span class="line"><span class="keyword">use</span> libc;</span><br><span class="line"><span class="meta">#[cfg(windows)]</span></span><br><span class="line"><span class="keyword">use</span> winapi;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> chrono::&#123;DateTime, Local, TimeZone&#125;;</span><br><span class="line"><span class="keyword">use</span> clap::&#123;App, Arg&#125;;</span><br><span class="line"><span class="keyword">use</span> std::mem::zeroed;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Clock</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Clock</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">get</span>() <span class="punctuation">-&gt;</span> DateTime&lt;Local&gt; &#123;</span><br><span class="line">        Local::<span class="title function_ invoke__">now</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//使用Windows中的kernel32.dll的API来设置时间</span></span><br><span class="line">    <span class="meta">#[cfg(windows)]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">set</span>&lt;Tz: TimeZone&gt;(t: DateTime&lt;Tz&gt;) <span class="punctuation">-&gt;</span> () &#123;</span><br><span class="line">        <span class="keyword">use</span> chrono::&#123;Datelike, Timelike, Weekday&#125;;</span><br><span class="line">        <span class="keyword">use</span> kernel32::SetSystemTime;</span><br><span class="line">        <span class="keyword">use</span> winapi::&#123;SYSTEMTIME, WORD&#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t</span> = t.<span class="title function_ invoke__">with_timezone</span>(&amp;Local);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">systime</span>: SYSTEMTIME = <span class="keyword">unsafe</span> &#123; <span class="title function_ invoke__">zeroed</span>() &#125;;</span><br><span class="line">        <span class="comment">/*chrono::Datelike trait 提供了weekday()方法。</span></span><br><span class="line"><span class="comment">        在微软的开发者文档中给出了转换表</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">dow</span> = <span class="keyword">match</span> t.<span class="title function_ invoke__">weekday</span>() &#123;</span><br><span class="line">            Weekday::Mon =&gt; <span class="number">1</span>,</span><br><span class="line">            Weekday::Tue =&gt; <span class="number">2</span>,</span><br><span class="line">            Weekday::Wed =&gt; <span class="number">3</span>,</span><br><span class="line">            Weekday::Thu =&gt; <span class="number">4</span>,</span><br><span class="line">            Weekday::Fri =&gt; <span class="number">5</span>,</span><br><span class="line">            Weekday::Sat =&gt; <span class="number">6</span>,</span><br><span class="line">            Weekday::Sun =&gt; <span class="number">0</span>,</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        作为实现细节，在chrono中表示闰秒是通过在纳秒字段中添加额外的一秒来实现的，</span></span><br><span class="line"><span class="comment">        要把纳秒转换为windows所要求的毫秒，就必须考虑到这一点</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">ns</span> = t.<span class="title function_ invoke__">nanosecond</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">is_leap_second</span> = ns &gt; <span class="number">1_000_000_000</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> is_leap_second &#123;</span><br><span class="line">            ns -= <span class="number">1_000_000_000</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        systime.wYear = t.<span class="title function_ invoke__">year</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wMonth = t.<span class="title function_ invoke__">month</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wDayOfWeek = dow <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wDay = t.<span class="title function_ invoke__">day</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wHour = t.<span class="title function_ invoke__">hour</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wMinute = t.<span class="title function_ invoke__">minute</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wSecond = t.<span class="title function_ invoke__">second</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wMilliseconds = (ns / <span class="number">1_000_000</span>) <span class="keyword">as</span> WORD;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">systime_ptr</span> = &amp;systime <span class="keyword">as</span> *<span class="keyword">const</span> SYSTEMTIME;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">            从rust编译器的角度来看，让其他的某些东西能够直接访问到内存是不安全的</span></span><br><span class="line"><span class="comment">            rust并不能保证windows内核将会有良好的行为表现</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="title function_ invoke__">SetSystemTime</span>(systime_ptr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[cfg(not(windows))]</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    t值来自命令行，并且经过了解析</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">set</span>&lt;Tz: TimeZone&gt;(t: DateTime&lt;Tz&gt;) <span class="punctuation">-&gt;</span> () &#123;</span><br><span class="line">        <span class="keyword">use</span> libc::&#123;settimeofday, timezone&#125;;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        settimeofday()中的timezone参数似乎是某种历史事故，</span></span><br><span class="line"><span class="comment">        如果给的是非空值则会产生一个错误</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">use</span> libc::&#123;suseconds_t, time_t, timeval&#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t</span> = t.<span class="title function_ invoke__">with_timezone</span>(&amp;Local);</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">u</span>: timeval = <span class="keyword">unsafe</span> &#123; <span class="title function_ invoke__">zeroed</span>() &#125;;</span><br><span class="line"></span><br><span class="line">        u.tv_sec = t.<span class="title function_ invoke__">timestamp</span>() <span class="keyword">as</span> time_t;</span><br><span class="line">        u.tv_usec = t.<span class="title function_ invoke__">timestamp_subsec_micros</span>() <span class="keyword">as</span> suseconds_t;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">mock_tz</span>: *<span class="keyword">const</span> timezone = std::ptr::<span class="title function_ invoke__">null</span>();</span><br><span class="line">            <span class="title function_ invoke__">settimeofday</span>(&amp;u <span class="keyword">as</span> *<span class="keyword">const</span> timeval, mock_tz);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">app</span> = App::<span class="title function_ invoke__">new</span>(<span class="string">&quot;clock&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">version</span>(<span class="string">&quot;0.1.2&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">about</span>(<span class="string">&quot;Gets and (aspirationally) sets the time.&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">after_help</span>(</span><br><span class="line">            <span class="string">&quot;Note: UNIX timestamps are parsed as whole \</span></span><br><span class="line"><span class="string">        seconds since 1st January 1970 0:00:00 UTC. \</span></span><br><span class="line"><span class="string">        For more accuracy, use another format.&quot;</span>,</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(</span><br><span class="line">            Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;action&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">takes_value</span>(<span class="literal">true</span>)</span><br><span class="line">                .<span class="title function_ invoke__">possible_values</span>(&amp;[<span class="string">&quot;get&quot;</span>, <span class="string">&quot;set&quot;</span>])</span><br><span class="line">                .<span class="title function_ invoke__">default_value</span>(<span class="string">&quot;get&quot;</span>),</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(</span><br><span class="line">            Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;std&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">short</span>(<span class="string">&quot;s&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">long</span>(<span class="string">&quot;use-standard&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">takes_value</span>(<span class="literal">true</span>)</span><br><span class="line">                .<span class="title function_ invoke__">possible_values</span>(&amp;[<span class="string">&quot;rfc2822&quot;</span>, <span class="string">&quot;rfc3339&quot;</span>, <span class="string">&quot;timestamp&quot;</span>])</span><br><span class="line">                .<span class="title function_ invoke__">default_value</span>(<span class="string">&quot;rfc3339&quot;</span>),</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;datetime&quot;</span>).<span class="title function_ invoke__">help</span>(</span><br><span class="line">            <span class="string">&quot;When &lt;action&gt; is &#x27;set&#x27;, apply &lt;datetime&gt;. \</span></span><br><span class="line"><span class="string">        Otherwise, ignore.&quot;</span>,</span><br><span class="line">        ));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span> = app.<span class="title function_ invoke__">get_matches</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">action</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;action&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">std</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;std&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> action == <span class="string">&quot;set&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t_</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;datetime&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">parser</span> = <span class="keyword">match</span> std &#123;</span><br><span class="line">            <span class="string">&quot;rfc2822&quot;</span> =&gt; DateTime::parse_from_rfc2822,</span><br><span class="line">            <span class="string">&quot;rfc3339&quot;</span> =&gt; DateTime::parse_from_rfc3339,</span><br><span class="line">            _ =&gt; <span class="built_in">unimplemented!</span>(),</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">err_msg</span> = <span class="built_in">format!</span>(<span class="string">&quot;Unable to parse &#123;&#125; according to &#123;&#125;&quot;</span>, t_, std);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t</span> = <span class="title function_ invoke__">parser</span>(t_).<span class="title function_ invoke__">expect</span>(&amp;err_msg);</span><br><span class="line"></span><br><span class="line">        Clock::<span class="title function_ invoke__">set</span>(t)；</span><br><span class="line">        </span><br><span class="line">        <span class="comment">////////////改善错误处理////////////</span></span><br><span class="line">        <span class="comment">//通过解析rust类型maybe_error，将其转换为一个容易匹配的原生i32的值</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">maybe_error</span> = std::io::Error::<span class="title function_ invoke__">last_os_error</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">os_error_code</span> = &amp;maybe_error.<span class="title function_ invoke__">raw_os_error</span>();</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        在一个原生的整数上进行匹配，可以节省导入枚举的代码，</span></span><br><span class="line"><span class="comment">        但是牺牲了类型安全性，不应该在生产环境的代码中使用这种”作弊方式“</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">match</span> os_error_code &#123;</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(<span class="number">0</span>) =&gt; (),</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(_) =&gt; eprintln!(<span class="string">&quot;unable to set the time: &#123;:?&#125;&quot;</span>, maybe_error),</span><br><span class="line">            <span class="literal">None</span> =&gt; (),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">now</span> = Clock::<span class="title function_ invoke__">get</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> std &#123;</span><br><span class="line">        <span class="string">&quot;timestamp&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">timestamp</span>()),</span><br><span class="line">        <span class="string">&quot;rfc2822&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">to_rfc2822</span>()),</span><br><span class="line">        <span class="string">&quot;rfc3339&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">to_rfc3339</span>()),</span><br><span class="line">        _ =&gt; <span class="built_in">unreachable!</span>(),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+<p>clockv0.1.3</p>
+<pre class="highlight"><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">chrono</span>=<span class="string">&quot;0.4.0&quot;</span></span><br><span class="line"><span class="attr">clap</span>=<span class="string">&quot;2&quot;</span></span><br><span class="line"><span class="attr">byteorder</span>=<span class="string">&quot;1.2&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[target. &#x27;cfg(windows)&#x27;.dependencies]</span></span><br><span class="line"><span class="attr">winapi</span>=<span class="string">&quot;0.2&quot;</span></span><br><span class="line"><span class="attr">kernel32-sys</span>=<span class="string">&quot;0.2&quot;</span></span><br><span class="line"><span class="section">[target. &#x27;cfg(not (windows))&#x27;.dependencies]</span></span><br><span class="line"><span class="attr">libc</span>=<span class="string">&quot;0.2&quot;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">use</span> byteorder::&#123;BigEndian, ReadBytesExt&#125;;</span><br><span class="line"><span class="keyword">use</span> chrono::&#123;DateTime, Duration <span class="keyword">as</span> ChronoDuration, TimeZone, Timelike&#125;;</span><br><span class="line"><span class="keyword">use</span> chrono::&#123;Local, Utc&#125;;</span><br><span class="line"><span class="keyword">use</span> clap::&#123;App, Arg&#125;;</span><br><span class="line"><span class="meta">#[cfg(windows)]</span></span><br><span class="line"><span class="keyword">use</span> kernel32;</span><br><span class="line"><span class="meta">#[cfg(not(windows))]</span></span><br><span class="line"><span class="keyword">use</span> libc;</span><br><span class="line"><span class="keyword">use</span> std::mem::zeroed;</span><br><span class="line"><span class="keyword">use</span> std::net::UdpSocket;</span><br><span class="line"><span class="keyword">use</span> std::time::Duration;</span><br><span class="line"><span class="meta">#[cfg(windows)]</span></span><br><span class="line"><span class="keyword">use</span> winapi;</span><br><span class="line"></span><br><span class="line"><span class="comment">//12×4字节（12个32位整数的宽度）。</span></span><br><span class="line"><span class="keyword">const</span> NTP_MESSAGE_LENGTH: <span class="type">usize</span> = <span class="number">48</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//1900年1月1日和1970年1月1日之间的秒数</span></span><br><span class="line"><span class="keyword">const</span> NTP_TO_UNIX_SECONDS: <span class="type">i64</span> = <span class="number">2_208_988_800</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//12300是NTP默认的端口。</span></span><br><span class="line"><span class="keyword">const</span> LOCAL_ADDR: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> = <span class="string">&quot;0.0.0.0:12300&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Default, Debug, Copy, Clone)]</span></span><br><span class="line"><span class="comment">//内部类型，用来表示一个NTP的时间戳</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">NTPTimestamp</span> &#123;</span><br><span class="line">    seconds: <span class="type">u32</span>,</span><br><span class="line">    fraction: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">NTPMessage</span> &#123;</span><br><span class="line">    data: [<span class="type">u8</span>; NTP_MESSAGE_LENGTH],</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">NTPResult</span> &#123;</span><br><span class="line">    t1: DateTime&lt;Utc&gt;,</span><br><span class="line">    t2: DateTime&lt;Utc&gt;,</span><br><span class="line">    t3: DateTime&lt;Utc&gt;,</span><br><span class="line">    t4: DateTime&lt;Utc&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">NTPResult</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">offset</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">i64</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">duration</span> = (<span class="keyword">self</span>.t2 - <span class="keyword">self</span>.t1) + (<span class="keyword">self</span>.t4 - <span class="keyword">self</span>.t3);</span><br><span class="line">        duration.<span class="title function_ invoke__">num_milliseconds</span>() / <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">delay</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">i64</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">duration</span> = (<span class="keyword">self</span>.t4 - <span class="keyword">self</span>.t1) - (<span class="keyword">self</span>.t3 - <span class="keyword">self</span>.t2);</span><br><span class="line">        duration.<span class="title function_ invoke__">num_milliseconds</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">From</span>&lt;NTPTimestamp&gt; <span class="keyword">for</span> <span class="title class_">DateTime</span>&lt;Utc&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from</span>(ntp: NTPTimestamp) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">secs</span> = ntp.seconds <span class="keyword">as</span> <span class="type">i64</span> - NTP_TO_UNIX_SECONDS;</span><br><span class="line">        <span class="comment">//可以使用移位操作来实现这些转换，但会降低可读性</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">nanos</span> = ntp.fraction <span class="keyword">as</span> <span class="type">f64</span>;</span><br><span class="line">        nanos *= <span class="number">1e9</span>;</span><br><span class="line">        nanos /= <span class="number">2_f64</span>.<span class="title function_ invoke__">powi</span>(<span class="number">32</span>);</span><br><span class="line"></span><br><span class="line">        Utc.<span class="title function_ invoke__">timestamp</span>(secs, nanos <span class="keyword">as</span> <span class="type">u32</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">From</span>&lt;DateTime&lt;Utc&gt;&gt; <span class="keyword">for</span> <span class="title class_">NTPTimestamp</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from</span>(utc: DateTime&lt;Utc&gt;) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">secs</span> = utc.<span class="title function_ invoke__">timestamp</span>() + NTP_TO_UNIX_SECONDS;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">fraction</span> = utc.<span class="title function_ invoke__">nanosecond</span>() <span class="keyword">as</span> <span class="type">f64</span>;</span><br><span class="line">        fraction *= <span class="number">2_f64</span>.<span class="title function_ invoke__">powi</span>(<span class="number">32</span>);</span><br><span class="line">        fraction /= <span class="number">1e9</span>;</span><br><span class="line"></span><br><span class="line">        NTPTimestamp &#123;</span><br><span class="line">            seconds: secs <span class="keyword">as</span> <span class="type">u32</span>,</span><br><span class="line">            fraction: fraction <span class="keyword">as</span> <span class="type">u32</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">NTPMessage</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>() <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        NTPMessage &#123;</span><br><span class="line">            data: [<span class="number">0</span>; NTP_MESSAGE_LENGTH],</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//下画线隔开了NTP的各个字段：闰秒标志（占2位）、版本（占3位）以及模式（占3位）。</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">client</span>() <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> VERSION: <span class="type">u8</span> = <span class="number">0b00_011_000</span>;</span><br><span class="line">        <span class="keyword">const</span> MODE: <span class="type">u8</span> = <span class="number">0b00_000_011</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//每个NTP消息的第一个字节都包含3个字段，但是我们只需设置其中的两个。</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">msg</span> = NTPMessage::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">        msg.data[<span class="number">0</span>] |= VERSION;</span><br><span class="line">        msg.data[<span class="number">0</span>] |= MODE;</span><br><span class="line">        <span class="comment">//现在，msg.data[0]等于0001_1011（十进制的27）。</span></span><br><span class="line">        msg</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">parse_timestamp</span>(&amp;<span class="keyword">self</span>, i: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;NTPTimestamp, std::io::Error&gt; &#123;</span><br><span class="line">        <span class="comment">//获取一个首字节的切片。</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">reader</span> = &amp;<span class="keyword">self</span>.data[i..i + <span class="number">8</span>];</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">seconds</span> = reader.read_u32::&lt;BigEndian&gt;()?;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">fraction</span> = reader.read_u32::&lt;BigEndian&gt;()?;</span><br><span class="line"></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(NTPTimestamp &#123;</span><br><span class="line">            seconds: seconds,</span><br><span class="line">            fraction: fraction,</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">rx_time</span>(&amp;<span class="keyword">self</span>, <span class="comment">// rx代表接收。</span></span><br><span class="line">    ) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;NTPTimestamp, std::io::Error&gt; &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="title function_ invoke__">parse_timestamp</span>(<span class="number">32</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">tx_time</span>(&amp;<span class="keyword">self</span>, <span class="comment">//tx代表发送。</span></span><br><span class="line">    ) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;NTPTimestamp, std::io::Error&gt; &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="title function_ invoke__">parse_timestamp</span>(<span class="number">40</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">weighted_mean</span>(values: &amp;[<span class="type">f64</span>], weights: &amp;[<span class="type">f64</span>]) <span class="punctuation">-&gt;</span> <span class="type">f64</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">result</span> = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">sum_of_weights</span> = <span class="number">0.0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">for</span> (v, w) <span class="keyword">in</span> values.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">zip</span>(weights) &#123;</span><br><span class="line">        result += v * w;</span><br><span class="line">        sum_of_weights += w;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    result / sum_of_weights</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定义一个发送NTP消息的函数</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">ntp_roundtrip</span>(host: &amp;<span class="type">str</span>, port: <span class="type">u16</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;NTPResult, std::io::Error&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">destination</span> = <span class="built_in">format!</span>(<span class="string">&quot;&#123;&#125;:&#123;&#125;&quot;</span>, host, port);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">timeout</span> = Duration::<span class="title function_ invoke__">from_secs</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">request</span> = NTPMessage::<span class="title function_ invoke__">client</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">response</span> = NTPMessage::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">message</span> = request.data;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">udp</span> = UdpSocket::<span class="title function_ invoke__">bind</span>(LOCAL_ADDR)?;</span><br><span class="line">    udp.<span class="title function_ invoke__">connect</span>(&amp;destination).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;unable to connect&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    这行代码稍微有点作弊，它并没有把ti编码到出站消息中</span></span><br><span class="line"><span class="comment">    然而，在实践上，这样可以很好地允许，</span></span><br><span class="line"><span class="comment">    而且需要做的工作量也会少很多</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t1</span> = Utc::<span class="title function_ invoke__">now</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//向服务器端发送一个请求的有效载荷</span></span><br><span class="line">    udp.<span class="title function_ invoke__">send</span>(&amp;message)?;</span><br><span class="line">    udp.<span class="title function_ invoke__">set_read_timeout</span>(<span class="title function_ invoke__">Some</span>(timeout))?;</span><br><span class="line">    <span class="comment">//会阻塞应用程序，直到要接收的数据准备好为止</span></span><br><span class="line">    udp.<span class="title function_ invoke__">recv_from</span>(&amp;<span class="keyword">mut</span> response.data)?;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t4</span> = Utc::<span class="title function_ invoke__">now</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//rx_time()代表接收的时间戳，也就是服务器端收到客户端信息的那个时间</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t2</span>: DateTime&lt;Utc&gt; = response.<span class="title function_ invoke__">rx_time</span>().<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">into</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//tx_time()代表发送的时间戳，也就是服务器端发送的那个时间</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t3</span>: DateTime&lt;Utc&gt; = response.<span class="title function_ invoke__">tx_time</span>().<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">into</span>();</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(NTPResult &#123;</span><br><span class="line">        t1: t1,</span><br><span class="line">        t2: t2,</span><br><span class="line">        t3: t3,</span><br><span class="line">        t4: t4,</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">check_time</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">f64</span>, std::io::Error&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> NTP_PORT: <span class="type">u16</span> = <span class="number">123</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">servers</span> = [</span><br><span class="line">        <span class="string">&quot;time.nist▓▓▓▓&quot;</span>,</span><br><span class="line">        <span class="string">&quot;time.apple▓▓▓▓&quot;</span>,</span><br><span class="line">        <span class="string">&quot;time.euro.apple▓▓▓▓&quot;</span>,</span><br><span class="line">        <span class="string">&quot;time.google▓▓▓▓&quot;</span>,</span><br><span class="line">        <span class="string">&quot;time2.google▓▓▓▓&quot;</span>,</span><br><span class="line">        <span class="comment">//&quot;time.windows▓▓▓▓&quot;,</span></span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">times</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">with_capacity</span>(servers.<span class="title function_ invoke__">len</span>());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> &amp;server <span class="keyword">in</span> servers.<span class="title function_ invoke__">iter</span>() &#123;</span><br><span class="line">        <span class="built_in">print!</span>(<span class="string">&quot;&#123;&#125; =&gt;&quot;</span>, server);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">calc</span> = <span class="title function_ invoke__">ntp_roundtrip</span>(&amp;server, NTP_PORT);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">match</span> calc &#123;</span><br><span class="line">            <span class="title function_ invoke__">Ok</span>(time) =&gt; &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot; &#123;&#125;ms away from local system time&quot;</span>, time.<span class="title function_ invoke__">offset</span>());</span><br><span class="line">                times.<span class="title function_ invoke__">push</span>(time);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="title function_ invoke__">Err</span>(_) =&gt; &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot; ? [response took too long]&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">offsets</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">with_capacity</span>(servers.<span class="title function_ invoke__">len</span>());</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">offset_weights</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">with_capacity</span>(servers.<span class="title function_ invoke__">len</span>());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">time</span> <span class="keyword">in</span> &amp;times &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">offset</span> = time.<span class="title function_ invoke__">offset</span>() <span class="keyword">as</span> <span class="type">f64</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">delay</span> = time.<span class="title function_ invoke__">delay</span>() <span class="keyword">as</span> <span class="type">f64</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">weight</span> = <span class="number">1_000_000.0</span> / (delay * delay);</span><br><span class="line">        <span class="keyword">if</span> weight.<span class="title function_ invoke__">is_finite</span>() &#123;</span><br><span class="line">            offsets.<span class="title function_ invoke__">push</span>(offset);</span><br><span class="line">            offset_weights.<span class="title function_ invoke__">push</span>(weight);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">avg_offset</span> = <span class="title function_ invoke__">weighted_mean</span>(&amp;offsets, &amp;offset_weights);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(avg_offset)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Clock</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Clock</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">get</span>() <span class="punctuation">-&gt;</span> DateTime&lt;Local&gt; &#123;</span><br><span class="line">        Local::<span class="title function_ invoke__">now</span>()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[cfg(windows)]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">set</span>&lt;Tz: TimeZone&gt;(t: DateTime&lt;Tz&gt;) <span class="punctuation">-&gt;</span> () &#123;</span><br><span class="line">        <span class="keyword">use</span> chrono::&#123;Datelike, Weekday&#125;;</span><br><span class="line">        <span class="keyword">use</span> kernel32::SetSystemTime;</span><br><span class="line">        <span class="keyword">use</span> winapi::&#123;SYSTEMTIME, WORD&#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t</span> = t.<span class="title function_ invoke__">with_timezone</span>(&amp;Local);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">systime</span>: SYSTEMTIME = <span class="keyword">unsafe</span> &#123; <span class="title function_ invoke__">zeroed</span>() &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">dow</span> = <span class="keyword">match</span> t.<span class="title function_ invoke__">weekday</span>() &#123;</span><br><span class="line">            Weekday::Mon =&gt; <span class="number">1</span>,</span><br><span class="line">            Weekday::Tue =&gt; <span class="number">2</span>,</span><br><span class="line">            Weekday::Wed =&gt; <span class="number">3</span>,</span><br><span class="line">            Weekday::Thu =&gt; <span class="number">4</span>,</span><br><span class="line">            Weekday::Fri =&gt; <span class="number">5</span>,</span><br><span class="line">            Weekday::Sat =&gt; <span class="number">6</span>,</span><br><span class="line">            Weekday::Sun =&gt; <span class="number">0</span>,</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">ns</span> = t.<span class="title function_ invoke__">nanosecond</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">is_leap_second</span> = ns &gt; <span class="number">1_000_000_000</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> is_leap_second &#123;</span><br><span class="line">            ns -= <span class="number">1_000_000_000</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        systime.wYear = t.<span class="title function_ invoke__">year</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wMonth = t.<span class="title function_ invoke__">month</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wDayOfWeek = dow <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wDay = t.<span class="title function_ invoke__">day</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wHour = t.<span class="title function_ invoke__">hour</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wMinute = t.<span class="title function_ invoke__">minute</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wSecond = t.<span class="title function_ invoke__">second</span>() <span class="keyword">as</span> WORD;</span><br><span class="line">        systime.wMilliseconds = (ns / <span class="number">1_000_000</span>) <span class="keyword">as</span> WORD;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">systime_ptr</span> = &amp;systime <span class="keyword">as</span> *<span class="keyword">const</span> SYSTEMTIME;</span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            <span class="title function_ invoke__">SetSystemTime</span>(systime_ptr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[cfg(not(windows))]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">set</span>&lt;Tz: TimeZone&gt;(t: DateTime&lt;Tz&gt;) <span class="punctuation">-&gt;</span> () &#123;</span><br><span class="line">        <span class="keyword">use</span> libc::settimeofday;</span><br><span class="line">        <span class="keyword">use</span> libc::&#123;suseconds_t, time_t, timeval, timezone&#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t</span> = t.<span class="title function_ invoke__">with_timezone</span>(&amp;Local);</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">u</span>: timeval = <span class="keyword">unsafe</span> &#123; <span class="title function_ invoke__">zeroed</span>() &#125;;</span><br><span class="line"></span><br><span class="line">        u.tv_sec = t.<span class="title function_ invoke__">timestamp</span>() <span class="keyword">as</span> time_t;</span><br><span class="line">        u.tv_usec = t.<span class="title function_ invoke__">timestamp_subsec_micros</span>() <span class="keyword">as</span> suseconds_t;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">mock_tz</span>: *<span class="keyword">const</span> timezone = std::ptr::<span class="title function_ invoke__">null</span>();</span><br><span class="line">            <span class="title function_ invoke__">settimeofday</span>(&amp;u <span class="keyword">as</span> *<span class="keyword">const</span> timeval, mock_tz);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">app</span> = App::<span class="title function_ invoke__">new</span>(<span class="string">&quot;clock&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">version</span>(<span class="string">&quot;0.1.3&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">about</span>(<span class="string">&quot;Gets and sets the time.&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">after_help</span>(</span><br><span class="line">            <span class="string">&quot;Note: UNIX timestamps are parsed as whole seconds since 1st \</span></span><br><span class="line"><span class="string">        January 1970 0:00:00 UTC. For more accuracy, use another \</span></span><br><span class="line"><span class="string">        format.&quot;</span>,</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(</span><br><span class="line">            Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;action&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">takes_value</span>(<span class="literal">true</span>)</span><br><span class="line">                .<span class="title function_ invoke__">possible_values</span>(&amp;[<span class="string">&quot;get&quot;</span>, <span class="string">&quot;set&quot;</span>, <span class="string">&quot;check-ntp&quot;</span>])</span><br><span class="line">                .<span class="title function_ invoke__">default_value</span>(<span class="string">&quot;get&quot;</span>),</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(</span><br><span class="line">            Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;std&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">short</span>(<span class="string">&quot;s&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">long</span>(<span class="string">&quot;use-standard&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">takes_value</span>(<span class="literal">true</span>)</span><br><span class="line">                .<span class="title function_ invoke__">possible_values</span>(&amp;[<span class="string">&quot;rfc2822&quot;</span>, <span class="string">&quot;rfc3339&quot;</span>, <span class="string">&quot;timestamp&quot;</span>])</span><br><span class="line">                .<span class="title function_ invoke__">default_value</span>(<span class="string">&quot;rfc3339&quot;</span>),</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">arg</span>(</span><br><span class="line">            Arg::<span class="title function_ invoke__">with_name</span>(<span class="string">&quot;datetime&quot;</span>)</span><br><span class="line">                .<span class="title function_ invoke__">help</span>(<span class="string">&quot;When &lt;action&gt; is &#x27;set&#x27;, apply &lt;datetime&gt;. Otherwise, ignore.&quot;</span>),</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span> = app.<span class="title function_ invoke__">get_matches</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">action</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;action&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">std</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;std&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> action == <span class="string">&quot;set&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t_</span> = args.<span class="title function_ invoke__">value_of</span>(<span class="string">&quot;datetime&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">parser</span> = <span class="keyword">match</span> std &#123;</span><br><span class="line">            <span class="string">&quot;rfc2822&quot;</span> =&gt; DateTime::parse_from_rfc2822,</span><br><span class="line">            <span class="string">&quot;rfc3339&quot;</span> =&gt; DateTime::parse_from_rfc3339,</span><br><span class="line">            _ =&gt; <span class="built_in">unimplemented!</span>(),</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">err_msg</span> = <span class="built_in">format!</span>(<span class="string">&quot;Unable to parse &#123;&#125; according to &#123;&#125;&quot;</span>, t_, std);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">t</span> = <span class="title function_ invoke__">parser</span>(t_).<span class="title function_ invoke__">expect</span>(&amp;err_msg);</span><br><span class="line"></span><br><span class="line">        Clock::<span class="title function_ invoke__">set</span>(t);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> action == <span class="string">&quot;check-ntp&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">offset</span> = <span class="title function_ invoke__">check_time</span>().<span class="title function_ invoke__">unwrap</span>() <span class="keyword">as</span> <span class="type">isize</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">adjust_ms_</span> = offset.<span class="title function_ invoke__">signum</span>() * offset.<span class="title function_ invoke__">abs</span>().<span class="title function_ invoke__">min</span>(<span class="number">200</span>) / <span class="number">5</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">adjust_ms</span> = ChronoDuration::<span class="title function_ invoke__">milliseconds</span>(adjust_ms_ <span class="keyword">as</span> <span class="type">i64</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">now</span>: DateTime&lt;Utc&gt; = Utc::<span class="title function_ invoke__">now</span>() + adjust_ms;</span><br><span class="line"></span><br><span class="line">        Clock::<span class="title function_ invoke__">set</span>(now);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">maybe_error</span> = std::io::Error::<span class="title function_ invoke__">last_os_error</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">os_error_code</span> = &amp;maybe_error.<span class="title function_ invoke__">raw_os_error</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> os_error_code &#123;</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="number">0</span>) =&gt; (),</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(_) =&gt; eprintln!(<span class="string">&quot;Unable to set the time: &#123;:?&#125;&quot;</span>, maybe_error),</span><br><span class="line">        <span class="literal">None</span> =&gt; (),</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">now</span> = Clock::<span class="title function_ invoke__">get</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> std &#123;</span><br><span class="line">        <span class="string">&quot;timestamp&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">timestamp</span>()),</span><br><span class="line">        <span class="string">&quot;rfc2822&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">to_rfc2822</span>()),</span><br><span class="line">        <span class="string">&quot;rfc3339&quot;</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, now.<span class="title function_ invoke__">to_rfc3339</span>()),</span><br><span class="line">        _ =&gt; <span class="built_in">unreachable!</span>(),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            sabakiro
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://sabakiro.github.io/2023/09/12/rust%E6%97%B6%E9%92%9F/">
+            https://sabakiro.github.io/2023/09/12/rust%E6%97%B6%E9%92%9F/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/09/10/rust%E7%BD%91%E7%BB%9C/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">Next</div>
+          
+            <div class="nav-title">rust网络 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+</div>
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>TOC
+</div>
+
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>Recent Posts
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-12</div>
+        <a href="/2023/09/12/rust%E6%97%B6%E9%92%9F/"><div class="recent-posts-item-content">rust时钟</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-10</div>
+        <a href="/2023/09/10/rust%E7%BD%91%E7%BB%9C/"><div class="recent-posts-item-content">rust网络</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-09</div>
+        <a href="/2023/09/09/rust%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><div class="recent-posts-item-content">rust文件系统</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-08</div>
+        <a href="/2023/09/08/rust%E5%86%85%E5%AD%98/"><div class="recent-posts-item-content">rust内存</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          kaze
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    href="#"
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
