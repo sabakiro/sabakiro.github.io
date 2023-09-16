@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>flutter项目设置</title>
+  <title>vue路由和pinia基础</title>
   
     
       <meta 
         property="og:title" 
-        content="flutter项目设置">
+        content="vue路由和pinia基础">
     
     
       <meta 
         property="og:url" 
-        content="https://sabakiro.github.io/2023/09/06/flutter%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE/index.html">
+        content="https://sabakiro.github.io/2023/09/15/vue%E8%B7%AF%E7%94%B1%E5%92%8Cpinia%E5%9F%BA%E7%A1%80/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-09-06">
+        content="2023-09-15">
       <meta 
         property="og:article:modified_time" 
-        content="2023-09-06">
+        content="2023-09-16">
       <meta 
         property="og:article:author" 
         content="sabakiro">
@@ -53,7 +53,7 @@
         
           <meta 
             property="og:article:tag" 
-            content="flutter">
+            content="vue">
         
       
     
@@ -315,7 +315,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1"><span class="toc-text">路由</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pinia"><span class="toc-text">pinia</span></a></li></ol>
       </div>
     </article>
   
@@ -345,21 +345,15 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/rust/" 
-        title="rust">
-        <div class="tags-list-item">rust</div>
-      </a>
-    
-      <a 
-        href="/tags/vue/" 
-        title="vue">
-        <div class="tags-list-item">vue</div>
-      </a>
-    
-      <a 
         href="/tags/c/" 
         title="c#">
         <div class="tags-list-item">c#</div>
+      </a>
+    
+      <a 
+        href="/tags/rust/" 
+        title="rust">
+        <div class="tags-list-item">rust</div>
       </a>
     
       <a 
@@ -369,9 +363,15 @@
       </a>
     
       <a 
-        href="/tags/%E7%AE%97%E6%B3%95/" 
-        title="算法">
-        <div class="tags-list-item">算法</div>
+        href="/tags/golang/" 
+        title="golang">
+        <div class="tags-list-item">golang</div>
+      </a>
+    
+      <a 
+        href="/tags/vue/" 
+        title="vue">
+        <div class="tags-list-item">vue</div>
       </a>
     
       <a 
@@ -381,9 +381,9 @@
       </a>
     
       <a 
-        href="/tags/golang/" 
-        title="golang">
-        <div class="tags-list-item">golang</div>
+        href="/tags/%E7%AE%97%E6%B3%95/" 
+        title="算法">
+        <div class="tags-list-item">算法</div>
       </a>
     
   </div>
@@ -398,21 +398,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      flutter项目设置
+      vue路由和pinia基础
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-09-06T11:11:33.000Z">
+    <time datetime="2023-09-15T14:28:35.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-09-06</span>
+      <span>2023-09-15</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>30 words</span>
+      <span>460 words</span>
     
   </div>
   
@@ -427,9 +427,9 @@
         
           
           <a 
-            href="/tags/flutter/" 
+            href="/tags/vue/" 
             class="post-meta-link">
-            flutter
+            vue
           </a>
         
       </div>
@@ -439,10 +439,24 @@
   <div 
     id="section" 
     class="post-content">
-    <p>设置环境变量<br>PUB_HOSTED_URL<br><code>https://pub.flutter-io.cn</code></p>
-<p>FLUTTER_STORAGE_BASE_URL<br><code>https://storage.flutter-io.cn</code></p>
-<p>导包<br>flutter packages get</p>
-<p>创建flutter项目<br>flutter create 项目名</p>
+    <h1 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h1><p>src&#x2F;views&#x2F;Find.vue</p>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class=&quot;find&quot;&gt;</span><br><span class="line">    &lt;div&gt;find .............&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>src&#x2F;views&#x2F;Friend.vue</p>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class=&quot;friend&quot;&gt;</span><br><span class="line">    &lt;div&gt;friend .............&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;friend .............&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;friend .............&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;friend .............&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;friend .............&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;friend .............&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>src&#x2F;router&#x2F;index.js</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; createRouter, createWebHistory &#125; <span class="keyword">from</span> <span class="string">&#x27;vue-router&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Find</span> <span class="keyword">from</span> <span class="string">&#x27;../views/Find.vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> router = <span class="title function_">createRouter</span>(&#123;</span><br><span class="line">  <span class="attr">history</span>: <span class="title function_">createWebHistory</span>(<span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">BASE_URL</span>),</span><br><span class="line">  <span class="attr">routes</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;find&#x27;</span>,</span><br><span class="line">      <span class="attr">component</span>: <span class="title class_">Find</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;/friend&#x27;</span>,</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;friend&#x27;</span>,</span><br><span class="line">      <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;../views/Friend.vue&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> router</span><br></pre>
+<p>src&#x2F;App.vue</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line"></span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;!-- 路由跳转 --&gt;</span><br><span class="line">    &lt;p&gt;</span><br><span class="line">      &lt;RouterLink to=&quot;/find&quot;&gt;</span><br><span class="line">        go to find</span><br><span class="line">      &lt;/RouterLink&gt;</span><br><span class="line">    &lt;/p&gt;</span><br><span class="line">    &lt;p&gt;</span><br><span class="line">      &lt;RouterLink to=&quot;/friend&quot;&gt;</span><br><span class="line">        go to friend</span><br><span class="line">      &lt;/RouterLink&gt;</span><br><span class="line">    &lt;/p&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;!-- 路由出口 --&gt;</span><br><span class="line">  &lt;RouterView&gt;&lt;/RouterView&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+<p>src&#x2F;main.js</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">&#x27;./router&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">createApp</span>(<span class="title class_">App</span>)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(router)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">mount</span>(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre>
+
+<h1 id="pinia"><a href="#pinia" class="headerlink" title="pinia"></a>pinia</h1><p>src&#x2F;main.js</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">&#x27;./router&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; createPinia &#125; <span class="keyword">from</span> <span class="string">&quot;pinia&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">createApp</span>(<span class="title class_">App</span>)</span><br><span class="line"><span class="keyword">const</span> pinia = <span class="title function_">createPinia</span>()</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(router).<span class="title function_">use</span>(pinia)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">mount</span>(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre>
+<p>src&#x2F;storage&#x2F;counter.js</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; defineStore &#125; <span class="keyword">from</span> <span class="string">&quot;pinia&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">ref() 就是 state 属性</span></span><br><span class="line"><span class="comment">computed() 就是 getters</span></span><br><span class="line"><span class="comment">function() 就是 actions</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useCounterStore=<span class="title function_">defineStore</span>(<span class="string">&#x27;counter&#x27;</span>,<span class="function">()=&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> count=<span class="title function_">ref</span>(<span class="number">0</span>)</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">increment</span>(<span class="params"></span>)&#123;</span><br><span class="line">    count.<span class="property">value</span>++</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> &#123;count,increment&#125;</span><br><span class="line">&#125;)</span><br></pre>
+<p>src&#x2F;views&#x2F;Find.vue</p>
+<pre class="highlight"><span class="line">&lt;script setup&gt;</span><br><span class="line">import &#123; storeToRefs &#125; from &#x27;pinia&#x27;</span><br><span class="line">import &#123; useCounterStore &#125; from &#x27;../storage/counter&#x27;</span><br><span class="line">const store = useCounterStore()</span><br><span class="line">const &#123; count &#125; = storeToRefs(store)</span><br><span class="line">const &#123; increment &#125; = store</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">	........</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;button @click=&quot;increment&quot;&gt;&#123;&#123; count &#125;&#125;&lt;/button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
+
 
   </div>
   <div>
@@ -462,8 +476,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://sabakiro.github.io/2023/09/06/flutter%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE/">
-            https://sabakiro.github.io/2023/09/06/flutter%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE/
+            href="https://sabakiro.github.io/2023/09/15/vue%E8%B7%AF%E7%94%B1%E5%92%8Cpinia%E5%9F%BA%E7%A1%80/">
+            https://sabakiro.github.io/2023/09/15/vue%E8%B7%AF%E7%94%B1%E5%92%8Cpinia%E5%9F%BA%E7%A1%80/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -473,29 +487,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/09/07/kmp%E7%AE%97%E6%B3%95/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">Prev</div>
-          
-            <div class="nav-title">kmp算法 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/09/05/vue%E6%A8%A1%E6%9D%BF%E5%BC%95%E7%94%A8%E5%92%8C%E7%BB%84%E4%BB%B6%E5%9F%BA%E7%A1%80/" 
+        href="/2023/09/14/vue%E5%85%A8%E5%B1%80%E7%BB%84%E4%BB%B6%E5%92%8C%E7%BB%84%E5%90%88%E5%BC%8F%E5%87%BD%E6%95%B0/" 
         class="nav-link">
         <div>
           <div class="nav-label">Next</div>
           
-            <div class="nav-title">模板引用和组件基础 </div>
+            <div class="nav-title">vue深入组件 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -513,7 +513,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1"><span class="toc-text">路由</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pinia"><span class="toc-text">pinia</span></a></li></ol>
 </div>
             </main>
             <aside class="right-column">
@@ -527,7 +527,7 @@
     style="padding-right: 2px;">
   </i>TOC
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1"><span class="toc-text">路由</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pinia"><span class="toc-text">pinia</span></a></li></ol>
     </article>
   
   
